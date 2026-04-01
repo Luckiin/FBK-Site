@@ -41,7 +41,6 @@ export default function EventosPage() {
         breadcrumb="Eventos"
       />
 
-      {/* Tipos de evento */}
       <section className="bg-dark-300 py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
@@ -68,7 +67,6 @@ export default function EventosPage() {
         </div>
       </section>
 
-      {/* Próximos Eventos */}
       <section className="bg-dark-400 py-20 border-y border-dark-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
@@ -108,7 +106,6 @@ export default function EventosPage() {
         </div>
       </section>
 
-      {/* CTA */}
       <section className="bg-dark-300 py-20">
         <div className="max-w-3xl mx-auto px-4 text-center">
           <h2 className="text-2xl font-extrabold text-ink-100 mb-4">

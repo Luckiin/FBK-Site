@@ -15,7 +15,6 @@ export default function SobrePage() {
         breadcrumb="A Federação"
       />
 
-      {/* Quem Somos */}
       <section className="bg-dark-300 py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="section-title mb-4">Quem Somos</h2>
@@ -38,7 +37,6 @@ export default function SobrePage() {
         </div>
       </section>
 
-      {/* Missão, Visão, Valores */}
       <section className="bg-dark-400 py-20 border-y border-dark-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader title="Missão, Visão e Valores" />
@@ -71,7 +69,6 @@ export default function SobrePage() {
         </div>
       </section>
 
-      {/* Atuação e Serviços */}
       <section className="bg-dark-300 py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
@@ -103,7 +100,6 @@ export default function SobrePage() {
         </div>
       </section>
 
-      {/* Filiação Internacional */}
       <section className="bg-dark-400 py-20 border-t border-dark-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="w-16 h-16 mx-auto mb-6 bg-gold-500/10 border border-gold-500/20 text-gold-500 rounded-2xl flex items-center justify-center">

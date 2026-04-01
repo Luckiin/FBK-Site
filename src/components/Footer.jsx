@@ -5,7 +5,6 @@ import { APP_NAME, APP_FULL_NAME, APP_EMAIL, APP_INSTAGRAM, APP_LOCATION, NAV_LI
 export default function Footer() {
   return (
     <footer className="bg-dark-400 border-t border-dark-50">
-      {/* CTA Banner */}
       <div className="bg-gradient-to-r from-brand-900 via-brand-800 to-brand-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
           <h3 className="text-2xl md:text-3xl font-extrabold text-white mb-3">
@@ -25,10 +24,8 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Footer content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
-          {/* Brand */}
           <div>
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 bg-gradient-to-br from-brand-500 to-brand-700 rounded-xl flex items-center justify-center">
@@ -56,7 +53,6 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Navegacao */}
           <div>
             <h4 className="text-sm font-bold text-ink-100 uppercase tracking-wider mb-4">
               Navegação
@@ -76,7 +72,6 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Institucional */}
           <div>
             <h4 className="text-sm font-bold text-ink-100 uppercase tracking-wider mb-4">
               Institucional
@@ -101,7 +96,6 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Contato */}
           <div>
             <h4 className="text-sm font-bold text-ink-100 uppercase tracking-wider mb-4">
               Contato
@@ -133,7 +127,6 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Bottom bar */}
       <div className="border-t border-dark-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-2">
           <p className="text-xs text-ink-500">

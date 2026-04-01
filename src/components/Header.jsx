@@ -39,7 +39,6 @@ export default function Header() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
-          {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group">
             <div className="relative">
               <div className="w-10 h-10 bg-gradient-to-br from-brand-500 to-brand-700 rounded-xl flex items-center justify-center shadow-lg shadow-brand-500/30 group-hover:shadow-brand-500/50 transition-all duration-300">
@@ -57,7 +56,6 @@ export default function Header() {
             </div>
           </Link>
 
-          {/* Desktop Nav */}
           <nav className="hidden lg:flex items-center gap-1">
             {NAV_LINKS.map((link) => (
               <Link
@@ -74,7 +72,6 @@ export default function Header() {
             ))}
           </nav>
 
-          {/* CTA / Auth */}
           <div className="hidden lg:flex items-center gap-3">
             {user ? (
               <div className="flex items-center gap-3">
@@ -109,7 +106,6 @@ export default function Header() {
             )}
           </div>
 
-          {/* Mobile toggle */}
           <button
             className="lg:hidden p-2 rounded-lg hover:bg-dark-100 transition"
             onClick={() => setMenuOpen(!menuOpen)}
@@ -122,7 +118,6 @@ export default function Header() {
           </button>
         </div>
 
-        {/* Mobile Nav */}
         {menuOpen && (
           <div className="lg:hidden border-t border-dark-50 py-4 flex flex-col gap-1 animate-fade-in">
             {NAV_LINKS.map((link) => (

@@ -21,7 +21,6 @@ export default function TransparenciaPage() {
         breadcrumb="Transparência"
       />
 
-      {/* Intro */}
       <section className="bg-dark-300 py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-ink-300 leading-relaxed text-center max-w-2xl mx-auto">
@@ -32,7 +31,6 @@ export default function TransparenciaPage() {
         </div>
       </section>
 
-      {/* Documentos */}
       <section className="bg-dark-400 py-20 border-y border-dark-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
@@ -63,7 +61,6 @@ export default function TransparenciaPage() {
         </div>
       </section>
 
-      {/* Compromisso */}
       <section className="bg-dark-300 py-20">
         <div className="max-w-3xl mx-auto px-4 text-center">
           <div className="w-16 h-16 mx-auto mb-6 bg-brand-500/10 border border-brand-500/20 text-brand-400 rounded-2xl flex items-center justify-center">

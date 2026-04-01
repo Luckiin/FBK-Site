@@ -1,7 +1,6 @@
 export default function PageHero({ title, subtitle, breadcrumb }) {
   return (
     <section className="relative bg-dark-400 pt-32 pb-16 md:pt-36 md:pb-20 overflow-hidden">
-      {/* Background elements */}
       <div className="absolute inset-0">
         <div className="absolute top-0 right-0 w-[500px] h-[300px] bg-brand-500/5 rounded-full blur-[120px]" />
         <div className="absolute bottom-0 left-0 w-[300px] h-[200px] bg-gold-500/5 rounded-full blur-[100px]" />

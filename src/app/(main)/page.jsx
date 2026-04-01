@@ -50,26 +50,21 @@ export const metadata = { title: "Início" };
 export default function HomePage() {
   return (
     <>
-      {/* ═══════════════ HERO ═══════════════ */}
       <section className="relative min-h-[90vh] flex items-center overflow-hidden">
-        {/* Background */}
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-dark-400" />
-          {/* Geometric pattern overlay */}
           <div className="absolute inset-0 opacity-[0.03]"
             style={{
               backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
             }}
           />
           <div className="absolute inset-0 bg-gradient-to-b from-dark-400/50 via-dark-400/70 to-dark-300" />
-          {/* Red accent glow */}
           <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-brand-500/10 rounded-full blur-[150px]" />
           <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-gold-500/5 rounded-full blur-[120px]" />
         </div>
 
         <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-20 relative z-10">
           <div className="max-w-3xl">
-            {/* Badge */}
             <div className="inline-flex items-center gap-2 bg-brand-500/10 border border-brand-500/20 rounded-full px-4 py-1.5 text-sm font-medium mb-8">
               <div className="w-2 h-2 bg-brand-500 rounded-full animate-pulse" />
               <span className="text-brand-300">Federação oficial de Kickboxing da Bahia</span>
@@ -102,11 +97,9 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Bottom gradient fade */}
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-dark-300 to-transparent z-10" />
       </section>
 
-      {/* ═══════════════ STATS BAR ═══════════════ */}
       <section className="bg-dark-300 relative z-20 -mt-1">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -130,7 +123,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ═══════════════ QUEM SOMOS ═══════════════ */}
       <section className="bg-dark-300 py-20 md:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -159,7 +151,6 @@ export default function HomePage() {
               </Link>
             </div>
 
-            {/* Card visual */}
             <div className="relative">
               <div className="card p-8 lg:p-10">
                 <h3 className="text-lg font-bold text-ink-100 mb-6 flex items-center gap-2">
@@ -183,7 +174,6 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* Decoration */}
               <div className="absolute -top-4 -right-4 w-24 h-24 bg-brand-500/10 rounded-2xl -z-10" />
               <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-gold-500/10 rounded-xl -z-10" />
             </div>
@@ -191,7 +181,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ═══════════════ O ESPORTE ═══════════════ */}
       <section className="bg-dark-400 py-20 md:py-28 border-y border-dark-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
@@ -226,7 +215,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ═══════════════ EVENTOS ═══════════════ */}
       <section className="bg-dark-300 py-20 md:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
@@ -277,9 +265,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ═══════════════ IMPACTO SOCIAL ═══════════════ */}
       <section className="relative py-20 md:py-28 overflow-hidden">
-        {/* Background */}
         <div className="absolute inset-0 bg-gradient-to-br from-brand-900/30 via-dark-400 to-dark-400" />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-brand-500/5 rounded-full blur-[150px]" />
 
@@ -307,7 +293,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ═══════════════ COMUNIDADE ═══════════════ */}
       <section className="bg-dark-300 py-20 md:py-28 border-t border-dark-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
@@ -349,7 +334,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ═══════════════ NOTÍCIAS ═══════════════ */}
       <section className="bg-dark-400 py-20 md:py-28 border-t border-dark-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
@@ -360,7 +344,6 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[1, 2, 3].map((n) => (
               <div key={n} className="card card-hover overflow-hidden group">
-                {/* Placeholder image area */}
                 <div className="h-48 bg-gradient-to-br from-dark-100 to-dark-200 flex items-center justify-center">
                   <div className="text-ink-500 text-sm">Em breve</div>
                 </div>
@@ -379,11 +362,9 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ═══════════════ ÁREA DO FILIADO ═══════════════ */}
       <section className="bg-dark-300 py-20 md:py-28 border-t border-dark-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Atleta */}
             <div className="relative overflow-hidden rounded-2xl border border-brand-500/30 bg-gradient-to-br from-brand-900/20 to-dark-200 p-8 group hover:border-brand-500/50 transition-all duration-300">
               <div className="absolute top-0 right-0 w-32 h-32 bg-brand-500/10 rounded-full blur-[60px]" />
               <h3 className="text-xl font-extrabold text-ink-100 mb-1 uppercase tracking-wide">
@@ -399,7 +380,6 @@ export default function HomePage() {
               </Link>
             </div>
 
-            {/* Filial */}
             <div className="relative overflow-hidden rounded-2xl border border-gold-500/30 bg-gradient-to-br from-gold-900/20 to-dark-200 p-8 group hover:border-gold-500/50 transition-all duration-300">
               <div className="absolute top-0 right-0 w-32 h-32 bg-gold-500/10 rounded-full blur-[60px]" />
               <h3 className="text-xl font-extrabold text-ink-100 mb-1 uppercase tracking-wide">
@@ -418,7 +398,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ═══════════════ PARCEIROS ═══════════════ */}
       <section className="bg-dark-400 py-16 border-t border-dark-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h3 className="text-center text-sm font-bold text-ink-500 uppercase tracking-widest mb-8">

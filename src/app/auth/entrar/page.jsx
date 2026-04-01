@@ -33,14 +33,12 @@ export default function EntrarPage() {
 
   return (
     <div className="min-h-screen bg-dark-300 flex items-center justify-center px-4">
-      {/* Background */}
       <div className="fixed inset-0 z-0">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-500/5 rounded-full blur-[150px]" />
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-gold-500/5 rounded-full blur-[120px]" />
       </div>
 
       <div className="w-full max-w-md relative z-10">
-        {/* Logo */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-3">
             <div className="relative">
@@ -56,7 +54,6 @@ export default function EntrarPage() {
           </Link>
         </div>
 
-        {/* Card */}
         <div className="card p-8">
           <h1 className="text-xl font-bold text-ink-100 mb-1">Área do Filiado</h1>
           <p className="text-sm text-ink-400 mb-6">Entre com suas credenciais de acesso.</p>

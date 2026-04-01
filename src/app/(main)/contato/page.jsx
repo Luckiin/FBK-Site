@@ -11,7 +11,6 @@ export default function ContatoPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // TODO: integrar com Supabase ou API de email
     setSent(true);
   };
 
@@ -26,7 +25,6 @@ export default function ContatoPage() {
       <section className="bg-dark-300 py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-            {/* Formulário */}
             <div>
               <h2 className="text-2xl font-extrabold text-ink-100 mb-2">Enviar Mensagem</h2>
               <div className="gold-divider mb-6" />
@@ -97,7 +95,6 @@ export default function ContatoPage() {
               )}
             </div>
 
-            {/* Info */}
             <div>
               <h2 className="text-2xl font-extrabold text-ink-100 mb-2">Informações</h2>
               <div className="gold-divider mb-8" />
@@ -143,7 +140,6 @@ export default function ContatoPage() {
                 </div>
               </div>
 
-              {/* Map placeholder */}
               <div className="mt-8 card overflow-hidden">
                 <div className="h-64 bg-dark-200 flex items-center justify-center">
                   <div className="text-center">

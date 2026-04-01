@@ -14,7 +14,6 @@ export default function ComunidadePage() {
         breadcrumb="Comunidade"
       />
 
-      {/* Filiação */}
       <section className="bg-dark-300 py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
@@ -23,7 +22,6 @@ export default function ComunidadePage() {
           />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {/* Atleta/Técnico */}
             <div className="card p-8 border-brand-500/20 hover:border-brand-500/40 transition-all duration-300">
               <div className="w-14 h-14 bg-brand-500/10 border border-brand-500/20 text-brand-400 rounded-2xl flex items-center justify-center mb-4">
                 <Users size={24} />
@@ -43,7 +41,6 @@ export default function ComunidadePage() {
               </Link>
             </div>
 
-            {/* Filial */}
             <div id="filiar" className="card p-8 border-gold-500/20 hover:border-gold-500/40 transition-all duration-300">
               <div className="w-14 h-14 bg-gold-500/10 border border-gold-500/20 text-gold-500 rounded-2xl flex items-center justify-center mb-4">
                 <Building size={24} />
@@ -66,7 +63,6 @@ export default function ComunidadePage() {
         </div>
       </section>
 
-      {/* Academias Filiadas */}
       <section className="bg-dark-400 py-20 border-y border-dark-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader

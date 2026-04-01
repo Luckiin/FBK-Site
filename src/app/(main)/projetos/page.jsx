@@ -42,7 +42,6 @@ export default function ProjetosPage() {
         breadcrumb="Projetos"
       />
 
-      {/* Intro */}
       <section className="bg-dark-300 py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="space-y-4 text-ink-300 leading-relaxed">
@@ -58,7 +57,6 @@ export default function ProjetosPage() {
         </div>
       </section>
 
-      {/* Exemplos de Ações */}
       <section className="bg-dark-400 py-20 border-y border-dark-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
@@ -82,7 +80,6 @@ export default function ProjetosPage() {
         </div>
       </section>
 
-      {/* Apoie o Kickboxing */}
       <section className="relative py-20 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-brand-900/20 via-dark-300 to-dark-300" />
         <div className="max-w-3xl mx-auto px-4 text-center relative z-10">

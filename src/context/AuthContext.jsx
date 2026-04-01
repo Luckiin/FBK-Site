@@ -1,10 +1,5 @@
 "use client";
 
-// ============================================================
-// AuthContext — Supabase Auth (FBK)
-// Gerencia sessão, login e role do usuário
-// Roles: 'atleta' | 'filial' | 'admin'
-// ============================================================
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase";
 
@@ -17,7 +12,6 @@ export function AuthProvider({ children }) {
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // ─── Busca perfil na tabela public.users ──────────────────
   const fetchProfile = useCallback(async (authUser) => {
     if (!authUser) { setUser(null); return; }
 
@@ -30,7 +24,6 @@ export function AuthProvider({ children }) {
     setUser(profile ?? null);
   }, [supabase]);
 
-  // ─── Inicialização: lê sessão existente ──────────────────
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
@@ -47,7 +40,6 @@ export function AuthProvider({ children }) {
     return () => subscription.unsubscribe();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // ─── Login ────────────────────────────────────────────────
   const login = async (email, password) => {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw new Error(error.message);
@@ -61,14 +53,12 @@ export function AuthProvider({ children }) {
     return { ...data.user, role: profile?.role };
   };
 
-  // ─── Logout ───────────────────────────────────────────────
   const logout = async () => {
     await supabase.auth.signOut();
     setUser(null);
     setSession(null);
   };
 
-  // ─── Atualiza perfil ─────────────────────────────────────
   const updateProfile = async (updates) => {
     if (!user) throw new Error("Não autenticado");
     const { data, error } = await supabase

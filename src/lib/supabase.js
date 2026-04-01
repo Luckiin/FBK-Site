@@ -1,6 +1,3 @@
-// ============================================================
-// Cliente Supabase para uso no BROWSER (Client Components)
-// ============================================================
 import { createBrowserClient } from "@supabase/ssr";
 
 export function createClient() {

@@ -1,14 +1,8 @@
-// ============================================================
-// Middleware FBK — gerencia sessão Supabase e protege rotas
-// ============================================================
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse } from "next/server";
 
-// Rotas que exigem login de atleta
 const ATLETA_ROUTES = ["/atleta"];
-// Rotas que exigem login de filial
 const FILIAL_ROUTES = ["/filial"];
-// Rotas exclusivas para admins
 const ADMIN_ROUTES = ["/admin"];
 
 export async function middleware(request) {
@@ -41,7 +35,6 @@ export async function middleware(request) {
 
   const { pathname } = request.nextUrl;
 
-  // ── Busca role do usuário ──────────────────────────────────
   let role = null;
   if (user) {
     const { data: profile } = await supabase
@@ -54,13 +47,11 @@ export async function middleware(request) {
 
   const isAdmin = role === "admin";
 
-  // ── Redirect: auth pages quando já logado ──────────────────
   if (user && pathname.startsWith("/auth/")) {
     const dest = isAdmin ? "/admin" : role === "filial" ? "/filial" : "/atleta";
     return NextResponse.redirect(new URL(dest, request.url));
   }
 
-  // ── Redirect: rotas protegidas sem login ───────────────────
   const isProtected = [...ATLETA_ROUTES, ...FILIAL_ROUTES, ...ADMIN_ROUTES]
     .some(p => pathname.startsWith(p));
 
@@ -68,7 +59,6 @@ export async function middleware(request) {
     return NextResponse.redirect(new URL("/auth/entrar", request.url));
   }
 
-  // ── Redirect: admin sem permissão ──────────────────────────
   if (ADMIN_ROUTES.some(p => pathname.startsWith(p)) && !isAdmin) {
     return NextResponse.redirect(new URL("/", request.url));
   }

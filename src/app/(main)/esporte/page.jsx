@@ -25,7 +25,6 @@ export default function EsportePage() {
         breadcrumb="O Esporte"
       />
 
-      {/* O Kickboxing */}
       <section className="bg-dark-300 py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="section-title mb-4">O Kickboxing</h2>
@@ -44,7 +43,6 @@ export default function EsportePage() {
         </div>
       </section>
 
-      {/* Modalidades */}
       <section className="bg-dark-400 py-20 border-y border-dark-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
@@ -68,7 +66,6 @@ export default function EsportePage() {
         </div>
       </section>
 
-      {/* Áreas */}
       <section className="bg-dark-300 py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader title="Áreas de Atuação" />

@@ -4,8 +4,14 @@
 @tailwind utilities;
 
 @layer base {
-  * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     font-family: 'Inter', system-ui, sans-serif;
     background-color: #0f0f0f;
@@ -14,83 +20,78 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Scrollbar */
-  ::-webkit-scrollbar { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-track { background: #0a0a0a; }
-  ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
-  ::-webkit-scrollbar-thumb:hover { background: #dc2626; }
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #0a0a0a;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #dc2626;
+  }
 }
 
 @layer components {
-  /* Botoes */
   .btn-primary {
-    @apply bg-brand-500 text-white px-6 py-3 rounded-xl font-semibold
-           hover:bg-brand-600 active:bg-brand-700 transition-all duration-300
-           disabled:opacity-40 disabled:cursor-not-allowed
-           flex items-center justify-center gap-2
-           shadow-lg shadow-brand-500/20 hover:shadow-brand-500/40;
+    @apply bg-brand-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-brand-600 active:bg-brand-700 transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-brand-500/20 hover:shadow-brand-500/40;
   }
+
   .btn-gold {
-    @apply bg-gradient-to-r from-gold-500 to-gold-600 text-dark-400 px-6 py-3 rounded-xl font-semibold
-           hover:from-gold-400 hover:to-gold-500 transition-all duration-300
-           flex items-center justify-center gap-2
-           shadow-lg shadow-gold-500/20 hover:shadow-gold-500/40;
+    @apply bg-gradient-to-r from-gold-500 to-gold-600 text-dark-400 px-6 py-3 rounded-xl font-semibold hover:from-gold-400 hover:to-gold-500 transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-gold-500/20 hover:shadow-gold-500/40;
   }
+
   .btn-outline {
-    @apply border border-dark-50 text-ink-300 px-6 py-3 rounded-xl font-medium
-           hover:bg-dark-100 hover:text-ink-100 hover:border-ink-400 transition-all duration-300
-           flex items-center justify-center gap-2;
+    @apply border border-dark-50 text-ink-300 px-6 py-3 rounded-xl font-medium hover:bg-dark-100 hover:text-ink-100 hover:border-ink-400 transition-all duration-300 flex items-center justify-center gap-2;
   }
+
   .btn-outline-gold {
-    @apply border border-gold-500/40 text-gold-400 px-6 py-3 rounded-xl font-medium
-           hover:bg-gold-500/10 hover:border-gold-400 transition-all duration-300
-           flex items-center justify-center gap-2;
+    @apply border border-gold-500/40 text-gold-400 px-6 py-3 rounded-xl font-medium hover:bg-gold-500/10 hover:border-gold-400 transition-all duration-300 flex items-center justify-center gap-2;
   }
+
   .btn-ghost {
-    @apply text-ink-300 px-4 py-2 rounded-lg font-medium
-           hover:bg-dark-100 hover:text-ink-100 transition-all duration-300
-           flex items-center justify-center gap-2;
+    @apply text-ink-300 px-4 py-2 rounded-lg font-medium hover:bg-dark-100 hover:text-ink-100 transition-all duration-300 flex items-center justify-center gap-2;
   }
 
-  /* Inputs */
   .input-field {
-    @apply w-full px-4 py-3 rounded-xl text-sm
-           bg-dark-300 border border-dark-50
-           text-ink-100 placeholder:text-ink-400
-           focus:ring-2 focus:ring-brand-500 focus:border-brand-500
-           outline-none transition;
+    @apply w-full px-4 py-3 rounded-xl text-sm bg-dark-300 border border-dark-50 text-ink-100 placeholder:text-ink-400 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition;
   }
 
-  /* Cards */
   .card {
     @apply bg-dark-200 rounded-2xl border border-dark-50 transition-all duration-300;
   }
+
   .card-hover {
     @apply hover:-translate-y-1 hover:shadow-xl hover:border-brand-700/50;
   }
 
-  /* Tipografia */
   .section-title {
     @apply text-3xl md:text-4xl font-extrabold text-ink-100;
   }
+
   .section-subtitle {
     @apply text-ink-300 text-lg max-w-2xl;
   }
 
-  /* Badge */
   .badge {
     @apply text-xs font-semibold px-3 py-1 rounded-full border;
   }
 
-  /* Divider com dourado */
   .gold-divider {
     @apply w-16 h-1 bg-gradient-to-r from-gold-500 to-gold-300 rounded-full;
   }
 
-  /* Header de pagina interna */
   .page-hero {
     @apply relative bg-dark-400 py-20 md:py-28 overflow-hidden;
   }
+
   .page-hero::before {
     content: '';
     @apply absolute inset-0 bg-gradient-to-b from-brand-900/20 to-dark-400;

@@ -1,7 +1,3 @@
-// ============================================================
-// Cliente Supabase para uso no SERVIDOR (Server Components,
-// Route Handlers, Server Actions e Middleware)
-// ============================================================
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
@@ -22,8 +18,6 @@ export async function createClient() {
               cookieStore.set(name, value, options)
             );
           } catch {
-            // setAll chamado de Server Component — cookies de sessão
-            // são gerenciados pelo middleware, pode ignorar aqui
           }
         },
       },
@@ -31,7 +25,6 @@ export async function createClient() {
   );
 }
 
-// ─── Cliente com service role (APENAS no servidor, nunca no browser) ─────────
 export function createAdminClient() {
   const { createClient } = require("@supabase/supabase-js");
   return createClient(
