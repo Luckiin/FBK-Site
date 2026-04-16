@@ -462,7 +462,24 @@ export default function AtletasPage() {
                   <input
                     type="text"
                     value={form.cpf}
-                    onChange={(e) => setForm({ ...form, cpf: formatCPF(e.target.value) })}
+                    onChange={(e) => {
+                      const fmt = formatCPF(e.target.value);
+                      setForm({ ...form, cpf: fmt });
+                      if (errors.cpf) {
+                        setErrors((prev) => ({
+                          ...prev,
+                          cpf: validateCPF(fmt) ? undefined : 'CPF inválido',
+                        }));
+                      }
+                    }}
+                    onBlur={(e) => {
+                      const v = e.target.value;
+                      if (v && !validateCPF(v)) {
+                        setErrors((prev) => ({ ...prev, cpf: 'CPF inválido' }));
+                      } else if (validateCPF(v)) {
+                        setErrors((prev) => ({ ...prev, cpf: undefined }));
+                      }
+                    }}
                     placeholder="000.000.000-00"
                     disabled={saving}
                     className={`w-full px-4 py-2.5 text-sm bg-dark-300 border ${errors.cpf ? 'border-red-500' : 'border-dark-50'} rounded-xl text-ink-100 placeholder:text-ink-500 focus:ring-2 focus:ring-brand-500 outline-none transition`}

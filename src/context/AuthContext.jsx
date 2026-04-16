@@ -1,137 +1,183 @@
-"use client";
+'use client';
 
-import { createContext, useContext, useState, useEffect, useCallback } from "react";
-import { createClient } from "@/lib/supabase";
+/**
+ * AuthContext.jsx — Refatorado
+ * Contexto de autenticação unificado.
+ *
+ * Suporta quatro tipos de usuário:
+ *   'admin'   → usuário legado via Supabase Auth (tabela users)
+ *   'atleta'  → usuário legado via Supabase Auth (tabela users)
+ *   'filial'  → filial via Supabase Auth (tabela filiais, status: aprovado)
+ *   'filiado' → filiado via JWT customizado (telefone + senha, cookie httpOnly)
+ *
+ * A hidratação é feita via /api/auth/me, que lê cookies do servidor,
+ * garantindo que o JWT httpOnly do filiado seja validado com segurança.
+ */
+
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
 const AuthContext = createContext(null);
 
+// ============================================================
+// Provider
+// ============================================================
+
 export function AuthProvider({ children }) {
-  const supabase = createClient();
+  const [usuario, setUsuario] = useState(null);   // dados completos do usuário
+  const [tipo, setTipo] = useState(null);          // 'admin' | 'atleta' | 'filial' | 'filiado'
+  const [carregando, setCarregando] = useState(true);
 
-  const [user, setUser] = useState(null);
-  const [session, setSession] = useState(null);
-  const [loading, setLoading] = useState(true);
+  // Flags derivadas de papel
+  const isAdmin   = tipo === 'admin';
+  const isAtleta  = tipo === 'atleta';
+  const isFilial  = tipo === 'filial';
+  const isFiliado = tipo === 'filiado';
+  const autenticado = !!usuario;
 
-  const fetchProfile = useCallback(async (authUser) => {
-    if (!authUser) { setUser(null); return; }
+  // ─── Hidratação via /api/auth/me ─────────────────────────
+  const carregarSessao = useCallback(async () => {
+    try {
+      const res = await fetch('/api/auth/me', { credentials: 'include' });
+      if (!res.ok) throw new Error('Falha ao carregar sessão');
+      const data = await res.json();
 
-    const { data, error } = await supabase
-      .from("users")
-      .select("*")
-      .eq("auth_id", authUser.id)
-      .single();
-
-    if (error) {
-      // erro ao buscar perfil
+      if (data.autenticado) {
+        setUsuario(data.usuario);
+        setTipo(data.tipo);
+      } else {
+        setUsuario(null);
+        setTipo(null);
+      }
+    } catch (err) {
+      console.error('[AuthContext] Erro ao carregar sessão:', err);
+      setUsuario(null);
+      setTipo(null);
+    } finally {
+      setCarregando(false);
     }
-
-    const profile = data || null;
-
-    if (!profile) {
-      setUser(null);
-      return;
-    }
-
-    const role = profile.role ? profile.role.toLowerCase() : "atleta";
-    const normalizedProfile = { ...profile, role };
-
-    setUser(normalizedProfile);
-  }, [supabase]);
+  }, []);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
+    carregarSessao();
+  }, [carregarSessao]);
 
-      if (session?.access_token) {
-        try {
-          const payload = JSON.parse(atob(session.access_token.split(".")[1]));
-          // JWT payload analisado
-        } catch (e) {
-          // não foi possível ler o JWT
-        }
-      }
+  // ─── Login ────────────────────────────────────────────────
+  /**
+   * Login unificado para filial e filiado.
+   *
+   * @param {'filial'|'filiado'} tipoLogin
+   * @param {{ email?: string, telefone?: string, senha: string }} credenciais
+   */
+  async function login(tipoLogin, credenciais) {
+    setCarregando(true);
+    try {
+      const body =
+        tipoLogin === 'filial'
+          ? { tipo: 'filial', email: credenciais.email, senha: credenciais.senha }
+          : { tipo: 'filiado', telefone: credenciais.telefone, senha: credenciais.senha };
 
-      setSession(session);
-      fetchProfile(session?.user ?? null).finally(() => setLoading(false));
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(body),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.erro || 'Erro ao fazer login');
+
+      setUsuario(data.usuario);
+      setTipo(data.tipo);
+      return data;
+    } finally {
+      setCarregando(false);
+    }
+  }
+
+  // ─── Login legado (admin/atleta via Supabase Auth direto) ─
+  /**
+   * @deprecated Usar login('filial', ...) para novas filiais.
+   * Mantido para compatibilidade com usuários legados (admin, atleta).
+   */
+  async function loginLegado(email, password) {
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ tipo: 'filial', email, senha: password }),
     });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setSession(session);
-
-        if (session?.access_token) {
-          try {
-            const payload = JSON.parse(atob(session.access_token.split(".")[1]));
-            // JWT payload analisado
-          } catch (e) {
-            // não foi possível ler o JWT
-          }
-        }
-
-        fetchProfile(session?.user ?? null);
-      }
-    );
-
-    return () => subscription.unsubscribe();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const login = async (email, password) => {
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) throw new Error(error.message);
-
-    const { data: profile } = await supabase
-      .from("users")
-      .select("role")
-      .eq("auth_id", data.user.id)
-      .single();
-
-    return { ...data.user, role: profile?.role };
-  };
-
-  const logout = async () => {
-    await supabase.auth.signOut();
-    setUser(null);
-    setSession(null);
-  };
-
-  const updateProfile = async (updates) => {
-    if (!user) throw new Error("Não autenticado");
-    const { data, error } = await supabase
-      .from("users")
-      .update(updates)
-      .eq("id", user.id)
-      .select()
-      .single();
-    if (error) throw new Error(error.message);
-    setUser(data);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.erro || 'Erro ao fazer login');
+    setUsuario(data.usuario);
+    setTipo(data.tipo);
     return data;
-  };
+  }
 
-  const normalizedRole = user?.role?.toLowerCase?.() ?? "";
+  // ─── Logout ───────────────────────────────────────────────
+  async function logout() {
+    try {
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+    } catch (err) {
+      console.error('[AuthContext] Erro no logout:', err);
+    } finally {
+      setUsuario(null);
+      setTipo(null);
+    }
+  }
 
-  const isAdmin = normalizedRole === "admin";
-  const isAtleta = normalizedRole === "atleta";
-  const isFilial = normalizedRole === "filial";
+  // ─── Helpers ──────────────────────────────────────────────
+  /** Verifica se o usuário possui um dos papéis listados. */
+  function temAcesso(...papeis) {
+    return papeis.includes(tipo);
+  }
 
+  // ─── Valor exposto ────────────────────────────────────────
   return (
-    <AuthContext.Provider value={{
-      user,
-      session,
-      loading,
-      login,
-      logout,
-      updateProfile,
-      isAdmin,
-      isAtleta,
-      isFilial,
-    }}>
+    <AuthContext.Provider
+      value={{
+        // Estado
+        usuario,
+        tipo,
+        carregando,
+        autenticado,
+
+        // Aliases para compatibilidade com código legado
+        user: usuario,
+        loading: carregando,
+
+        // Flags de papel
+        isAdmin,
+        isAtleta,
+        isFilial,
+        isFiliado,
+
+        // Ações
+        login,
+        loginLegado,
+        logout,
+        recarregarSessao: carregarSessao,
+        temAcesso,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
 }
 
-export const useAuth = () => {
+// ============================================================
+// Hook
+// ============================================================
+
+/**
+ * Hook para acessar o AuthContext.
+ * @example
+ * const { usuario, isFilial, isFiliado, login, logout } = useAuth();
+ */
+export function useAuth() {
   const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error("useAuth deve ser usado dentro de AuthProvider");
+  if (!ctx) throw new Error('useAuth deve ser usado dentro de <AuthProvider>');
   return ctx;
-};
+}

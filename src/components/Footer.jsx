@@ -81,7 +81,7 @@ export default function Footer() {
                 ["/sobre", "Quem Somos"],
                 ["/transparencia", "Transparência"],
                 ["/comunidade", "Academias Filiadas"],
-                ["/auth/entrar", "Área do Filiado"],
+                ["/auth/entrar?tab=filiado", "Área do Filiado"],
               ].map(([href, label]) => (
                 <li key={href}>
                   <Link

@@ -375,7 +375,7 @@ export default function HomePage() {
                 <li className="flex items-center gap-2"><Eye size={14} className="text-brand-400" /> Meu Perfil</li>
                 <li className="flex items-center gap-2"><Trophy size={14} className="text-brand-400" /> Ranking e Eventos</li>
               </ul>
-              <Link href="/auth/entrar" className="btn-primary inline-flex text-sm py-2.5 px-5">
+              <Link href="/auth/entrar?tab=filiado" className="btn-primary inline-flex text-sm py-2.5 px-5">
                 Acessar <ArrowRight size={14} />
               </Link>
             </div>
@@ -390,7 +390,7 @@ export default function HomePage() {
                 <li className="flex items-center gap-2"><Users size={14} className="text-gold-500" /> Gestão de Atletas</li>
                 <li className="flex items-center gap-2"><FileText size={14} className="text-gold-500" /> Documentos Oficiais</li>
               </ul>
-              <Link href="/auth/entrar" className="btn-gold inline-flex text-sm py-2.5 px-5">
+              <Link href="/auth/entrar?tab=filial" className="btn-gold inline-flex text-sm py-2.5 px-5">
                 Acessar <ArrowRight size={14} />
               </Link>
             </div>

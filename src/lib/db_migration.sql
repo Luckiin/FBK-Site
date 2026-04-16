@@ -1,25 +1,46 @@
 -- ================================================================
--- FBK - Migração: Cadastro de Atleta
--- Execute este script no SQL Editor do Supabase
+-- FBK - Migração segura: Cadastro de Atleta
+-- Pode ser executada em banco existente sem apagar tabelas
 -- ================================================================
 
 -- 1. ADICIONAR COLUNAS FALTANTES NA TABELA USERS
-ALTER TABLE public.users 
-ADD COLUMN IF NOT EXISTS foto_url text,
-ADD COLUMN IF NOT EXISTS data_graduacao date,
-ADD COLUMN IF NOT EXISTS nome_professor text;
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1
+    FROM information_schema.tables
+    WHERE table_schema = 'public' AND table_name = 'users'
+  ) THEN
+    ALTER TABLE public.users
+      ADD COLUMN IF NOT EXISTS foto_url text,
+      ADD COLUMN IF NOT EXISTS data_graduacao date,
+      ADD COLUMN IF NOT EXISTS nome_professor text;
+  END IF;
+END $$;
 
--- 2. AJUSTAR CONSTRAINT DE SEXO (OPCIONAL - CASO QUEIRA SUPORTAR MAIS OPÇÕES)
-ALTER TABLE public.users 
-DROP CONSTRAINT IF EXISTS users_sexo_check;
+-- 2. AJUSTAR CONSTRAINT DE SEXO
+-- Compatível tanto com dados antigos ('M', 'F') quanto novos rótulos por extenso.
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1
+    FROM information_schema.tables
+    WHERE table_schema = 'public' AND table_name = 'users'
+  ) THEN
+    ALTER TABLE public.users
+      DROP CONSTRAINT IF EXISTS users_sexo_check;
 
-ALTER TABLE public.users 
-ADD CONSTRAINT users_sexo_check 
-CHECK (sexo IN ('Masculino', 'Feminino', 'Outro') OR sexo IS NULL);
+    ALTER TABLE public.users
+      ADD CONSTRAINT users_sexo_check
+      CHECK (
+        sexo IN ('M', 'F', 'Masculino', 'Feminino', 'Outro')
+        OR sexo IS NULL
+      );
+  END IF;
+END $$;
 
 -- 3. ATUALIZAR TRIGGER DE SINCRONIZAÇÃO DE USUÁRIOS
--- Isso garante que se o admin criar o perfil antes do usuário se registrar no Auth,
--- o Auth.id seja vinculado corretamente ao perfil pré-existente via e-mail.
+-- Vincula auth_id em perfis já existentes pelo mesmo e-mail, sem sobrescrever role/name.
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER AS $$
 BEGIN
@@ -30,19 +51,31 @@ BEGIN
     COALESCE(new.raw_user_meta_data->>'name', split_part(new.email, '@', 1)),
     COALESCE(new.raw_user_meta_data->>'role', 'atleta')
   )
-  ON CONFLICT (email) DO UPDATE 
+  ON CONFLICT (email) DO UPDATE
   SET auth_id = EXCLUDED.auth_id,
       updated_at = NOW();
   RETURN new;
 END;
 $$;
 
--- 4. DAR PERMISSÕES PARA ADMIN E FILIAL INSERIR NA USERS
--- (Caso não existam políticas de INSERT para o admin, as policies de ALL já cobrem)
--- Mas para garantir que o Admin Client (ou admin logado) consiga criar atletas manualmente:
-DROP POLICY IF EXISTS "users: admin can insert" ON public.users;
-CREATE POLICY "users: admin can insert"
-  ON public.users FOR INSERT
-  WITH CHECK (public.get_user_role() = 'admin');
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+
+-- 4. GARANTIR POLICY DE INSERT PARA ADMIN
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1
+    FROM information_schema.tables
+    WHERE table_schema = 'public' AND table_name = 'users'
+  ) THEN
+    DROP POLICY IF EXISTS "users: admin can insert" ON public.users;
+    CREATE POLICY "users: admin can insert"
+      ON public.users FOR INSERT
+      WITH CHECK (public.get_user_role() = 'admin');
+  END IF;
+END $$;
 
 -- FIM DA MIGRAÇÃO

@@ -1,0 +1,211 @@
+/**
+ * cryptoUtils.js
+ * Utilitários de criptografia usando Web Crypto API nativa.
+ * Compatível com Node.js 18+ e Edge Runtime (Next.js middleware).
+ *
+ * - Hashing de senha: PBKDF2 com SHA-512 (seguro, sem dependências externas)
+ * - JWT simples: HMAC-SHA256 para tokens de sessão
+ */
+
+// ============================================================
+// HASHING DE SENHA (PBKDF2 — Node.js API routes)
+// ============================================================
+
+/**
+ * Gera um hash seguro da senha usando PBKDF2.
+ * @param {string} senha
+ * @returns {Promise<string>} — formato: "salt:iterations:hash" em hex
+ */
+export async function hashSenha(senha) {
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const iterations = 100_000;
+
+  const key = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(senha),
+    'PBKDF2',
+    false,
+    ['deriveBits']
+  );
+
+  const bits = await crypto.subtle.deriveBits(
+    { name: 'PBKDF2', salt, hash: 'SHA-512', iterations },
+    key,
+    512
+  );
+
+  const hashHex = Array.from(new Uint8Array(bits))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+
+  const saltHex = Array.from(salt)
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+
+  return `${saltHex}:${iterations}:${hashHex}`;
+}
+
+/**
+ * Verifica se uma senha corresponde ao hash armazenado.
+ * @param {string} senha
+ * @param {string} senhaHash — formato gerado por hashSenha()
+ * @returns {Promise<boolean>}
+ */
+export async function verificarSenha(senha, senhaHash) {
+  const [saltHex, iterStr, storedHash] = senhaHash.split(':');
+  const iterations = Number(iterStr);
+
+  const salt = new Uint8Array(
+    saltHex.match(/.{2}/g).map((b) => parseInt(b, 16))
+  );
+
+  const key = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(senha),
+    'PBKDF2',
+    false,
+    ['deriveBits']
+  );
+
+  const bits = await crypto.subtle.deriveBits(
+    { name: 'PBKDF2', salt, hash: 'SHA-512', iterations },
+    key,
+    512
+  );
+
+  const candidateHash = Array.from(new Uint8Array(bits))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+
+  // Comparação em tempo constante (evita timing attacks)
+  return timingSafeEqual(candidateHash, storedHash);
+}
+
+function timingSafeEqual(a, b) {
+  if (a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) {
+    diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  }
+  return diff === 0;
+}
+
+/**
+ * Gera uma senha aleatória legível (para senhas temporárias).
+ * @param {number} length
+ * @returns {string}
+ */
+export function gerarSenhaAleatoria(length = 10) {
+  const charset = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789@#$';
+  const values = crypto.getRandomValues(new Uint8Array(length));
+  return Array.from(values)
+    .map((v) => charset[v % charset.length])
+    .join('');
+}
+
+// ============================================================
+// JWT SIMPLES (HMAC-SHA256 — compatível com Edge Runtime)
+// ============================================================
+
+const getJwtSecret = () => {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) throw new Error('JWT_SECRET não definido no .env.local');
+  return new TextEncoder().encode(secret);
+};
+
+const b64url = (data) =>
+  btoa(String.fromCharCode(...new Uint8Array(data)))
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=/g, '');
+
+const strToB64url = (str) => b64url(new TextEncoder().encode(str));
+
+/**
+ * Gera um JWT assinado com HMAC-SHA256.
+ * @param {object} payload
+ * @param {string|number} expiresIn — segundos ou string como '7d', '15m'
+ * @returns {Promise<string>}
+ */
+export async function signToken(payload, expiresIn = '7d') {
+  const secret = getJwtSecret();
+
+  const expSeconds = parseExpiry(expiresIn);
+  const now = Math.floor(Date.now() / 1000);
+
+  const fullPayload = { ...payload, iat: now, exp: now + expSeconds };
+
+  const header = strToB64url(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
+  const body = strToB64url(JSON.stringify(fullPayload));
+  const message = `${header}.${body}`;
+
+  const key = await crypto.subtle.importKey(
+    'raw',
+    secret,
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+
+  const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(message));
+  const signature = b64url(sig);
+
+  return `${message}.${signature}`;
+}
+
+/**
+ * Verifica e decodifica um JWT.
+ * @param {string} token
+ * @returns {Promise<object|null>} — payload ou null se inválido/expirado
+ */
+export async function verifyToken(token) {
+  try {
+    const secret = getJwtSecret();
+    const parts = token.split('.');
+    if (parts.length !== 3) return null;
+
+    const [header, body, signature] = parts;
+    const message = `${header}.${body}`;
+
+    const key = await crypto.subtle.importKey(
+      'raw',
+      secret,
+      { name: 'HMAC', hash: 'SHA-256' },
+      false,
+      ['verify']
+    );
+
+    // Converte signature de base64url para Uint8Array
+    const sigBytes = Uint8Array.from(
+      atob(signature.replace(/-/g, '+').replace(/_/g, '/')),
+      (c) => c.charCodeAt(0)
+    );
+
+    const valid = await crypto.subtle.verify(
+      'HMAC',
+      key,
+      sigBytes,
+      new TextEncoder().encode(message)
+    );
+
+    if (!valid) return null;
+
+    const payload = JSON.parse(atob(body.replace(/-/g, '+').replace(/_/g, '/')));
+
+    if (payload.exp && Math.floor(Date.now() / 1000) > payload.exp) {
+      return null; // Expirado
+    }
+
+    return payload;
+  } catch {
+    return null;
+  }
+}
+
+function parseExpiry(expiry) {
+  if (typeof expiry === 'number') return expiry;
+  const units = { s: 1, m: 60, h: 3600, d: 86400 };
+  const match = String(expiry).match(/^(\d+)([smhd])$/);
+  if (!match) return 7 * 86400; // default: 7 dias
+  return Number(match[1]) * units[match[2]];
+}

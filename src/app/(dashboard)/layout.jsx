@@ -8,7 +8,8 @@ import Link from "next/link";
 import "../globals.css"; // Force globals.css import in this layout too
 
 function DashTopBar({ onMenuOpen }) {
-  const { user } = useAuth();
+  const { usuario } = useAuth();
+  const nomeExibido = usuario?.nome ?? usuario?.name ?? "Usuário";
   return (
     <header className="h-16 bg-dark-400/80 backdrop-blur-md border-b border-dark-50 flex items-center gap-3 px-4 sm:px-6 sticky top-0 z-30">
       <button
@@ -27,10 +28,10 @@ function DashTopBar({ onMenuOpen }) {
       </Link>
       <div className="flex items-center gap-2 bg-dark-200 border border-dark-50 rounded-xl px-3 py-1.5">
         <div className="w-6 h-6 bg-gradient-to-br from-brand-500 to-brand-700 rounded-full flex items-center justify-center text-white text-[10px] font-bold">
-          {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
+          {nomeExibido.charAt(0).toUpperCase()}
         </div>
         <span className="text-sm font-medium text-ink-200 hidden sm:block truncate max-w-[120px]">
-          {user?.name ?? "Usuário"}
+          {nomeExibido}
         </span>
       </div>
     </header>

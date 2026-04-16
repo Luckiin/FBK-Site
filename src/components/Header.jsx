@@ -8,7 +8,8 @@ import { useAuth } from "@/context/AuthContext";
 import { APP_NAME, NAV_LINKS } from "@/lib/constants";
 
 export default function Header() {
-  const { user, logout, isAdmin, isAtleta, isFilial } = useAuth();
+  const { usuario, autenticado, logout, isAdmin, isAtleta, isFilial } = useAuth();
+  const user = usuario; // alias para compatibilidade
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
@@ -97,7 +98,7 @@ export default function Header() {
                   Contato
                 </Link>
                 <Link
-                  href="/auth/entrar"
+                  href="/auth/entrar?tab=filiado"
                   className="bg-gradient-to-r from-brand-500 to-brand-600 text-white text-sm font-semibold py-2.5 px-5 rounded-xl hover:from-brand-600 hover:to-brand-700 transition-all duration-300 shadow-lg shadow-brand-500/20"
                 >
                   Área do Filiado
@@ -161,7 +162,7 @@ export default function Header() {
                 </>
               ) : (
                 <Link
-                  href="/auth/entrar"
+                  href="/auth/entrar?tab=filiado"
                   onClick={() => setMenuOpen(false)}
                   className="mx-4 mt-2 bg-brand-500 text-white text-sm font-semibold py-3 px-5 rounded-xl text-center"
                 >

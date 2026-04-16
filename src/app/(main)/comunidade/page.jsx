@@ -55,7 +55,7 @@ export default function ComunidadePage() {
                 <li className="flex items-center gap-2"><CheckCircle size={14} className="text-gold-500" /> Inscrição em eventos oficiais</li>
                 <li className="flex items-center gap-2"><CheckCircle size={14} className="text-gold-500" /> Documentos institucionais</li>
               </ul>
-              <Link href="/contato" className="btn-gold inline-flex w-full">
+              <Link href="/auth/cadastro-filial" className="btn-gold inline-flex w-full">
                 Quero ser uma filial <ArrowRight size={16} />
               </Link>
             </div>
