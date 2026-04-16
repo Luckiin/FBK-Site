@@ -1,9 +1,6 @@
 'use client';
 
-/**
- * /filial — Painel da Filial
- * Exibe resumo da filial logada: dados cadastrais, status, total de filiados.
- */
+
 
 import { useState, useEffect } from 'react';
 import { Building2, Users, Phone, Mail, CheckCircle, Clock, XCircle, Edit2, Save, X } from 'lucide-react';
@@ -24,7 +21,6 @@ export default function FilialPage() {
   const [erro, setErro] = useState('');
   const [sucesso, setSucesso] = useState('');
 
-  // Carregar total de filiados
   useEffect(() => {
     fetch('/api/filiados', { credentials: 'include' })
       .then((r) => r.json())
@@ -70,7 +66,7 @@ export default function FilialPage() {
         <p className="text-ink-400 text-sm mt-1">Gerencie os dados cadastrais da sua filial</p>
       </div>
 
-      {/* Status badge */}
+      
       <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-medium mb-6 ${statusConf.cor}`}>
         <StatusIcon size={16} />
         {statusConf.label}
@@ -88,7 +84,7 @@ export default function FilialPage() {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        {/* Card filiados */}
+        
         <div className="card p-5 flex items-center gap-4">
           <div className="w-12 h-12 bg-brand-500/10 rounded-xl flex items-center justify-center">
             <Users size={22} className="text-brand-400" />
@@ -101,7 +97,7 @@ export default function FilialPage() {
           </div>
         </div>
 
-        {/* Card email */}
+        
         <div className="card p-5 flex items-center gap-4">
           <div className="w-12 h-12 bg-gold-500/10 rounded-xl flex items-center justify-center">
             <Mail size={22} className="text-gold-400" />
@@ -112,7 +108,7 @@ export default function FilialPage() {
           </div>
         </div>
 
-        {/* Card telefone */}
+        
         <div className="card p-5 flex items-center gap-4">
           <div className="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center">
             <Phone size={22} className="text-blue-400" />
@@ -124,7 +120,7 @@ export default function FilialPage() {
         </div>
       </div>
 
-      {/* Dados cadastrais */}
+      
       <div className="card p-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">

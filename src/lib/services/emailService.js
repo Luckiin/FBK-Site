@@ -1,22 +1,6 @@
-/**
- * emailService.js
- * Envio real de emails via API HTTP do Resend.
- *
- * Variaveis esperadas:
- * - RESEND_API_KEY
- * - EMAIL_FROM
- * - NEXT_PUBLIC_APP_URL
- * - ADMIN_EMAIL
- */
 
-/**
- * Envia um email pelo Resend.
- * @param {string} to - Email do destinatário
- * @param {string} subject - Assunto
- * @param {string} body - Corpo em texto plano
- * @param {string} [html] - Corpo em HTML (opcional)
- * @returns {Promise<{ sucesso: boolean, emailId: string }>}
- */
+
+
 export async function sendEmail(to, subject, body, html) {
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.EMAIL_FROM;
@@ -59,10 +43,7 @@ export async function sendEmail(to, subject, body, html) {
   return { sucesso: true, emailId: data.id };
 }
 
-/**
- * Email de recuperação de senha.
- * @param {{ to: string, nome: string, resetUrl: string }} params
- */
+
 export async function sendRecuperacaoSenha({ to, nome, resetUrl }) {
   const subject = 'Redefinição de Senha — FBK';
   const body =
@@ -98,10 +79,7 @@ export async function sendRecuperacaoSenha({ to, nome, resetUrl }) {
   return sendEmail(to, subject, body, html);
 }
 
-/**
- * Email de boas-vindas para filial aprovada.
- * @param {{ to: string, nome: string }} params
- */
+
 export async function sendFilialAprovada({ to, nome }) {
   const subject = 'Cadastro Aprovado — FBK';
   const body =
@@ -113,10 +91,7 @@ export async function sendFilialAprovada({ to, nome }) {
   return sendEmail(to, subject, body);
 }
 
-/**
- * Email de confirmação de recebimento do cadastro da filial.
- * @param {{ to: string, nome: string }} params
- */
+
 export async function sendFilialCadastroRecebido({ to, nome }) {
   const subject = 'Cadastro Recebido — FBK';
   const body =
@@ -128,10 +103,7 @@ export async function sendFilialCadastroRecebido({ to, nome }) {
   return sendEmail(to, subject, body);
 }
 
-/**
- * Email de reprovação de cadastro da filial.
- * @param {{ to: string, nome: string, motivo: string }} params
- */
+
 export async function sendFilialReprovada({ to, nome, motivo }) {
   const subject = 'Cadastro Não Aprovado — FBK';
   const body =
@@ -144,10 +116,7 @@ export async function sendFilialReprovada({ to, nome, motivo }) {
   return sendEmail(to, subject, body);
 }
 
-/**
- * Email de notificação para admin sobre nova filial pendente.
- * @param {{ nomeFilial: string, emailFilial: string }} params
- */
+
 export async function sendNovaFilialAdmin({ nomeFilial, emailFilial }) {
   const adminEmail = process.env.ADMIN_EMAIL || 'admin@fbk.com.br';
   const subject = 'Nova Filial Aguardando Aprovação — FBK';

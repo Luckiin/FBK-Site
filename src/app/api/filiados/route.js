@@ -1,8 +1,4 @@
-/**
- * /api/filiados
- * GET  — Lista filiados da filial logada
- * POST — Cadastra novo filiado (filial logada)
- */
+
 
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
@@ -11,12 +7,8 @@ import { verifyToken } from '@/lib/cryptoUtils';
 import { listarFiliadosPorFilial, criarFiliado } from '@/lib/services/filiadoService';
 import { buscarFilialPorAuthId } from '@/lib/services/filialService';
 
-/**
- * Resolve a filial logada a partir de sessão Supabase (filial auth)
- * ou cookie JWT de filiado (para acesso próprio).
- */
+
 async function resolverFilialId(request) {
-  // 1. Verificar sessão Supabase (filial logada via Supabase Auth)
   const supabase = await createServerClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -24,13 +16,11 @@ async function resolverFilialId(request) {
     const filial = await buscarFilialPorAuthId(user.id);
     if (filial) return { filialId: filial.id, tipo: 'filial' };
 
-    // Admin via Supabase Auth
     const { data: perfil } = await supabase
       .from('users').select('role').eq('auth_id', user.id).single();
     if (perfil?.role === 'admin') return { filialId: null, tipo: 'admin' };
   }
 
-  // 2. Verificar cookie JWT de filiado
   const cookieStore = cookies();
   const filiadoToken = cookieStore.get('filiado-session')?.value;
   if (filiadoToken) {
@@ -67,7 +57,6 @@ export async function POST(request) {
     const auth = await resolverFilialId(request);
     if (!auth) return NextResponse.json({ erro: 'Não autorizado' }, { status: 401 });
 
-    // Filiados não podem cadastrar outros filiados
     if (auth.tipo === 'filiado') {
       return NextResponse.json({ erro: 'Acesso negado' }, { status: 403 });
     }
@@ -93,7 +82,6 @@ export async function POST(request) {
       {
         mensagem: 'Filiado cadastrado com sucesso',
         filiado: resultado.filiado,
-        // Em produção, NÃO retornar a senha — apenas enviar via WhatsApp/email
         senhaTemporaria: resultado.senhaTemporaria,
       },
       { status: 201 }

@@ -1,8 +1,4 @@
-/**
- * /api/filiais
- * GET  — Lista filiais (admin)
- * POST — Cria nova filial (público — cadastro)
- */
+
 
 import { NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase-server';
@@ -16,7 +12,6 @@ export async function GET(request) {
       return NextResponse.json({ erro: 'Não autorizado' }, { status: 401 });
     }
 
-    // Apenas admins listam filiais
     const { data: perfil } = await supabase
       .from('users')
       .select('role')

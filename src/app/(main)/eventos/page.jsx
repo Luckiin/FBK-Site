@@ -36,7 +36,6 @@ export default function EventosPage() {
         const data = await eventService.getActive();
         setEvents(data);
       } catch (err) {
-        // Erro ao carregar eventos
       } finally {
         setLoading(false);
       }
@@ -149,7 +148,7 @@ export default function EventosPage() {
       </section>
 
       <section className="bg-dark-300 py-24 relative overflow-hidden">
-        {/* Subtle decorative background */}
+        
         <div className="absolute -top-24 -right-24 w-64 h-64 bg-brand-500/5 rounded-full blur-3xl"></div>
         <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-gold-500/5 rounded-full blur-3xl"></div>
         

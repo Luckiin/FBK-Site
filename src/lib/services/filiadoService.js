@@ -1,22 +1,12 @@
-/**
- * filiadoService.js
- * Toda lógica de negócio relacionada a filiados.
- * Controllers (API routes) apenas chamam este service.
- */
+
 
 import { createAdminClient } from '@/lib/supabase-server';
 import { hashSenha, gerarSenhaAleatoria } from '@/lib/cryptoUtils';
 import { validarCPF } from './cpfService';
 import { sendBoasVindas, sendNovoFiliado } from './whatsappService';
 
-// ============================================================
-// LEITURA
-// ============================================================
 
-/**
- * Lista filiados de uma filial específica.
- * @param {string} filialId
- */
+
 export async function listarFiliadosPorFilial(filialId) {
   const supabase = createAdminClient();
 
@@ -30,10 +20,7 @@ export async function listarFiliadosPorFilial(filialId) {
   return data;
 }
 
-/**
- * Busca um filiado pelo ID (sem senha_hash).
- * @param {string} id
- */
+
 export async function buscarFiliadoPorId(id) {
   const supabase = createAdminClient();
 
@@ -47,10 +34,7 @@ export async function buscarFiliadoPorId(id) {
   return data;
 }
 
-/**
- * Busca um filiado pelo telefone (inclui senha_hash — uso interno do authService).
- * @param {string} telefone
- */
+
 export async function buscarFiliadoPorTelefone(telefone) {
   const supabase = createAdminClient();
 
@@ -64,10 +48,7 @@ export async function buscarFiliadoPorTelefone(telefone) {
   return data;
 }
 
-/**
- * Busca um filiado pelo email (para recuperação de senha).
- * @param {string} email
- */
+
 export async function buscarFiliadoPorEmail(email) {
   const supabase = createAdminClient();
 
@@ -81,33 +62,11 @@ export async function buscarFiliadoPorEmail(email) {
   return data;
 }
 
-// ============================================================
-// CRIAÇÃO
-// ============================================================
 
-/**
- * Cadastra um novo filiado vinculado à filial logada.
- * - Valida CPF (dígitos verificadores)
- * - Aceita dados pessoais preenchidos manualmente pelo operador
- * - Gera senha temporária automática
- * - Faz hash PBKDF2 da senha
- * - Envia WhatsApp com credenciais (mock)
- *
- * @param {string} filialId
- * @param {{
- *   cpf: string,
- *   nome: string,
- *   sexo?: string,
- *   data_nascimento?: string,
- *   telefone: string,
- *   email?: string
- * }} dados
- * @returns {{ filiado: object, senhaTemporaria: string }}
- */
+
 export async function criarFiliado(filialId, dados) {
   const supabase = createAdminClient();
 
-  // Validar CPF pelos dígitos verificadores
   if (!validarCPF(dados.cpf)) {
     throw new Error('CPF inválido');
   }
@@ -116,7 +75,6 @@ export async function criarFiliado(filialId, dados) {
     throw new Error('Nome do filiado é obrigatório');
   }
 
-  // Verificar duplicidade de CPF
   const { data: cpfExiste } = await supabase
     .from('filiados')
     .select('id')
@@ -125,7 +83,6 @@ export async function criarFiliado(filialId, dados) {
 
   if (cpfExiste) throw new Error('CPF já cadastrado');
 
-  // Verificar duplicidade de telefone
   const { data: telExiste } = await supabase
     .from('filiados')
     .select('id')
@@ -134,11 +91,9 @@ export async function criarFiliado(filialId, dados) {
 
   if (telExiste) throw new Error('Telefone já cadastrado');
 
-  // Gerar senha temporária
   const senhaTemporaria = gerarSenhaAleatoria(10);
   const senhaHash = await hashSenha(senhaTemporaria);
 
-  // Inserir filiado com dados fornecidos pelo operador
   const { data: filiado, error } = await supabase
     .from('filiados')
     .insert({
@@ -156,7 +111,6 @@ export async function criarFiliado(filialId, dados) {
 
   if (error) throw new Error(`Erro ao criar filiado: ${error.message}`);
 
-  // Notificar via WhatsApp (mock)
   await sendBoasVindas({
     telefone: dados.telefone,
     nome: filiado.nome,
@@ -166,16 +120,8 @@ export async function criarFiliado(filialId, dados) {
   return { filiado, senhaTemporaria };
 }
 
-// ============================================================
-// ATUALIZAÇÃO
-// ============================================================
 
-/**
- * Atualiza dados de um filiado.
- * @param {string} id
- * @param {string} filialId — garante que o filiado pertence à filial
- * @param {object} dados
- */
+
 export async function atualizarFiliado(id, filialId, dados) {
   const supabase = createAdminClient();
 
@@ -196,11 +142,7 @@ export async function atualizarFiliado(id, filialId, dados) {
   return data;
 }
 
-/**
- * Atualiza a senha de um filiado (após reset de senha).
- * @param {string} id
- * @param {string} novaSenha
- */
+
 export async function atualizarSenhaFiliado(id, novaSenha) {
   const supabase = createAdminClient();
   const senhaHash = await hashSenha(novaSenha);
@@ -214,15 +156,8 @@ export async function atualizarSenhaFiliado(id, novaSenha) {
   return { sucesso: true };
 }
 
-// ============================================================
-// DELEÇÃO
-// ============================================================
 
-/**
- * Remove um filiado (apenas pela filial dona).
- * @param {string} id
- * @param {string} filialId
- */
+
 export async function deletarFiliado(id, filialId) {
   const supabase = createAdminClient();
 

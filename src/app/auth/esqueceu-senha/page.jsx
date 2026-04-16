@@ -56,7 +56,7 @@ export default function EsqueceuSenhaPage() {
 
         <div className="card p-8">
           {enviado ? (
-            /* Estado de sucesso */
+            
             <div className="text-center">
               <div className="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <CheckCircle size={32} className="text-green-400" />
@@ -78,7 +78,7 @@ export default function EsqueceuSenhaPage() {
               </Link>
             </div>
           ) : (
-            /* Formulário */
+            
             <>
               <h1 className="text-xl font-bold text-ink-100 mb-1">Recuperar senha</h1>
               <p className="text-sm text-ink-400 mb-6">

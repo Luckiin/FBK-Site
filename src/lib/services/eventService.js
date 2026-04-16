@@ -3,10 +3,7 @@ import { createClient } from "@/lib/supabase";
 const supabase = createClient();
 
 export const eventService = {
-  /**
-   * Fetch all events from public.eventos
-   * Groups by Year
-   */
+  
   async getAll() {
     const { data, error } = await supabase
       .from("eventos")
@@ -17,10 +14,7 @@ export const eventService = {
     return data;
   },
 
-  /**
-   * Fetch active events (currently in disclosure range)
-   * data_inicio_div <= today <= data_fim_div
-   */
+  
   async getActive() {
     const today = new Date().toISOString().split("T")[0];
 
@@ -35,10 +29,7 @@ export const eventService = {
     return data;
   },
 
-  /**
-   * Fetch upcoming events (from today onwards)
-   * used for dashboard home with filtering or generic use
-   */
+  
   async getUpcoming(limit = 3) {
     const today = new Date().toISOString().split("T")[0];
 
@@ -53,13 +44,10 @@ export const eventService = {
     return data;
   },
 
-  /**
-   * Save (create or update) an event
-   */
+  
   async save(evento) {
     const { id, ...data } = evento;
 
-    // Field Mapping
     const dbData = {
       titulo: data.titulo,
       descricao: data.descricao,
@@ -91,18 +79,14 @@ export const eventService = {
     }
   },
 
-  /**
-   * Delete event
-   */
+  
   async delete(id) {
     const { error } = await supabase.from("eventos").delete().eq("id", id);
     if (error) throw error;
     return true;
   },
 
-  /**
-   * Get default image based on event type
-   */
+  
   getDefaultImage() {
     return "https://images.unsplash.com/photo-1552072805-2a9039d00e57?q=80&w=800&auto=format&fit=crop";
   }

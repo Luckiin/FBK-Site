@@ -1,16 +1,7 @@
--- ================================================================
--- FBK - Federação Baiana de Kickboxing
--- Schema Supabase completo — execute no SQL Editor do Supabase
--- Cole TUDO de uma vez e clique em RUN
--- ================================================================
 
--- ── Extensões ───────────────────────────────────────────────────
 create extension if not exists "pgcrypto";
 
 
--- ================================================================
--- RESET: remove tabelas antigas (banco vazio, sem perda de dados)
--- ================================================================
 drop table if exists public.contatos    cascade;
 drop table if exists public.parceiros   cascade;
 drop table if exists public.documentos  cascade;
@@ -28,12 +19,7 @@ drop function if exists public.get_user_id()     cascade;
 drop function if exists public.set_updated_at()  cascade;
 
 
--- ================================================================
--- TABELAS
--- ================================================================
 
--- ── 1. USERS ────────────────────────────────────────────────────
--- Perfis de todos os usuários do sistema (atletas, filiais, admins)
 create table if not exists public.users (
   id              uuid primary key default gen_random_uuid(),
   auth_id         uuid unique references auth.users(id) on delete cascade,
@@ -43,7 +29,6 @@ create table if not exists public.users (
   role            text not null default 'atleta'
                   check (role in ('atleta', 'filial', 'admin')),
 
-  -- Campos do atleta
   registro        text,          -- número de registro (ex: 04767)
   anuidade        text not null default 'Ativo'
                   check (anuidade in ('Ativo', 'Inativo')),
@@ -54,11 +39,9 @@ create table if not exists public.users (
   cpf             text,
   categoria       text,          -- categoria de peso/idade
 
-  -- Vínculo com filial
   entidade        text,          -- nome da academia/entidade (ex: GRBK)
   academia_id     uuid,          -- FK para o registro da filial (preenchida depois)
 
-  -- Campos da filial/admin
   cnpj            text,
   nome_academia   text,
   responsavel     text,
@@ -79,7 +62,6 @@ create index if not exists idx_users_registro  on public.users (registro);
 create index if not exists idx_users_academia  on public.users (academia_id);
 
 
--- ── 2. EVENTOS ──────────────────────────────────────────────────
 create table if not exists public.eventos (
   id              uuid primary key default gen_random_uuid(),
   titulo          text not null,
@@ -99,7 +81,6 @@ create table if not exists public.eventos (
   updated_at      timestamptz not null default now()
 );
 
--- Auditoria de ações do sistema
 create table if not exists public.auditoria (
   id uuid primary key default gen_random_uuid(),
   user_id uuid,
@@ -118,7 +99,6 @@ create index if not exists idx_eventos_status on public.eventos (status);
 create index if not exists idx_eventos_data   on public.eventos (data_inicio);
 
 
--- ── 3. INSCRIÇÕES EM EVENTOS ────────────────────────────────────
 create table if not exists public.inscricoes (
   id              uuid primary key default gen_random_uuid(),
   evento_id       uuid not null references public.eventos(id) on delete cascade,
@@ -136,7 +116,6 @@ create index if not exists idx_inscricoes_evento on public.inscricoes (evento_id
 create index if not exists idx_inscricoes_user   on public.inscricoes (user_id);
 
 
--- ── 4. EXAMES DE FAIXA ──────────────────────────────────────────
 create table if not exists public.exames (
   id              uuid primary key default gen_random_uuid(),
   user_id         uuid not null references public.users(id) on delete cascade,
@@ -154,7 +133,6 @@ create index if not exists idx_exames_user on public.exames (user_id);
 create index if not exists idx_exames_data on public.exames (data_exame);
 
 
--- ── 5. NOTÍCIAS ─────────────────────────────────────────────────
 create table if not exists public.noticias (
   id              uuid primary key default gen_random_uuid(),
   titulo          text not null,
@@ -171,7 +149,6 @@ create table if not exists public.noticias (
 create index if not exists idx_noticias_publicado on public.noticias (publicado);
 
 
--- ── 6. RANKING ──────────────────────────────────────────────────
 create table if not exists public.ranking (
   id              uuid primary key default gen_random_uuid(),
   user_id         uuid not null references public.users(id) on delete cascade,
@@ -189,7 +166,6 @@ create index if not exists idx_ranking_modalidade on public.ranking (modalidade)
 create index if not exists idx_ranking_temporada  on public.ranking (temporada);
 
 
--- ── 7. DOCUMENTOS ───────────────────────────────────────────────
 create table if not exists public.documentos (
   id              uuid primary key default gen_random_uuid(),
   titulo          text not null,
@@ -206,7 +182,6 @@ create index if not exists idx_documentos_tipo    on public.documentos (tipo);
 create index if not exists idx_documentos_publico on public.documentos (publico);
 
 
--- ── 8. PARCEIROS ────────────────────────────────────────────────
 create table if not exists public.parceiros (
   id              uuid primary key default gen_random_uuid(),
   nome            text not null,
@@ -218,7 +193,6 @@ create table if not exists public.parceiros (
 );
 
 
--- ── 9. CONTATOS (formulário do site) ────────────────────────────
 create table if not exists public.contatos (
   id              uuid primary key default gen_random_uuid(),
   nome            text not null,
@@ -230,23 +204,17 @@ create table if not exists public.contatos (
 );
 
 
--- ================================================================
--- FUNÇÕES AUXILIARES
--- ================================================================
 
--- Retorna o role do usuário logado
 create or replace function public.get_user_role()
 returns text language sql security definer stable as $$
   select role from public.users where auth_id = auth.uid() limit 1;
 $$;
 
--- Retorna o id interno do usuário logado
 create or replace function public.get_user_id()
 returns uuid language sql security definer stable as $$
   select id from public.users where auth_id = auth.uid() limit 1;
 $$;
 
--- Atualiza updated_at automaticamente
 create or replace function public.set_updated_at()
 returns trigger language plpgsql as $$
 begin
@@ -255,11 +223,6 @@ begin
 end;
 $$;
 
--- ================================================================
--- TRIGGER CRÍTICO: cria perfil em public.users quando alguém
--- se registra no Supabase Auth (auth.users)
--- Sem isso o login não encontra o perfil e falha.
--- ================================================================
 create or replace function public.handle_new_user()
 returns trigger language plpgsql security definer as $$
 begin
@@ -281,9 +244,6 @@ create trigger on_auth_user_created
   for each row execute function public.handle_new_user();
 
 
--- ================================================================
--- TRIGGERS: updated_at
--- ================================================================
 drop trigger if exists trg_users_updated_at on public.users;
 create trigger trg_users_updated_at
   before update on public.users
@@ -305,9 +265,6 @@ create trigger trg_ranking_updated_at
   for each row execute function public.set_updated_at();
 
 
--- ================================================================
--- ROW LEVEL SECURITY (RLS)
--- ================================================================
 alter table public.users       enable row level security;
 alter table public.eventos     enable row level security;
 alter table public.inscricoes  enable row level security;
@@ -319,7 +276,6 @@ alter table public.parceiros   enable row level security;
 alter table public.contatos    enable row level security;
 alter table public.auditoria  enable row level security;
 
--- Limpa policies antigas antes de recriar (evita erros de duplicata)
 drop policy if exists "users: admin full access"         on public.users;
 drop policy if exists "users: user reads own"            on public.users;
 drop policy if exists "users: user updates own"          on public.users;
@@ -355,23 +311,18 @@ drop policy if exists "auditoria: anyone can insert"     on public.auditoria;
 drop policy if exists "auditoria: all read"            on public.auditoria;
 
 
--- ── USERS policies ──────────────────────────────────────────────
--- Admin acessa tudo
 create policy "users: admin full access"
   on public.users for all
   using (public.get_user_role() = 'admin');
 
--- Usuário lê o próprio perfil
 create policy "users: user reads own"
   on public.users for select
   using (auth_id = auth.uid());
 
--- Usuário atualiza o próprio perfil
 create policy "users: user updates own"
   on public.users for update
   using (auth_id = auth.uid());
 
--- Filial vê atletas vinculados à sua academia
 create policy "users: filial reads own athletes"
   on public.users for select
   using (
@@ -380,7 +331,6 @@ create policy "users: filial reads own athletes"
   );
 
 
--- ── EVENTOS policies ────────────────────────────────────────────
 create policy "eventos: public read"
   on public.eventos for select
   using (true);
@@ -390,7 +340,6 @@ create policy "eventos: admin full access"
   using (public.get_user_role() = 'admin');
 
 
--- ── INSCRIÇÕES policies ─────────────────────────────────────────
 create policy "inscricoes: admin full access"
   on public.inscricoes for all
   using (public.get_user_role() = 'admin');
@@ -404,7 +353,6 @@ create policy "inscricoes: user inserts own"
   with check (user_id = public.get_user_id());
 
 
--- ── EXAMES policies ─────────────────────────────────────────────
 create policy "exames: admin full access"
   on public.exames for all
   using (public.get_user_role() = 'admin');
@@ -414,7 +362,6 @@ create policy "exames: user reads own"
   using (user_id = public.get_user_id());
 
 
--- ── NOTÍCIAS policies ───────────────────────────────────────────
 create policy "noticias: public read published"
   on public.noticias for select
   using (publicado = true);
@@ -424,7 +371,6 @@ create policy "noticias: admin full access"
   using (public.get_user_role() = 'admin');
 
 
--- ── RANKING policies ────────────────────────────────────────────
 create policy "ranking: public read"
   on public.ranking for select
   using (true);
@@ -434,7 +380,6 @@ create policy "ranking: admin full access"
   using (public.get_user_role() = 'admin');
 
 
--- ── DOCUMENTOS policies ─────────────────────────────────────────
 create policy "documentos: public read"
   on public.documentos for select
   using (publico = true);
@@ -448,7 +393,6 @@ create policy "documentos: admin full access"
   using (public.get_user_role() = 'admin');
 
 
--- ── PARCEIROS policies ──────────────────────────────────────────
 create policy "parceiros: public read"
   on public.parceiros for select
   using (ativo = true);
@@ -458,7 +402,6 @@ create policy "parceiros: admin full access"
   using (public.get_user_role() = 'admin');
 
 
--- ── CONTATOS policies ───────────────────────────────────────────
 create policy "contatos: anyone can insert"
   on public.contatos for insert
   with check (true);
@@ -474,23 +417,6 @@ create policy "auditoria: all read"
   on public.auditoria for select
   using (true);
 
--- ================================================================
--- STORAGE BUCKETS
--- Cole separadamente se precisar (pode dar conflito se já existirem)
--- ================================================================
--- insert into storage.buckets (id, name, public) values ('fbk-public', 'fbk-public', true)  on conflict do nothing;
--- insert into storage.buckets (id, name, public) values ('fbk-docs',   'fbk-docs',   false) on conflict do nothing;
 
 
--- ================================================================
--- USUÁRIO ADMIN INICIAL
--- Após criar o usuário via Supabase Auth (Dashboard > Authentication
--- > Add user), cole o UUID aqui e execute para promovê-lo a admin:
--- ================================================================
--- update public.users
---   set role = 'admin', name = 'Administrador FBK'
---   where email = 'seu-email-aqui@exemplo.com';
 
--- ================================================================
--- FIM — Schema executado com sucesso!
--- ================================================================

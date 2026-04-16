@@ -18,7 +18,6 @@ function RedefinirSenhaForm() {
   const [sucesso, setSucesso] = useState(false);
   const [erro, setErro] = useState('');
 
-  // Validar token ao montar
   useEffect(() => {
     if (!token) {
       setTokenValido(false);

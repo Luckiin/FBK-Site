@@ -1,9 +1,4 @@
-/**
- * /api/filiados/[id]
- * GET    — Busca filiado por ID
- * PATCH  — Atualiza dados do filiado
- * DELETE — Remove filiado
- */
+
 
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
@@ -20,18 +15,15 @@ async function resolverAcesso(filiadoId) {
   const supabase = await createServerClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  // Admin
   if (user) {
     const { data: perfil } = await supabase
       .from('users').select('role').eq('auth_id', user.id).single();
     if (perfil?.role === 'admin') return { ok: true, filialId: null, tipo: 'admin' };
 
-    // Filial logada
     const filial = await buscarFilialPorAuthId(user.id);
     if (filial) return { ok: true, filialId: filial.id, tipo: 'filial' };
   }
 
-  // Filiado via JWT — pode ver apenas o próprio registro
   const cookieStore = cookies();
   const token = cookieStore.get('filiado-session')?.value;
   if (token) {
@@ -63,7 +55,6 @@ export async function PATCH(request, { params }) {
 
     const body = await request.json();
 
-    // Filiado só pode editar o próprio perfil — sem campos sensíveis
     if (acesso.tipo === 'filiado') {
       const { nome, email, telefone } = body;
       const filiado = await atualizarFiliado(params.id, acesso.filialId, { nome, email, telefone });

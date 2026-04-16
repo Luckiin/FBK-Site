@@ -18,7 +18,6 @@ import {
   ClipboardList,
 } from 'lucide-react';
 
-// ── Itens por papel ────────────────────────────────────────
 
 const NAV_ADMIN = [
   { href: '/home',         label: 'Dashboard',      icon: LayoutDashboard },
@@ -44,7 +43,6 @@ const NAV_ATLETA = [
   { href: '/home', label: 'Dashboard', icon: LayoutDashboard },
 ];
 
-// ── Componente ─────────────────────────────────────────────
 
 export default function Sidebar({ open, onClose }) {
   const pathname = usePathname();
@@ -57,13 +55,11 @@ export default function Sidebar({ open, onClose }) {
 
   const isActive = (href) => pathname === href || pathname.startsWith(href + '/');
 
-  // Selecionar menu correto pelo papel
   let navItems = NAV_ATLETA;
   if (isAdmin)   navItems = NAV_ADMIN;
   if (isFilial)  navItems = NAV_FILIAL;
   if (isFiliado) navItems = NAV_FILIADO;
 
-  // Nome e papel para exibição
   const nomeExibido = usuario?.nome ?? usuario?.name ?? 'Usuário';
   const papelExibido =
     tipo === 'admin'   ? 'Administrador'  :
@@ -73,7 +69,7 @@ export default function Sidebar({ open, onClose }) {
 
   return (
     <>
-      {/* Overlay mobile */}
+      
       {open && (
         <div
           className="fixed inset-0 bg-black/60 z-40 lg:hidden"
@@ -85,7 +81,7 @@ export default function Sidebar({ open, onClose }) {
         className={`fixed top-0 left-0 h-full w-64 bg-dark-400 border-r border-dark-50 z-50 flex flex-col transition-transform duration-300
           ${open ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}
       >
-        {/* Logo */}
+        
         <div className="flex items-center justify-between p-5 border-b border-dark-50">
           <Link href="/" className="flex items-center gap-2.5 group">
             <div className="w-9 h-9 bg-gradient-to-br from-brand-500 to-brand-700 rounded-xl flex items-center justify-center shadow-md shadow-brand-500/30 group-hover:shadow-brand-500/50 transition-all">
@@ -106,7 +102,7 @@ export default function Sidebar({ open, onClose }) {
           </button>
         </div>
 
-        {/* Navegação */}
+        
         <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
           <p className="text-[10px] font-bold text-ink-500 uppercase tracking-widest px-3 mb-3">Menu</p>
           {navItems.map((item) => {
@@ -134,7 +130,7 @@ export default function Sidebar({ open, onClose }) {
           })}
         </nav>
 
-        {/* Usuário logado + logout */}
+        
         <div className="p-4 border-t border-dark-50">
           <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl mb-2">
             <div className="w-8 h-8 bg-gradient-to-br from-brand-500 to-brand-700 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0">

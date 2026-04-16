@@ -1,8 +1,4 @@
-/**
- * GET /api/auth/me
- * Retorna o usuário logado (filial via Supabase Auth ou filiado via JWT cookie).
- * Usado pelo AuthContext no cliente para hidratar o estado de sessão.
- */
+
 
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
@@ -13,12 +9,10 @@ import { buscarFiliadoPorId } from '@/lib/services/filiadoService';
 
 export async function GET() {
   try {
-    // 1. Verificar sessão Supabase (filial ou admin legado)
     const supabase = await createServerClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (user) {
-      // Verificar se é filial
       const filial = await buscarFilialPorAuthId(user.id);
       if (filial) {
         return NextResponse.json({
@@ -28,7 +22,6 @@ export async function GET() {
         });
       }
 
-      // Verificar se é admin/usuário legado
       const { data: perfil } = await supabase
         .from('users')
         .select('*')
@@ -44,7 +37,6 @@ export async function GET() {
       }
     }
 
-    // 2. Verificar cookie JWT (filiado)
     const cookieStore = cookies();
     const filiadoToken = cookieStore.get('filiado-session')?.value;
 
@@ -62,7 +54,6 @@ export async function GET() {
       }
     }
 
-    // Não autenticado
     return NextResponse.json({ autenticado: false, usuario: null });
   } catch (err) {
     console.error('[/api/auth/me]', err);

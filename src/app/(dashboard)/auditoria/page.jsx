@@ -22,7 +22,6 @@ export default function AuditoriaPage() {
         const data = await auditService.getAll();
         setLogs(data);
       } catch (err) {
-        // Erro ao carregar auditoria
       } finally {
         setLoading(false);
       }

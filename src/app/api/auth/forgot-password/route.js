@@ -1,8 +1,4 @@
-/**
- * POST /api/auth/forgot-password
- * Inicia fluxo de recuperação de senha.
- * Body: { email: string }
- */
+
 
 import { NextResponse } from 'next/server';
 import { solicitarRecuperacaoSenha } from '@/lib/services/authService';
@@ -18,7 +14,6 @@ export async function POST(request) {
 
     await solicitarRecuperacaoSenha(email);
 
-    // Sempre retorna sucesso (não revela se o email existe)
     return NextResponse.json({
       mensagem: 'Se este email estiver cadastrado, você receberá um link de recuperação em breve.',
     });

@@ -3,9 +3,7 @@ import { createClient } from "@/lib/supabase";
 const supabase = createClient();
 
 export const athleteService = {
-  /**
-   * Fetch all athletes from public.users
-   */
+  
   async getAll() {
     const { data, error } = await supabase
       .from("users")
@@ -17,13 +15,10 @@ export const athleteService = {
     return data;
   },
 
-  /**
-   * Save (create or update) an athlete
-   */
+  
   async save(atleta) {
     const { id, ...data } = atleta;
 
-    // Map form fields to DB columns
     const dbData = {
       name: data.nome,
       cpf: data.cpf,
@@ -44,8 +39,6 @@ export const athleteService = {
       anuidade: data.anuidade,
     };
 
-    // Correcting if the column name changed in SQL migration
-    // In my SQL migration I added 'nome_professor text'
     dbData.nome_professor = data.nomeProfessor;
     delete dbData.responsavel; // Schema had 'responsavel' but SQL added 'nome_professor'
 
@@ -60,7 +53,6 @@ export const athleteService = {
       if (error) throw error;
       return updated;
     } else {
-      // Create new
       const { data: created, error } = await supabase
         .from("users")
         .insert([dbData])
@@ -72,9 +64,7 @@ export const athleteService = {
     }
   },
 
-  /**
-   * Delete an athlete
-   */
+  
   async delete(id) {
     const { error } = await supabase
       .from("users")

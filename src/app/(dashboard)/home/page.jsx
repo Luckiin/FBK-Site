@@ -12,7 +12,6 @@ import { useAuth } from '@/context/AuthContext';
 import { statsService } from '@/lib/services/statsService';
 import { eventService } from '@/lib/services/eventService';
 
-// ── Paleta de cores ────────────────────────────────────────
 
 const colorMap = {
   brand: { bg: 'bg-brand-500/10', text: 'text-brand-400', border: 'border-brand-500/20' },
@@ -27,7 +26,6 @@ function formatDate(iso) {
   return `${d}/${m}/${y}`;
 }
 
-// ── Loader centralizado ────────────────────────────────────
 
 function PageLoader() {
   return (
@@ -37,9 +35,6 @@ function PageLoader() {
   );
 }
 
-// ============================================================
-// VIEW: ADMIN
-// ============================================================
 
 function AdminDashboard({ usuario }) {
   const [stats, setStats] = useState({
@@ -62,7 +57,6 @@ function AdminDashboard({ usuario }) {
         setStats(s);
         setEvents(filtered);
       } catch {
-        // silencioso
       } finally {
         setLoading(false);
       }
@@ -89,7 +83,7 @@ function AdminDashboard({ usuario }) {
         </div>
       </div>
 
-      {/* Stats */}
+      
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {statCards.map((stat) => {
           const Icon = stat.icon;
@@ -108,7 +102,7 @@ function AdminDashboard({ usuario }) {
         })}
       </div>
 
-      {/* Acesso rápido admin */}
+      
       <div className="bg-dark-200 border border-dark-50 rounded-2xl p-5">
         <div className="flex items-center gap-2 mb-4">
           <Zap size={16} className="text-gold-400" />
@@ -137,7 +131,7 @@ function AdminDashboard({ usuario }) {
         </div>
       </div>
 
-      {/* Eventos abertos */}
+      
       <div>
         <div className="flex items-center justify-between mb-4">
           <div>
@@ -187,9 +181,6 @@ function AdminDashboard({ usuario }) {
   );
 }
 
-// ============================================================
-// VIEW: FILIAL
-// ============================================================
 
 function FilialDashboard({ usuario }) {
   const [stats, setStats] = useState({ filiados: '—', atletas: '—' });
@@ -221,7 +212,7 @@ function FilialDashboard({ usuario }) {
 
   return (
     <main className="p-4 sm:p-6 lg:p-8 space-y-8">
-      {/* Cabeçalho */}
+      
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 bg-gold-500/10 rounded-xl flex items-center justify-center">
           <Building2 size={20} className="text-gold-400" />
@@ -232,7 +223,7 @@ function FilialDashboard({ usuario }) {
         </div>
       </div>
 
-      {/* Stats */}
+      
       <div className="grid grid-cols-2 gap-4">
         <div className="bg-dark-200 border border-brand-500/20 rounded-2xl p-5 flex flex-col gap-3">
           <div className="w-10 h-10 rounded-xl bg-brand-500/10 border border-brand-500/20 flex items-center justify-center">
@@ -254,7 +245,7 @@ function FilialDashboard({ usuario }) {
         </div>
       </div>
 
-      {/* Acesso rápido */}
+      
       <div className="bg-dark-200 border border-dark-50 rounded-2xl p-5">
         <div className="flex items-center gap-2 mb-4">
           <Zap size={16} className="text-gold-400" />
@@ -282,7 +273,7 @@ function FilialDashboard({ usuario }) {
         </div>
       </div>
 
-      {/* Próximos passos */}
+      
       <div className="bg-dark-200 border border-dark-50 rounded-2xl p-5 space-y-3">
         <div className="flex items-center gap-2 mb-1">
           <Star size={15} className="text-gold-400" />
@@ -310,9 +301,6 @@ function FilialDashboard({ usuario }) {
   );
 }
 
-// ============================================================
-// VIEW: FILIADO
-// ============================================================
 
 function FiliadoDashboard({ usuario }) {
   const nome = usuario?.nome ?? usuario?.name ?? 'Filiado';
@@ -320,7 +308,7 @@ function FiliadoDashboard({ usuario }) {
 
   return (
     <main className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-2xl">
-      {/* Header boas-vindas */}
+      
       <div className="bg-gradient-to-br from-brand-900/30 to-dark-200 border border-brand-500/20 rounded-2xl p-6 flex items-center gap-4">
         <div className="w-14 h-14 bg-brand-500/20 rounded-full flex items-center justify-center shrink-0 text-xl font-black text-brand-400 border-2 border-brand-500/30">
           {inicial}
@@ -332,7 +320,7 @@ function FiliadoDashboard({ usuario }) {
         </div>
       </div>
 
-      {/* Cards informativos */}
+      
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="bg-dark-200 border border-dark-50 rounded-2xl p-5">
           <div className="w-9 h-9 bg-gold-500/10 rounded-xl flex items-center justify-center mb-3">
@@ -387,7 +375,7 @@ function FiliadoDashboard({ usuario }) {
         </div>
       </div>
 
-      {/* Credenciais de acesso */}
+      
       {usuario?.telefone && (
         <div className="bg-dark-200 border border-dark-50 rounded-2xl p-5">
           <p className="text-xs text-ink-500 uppercase tracking-wider font-semibold mb-3">Seus dados de acesso</p>
@@ -409,9 +397,6 @@ function FiliadoDashboard({ usuario }) {
   );
 }
 
-// ============================================================
-// PÁGINA PRINCIPAL — delega por papel
-// ============================================================
 
 export default function DashboardHomePage() {
   const { usuario, tipo, carregando } = useAuth();
@@ -430,7 +415,6 @@ export default function DashboardHomePage() {
     return <FiliadoDashboard usuario={usuario} />;
   }
 
-  // Fallback (não autenticado — middleware deve ter bloqueado antes)
   return (
     <main className="p-8 text-center">
       <p className="text-ink-400">Nenhuma sessão ativa.</p>

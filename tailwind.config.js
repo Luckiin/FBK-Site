@@ -1,14 +1,13 @@
-/** @type {import('tailwindcss').Config} */
+
 module.exports = {
   content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/pages*.{js,ts,jsx,tsx,mdx}",
+    "./src/components*.{js,ts,jsx,tsx,mdx}",
+    "./src/app*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {
       colors: {
-        // ── Vermelho principal (Kickboxing) ────────
         brand: {
           50:  "#fff5f5",
           100: "#ffe0e0",
@@ -21,7 +20,6 @@ module.exports = {
           800: "#7f1d1d",
           900: "#450a0a",
         },
-        // ── Dourado (Premium / Institucional) ──────
         gold: {
           50:  "#fffdf0",
           100: "#fef3c7",
@@ -34,7 +32,6 @@ module.exports = {
           800: "#78590a",
           900: "#5c4306",
         },
-        // ── Backgrounds escuros ────────────────────
         dark: {
           50:  "#2a2a2a",   // bordas / inputs
           100: "#1f1f1f",   // hover
@@ -42,7 +39,6 @@ module.exports = {
           300: "#0f0f0f",   // fundo base
           400: "#0a0a0a",   // fundo mais profundo
         },
-        // ── Texto ──────────────────────────────────
         ink: {
           100: "#ffffff",
           200: "#f5f5f5",

@@ -1,15 +1,4 @@
-/**
- * middleware.js - Refatorado
- * Protecao de rotas para filiais (Supabase Auth) e filiados (JWT customizado).
- *
- * Regras:
- * 1. Usuario nao autenticado -> redireciona para /auth/entrar
- * 2. Filial com status pendente/reprovado -> redireciona para /auth/aguardando-aprovacao
- * 3. Telas de auth continuam acessiveis mesmo com sessao ativa
- * 4. Filiado tentando acessar rotas exclusivas de filial -> redireciona para /home
- *
- * Compativel com Edge Runtime (usa apenas Web Crypto API).
- */
+
 
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse } from 'next/server';

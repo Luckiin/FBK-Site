@@ -63,7 +63,6 @@ export default function DashboardEventosPage() {
       const data = await eventService.getAll();
       setEvents(data);
     } catch (err) {
-      // Erro ao carregar eventos
     } finally {
       setLoading(false);
     }
@@ -82,7 +81,6 @@ export default function DashboardEventosPage() {
       if (!groups[year]) groups[year] = [];
       groups[year].push(event);
     });
-    // Sort years descending
     return Object.keys(groups).sort((a, b) => b - a).map(year => ({
       year,
       events: groups[year]
@@ -128,7 +126,6 @@ export default function DashboardEventosPage() {
             description: `Evento "${target}" excluído`,
           });
         } catch {
-          // Auditoria falhou, não bloqueia o fluxo do usuário.
         }
 
         setEvents(prev => prev.filter(e => e.id !== id));
@@ -165,7 +162,6 @@ export default function DashboardEventosPage() {
             : `Evento "${saved.titulo}" criado`,
         });
       } catch {
-        // Auditoria falhou, mas não bloqueia a atualização.
       }
 
       await fetchEvents();
@@ -220,7 +216,7 @@ export default function DashboardEventosPage() {
               {group.events.map(event => (
                 <div key={event.id} className="relative group">
                   <div className="bg-white rounded-2xl overflow-hidden shadow-xl border border-dark-50 flex flex-col h-full transform transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl">
-                    {/* Event Image */}
+                    
                     <div className="aspect-[4/5] relative overflow-hidden bg-dark-100">
                       <img
                         src={event.imagem_url || eventService.getDefaultImage()}
@@ -228,7 +224,7 @@ export default function DashboardEventosPage() {
                         className="w-full h-full object-cover"
                       />
 
-                      {/* Admin/Filial Controls Overlay */}
+                      
                       {canEditEvents && (
                         <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                           <button
@@ -247,7 +243,7 @@ export default function DashboardEventosPage() {
                       )}
                     </div>
 
-                    {/* Action Buttons */}
+                    
                     <div className="p-5 space-y-3 bg-dark-200/5 mt-auto border-t border-dark-50/10 shadow-inner">
                       <div className="flex items-center justify-between">
                         <span className="inline-flex items-center px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-ink-100 bg-brand-500/15 rounded-full">
@@ -319,7 +315,7 @@ export default function DashboardEventosPage() {
             </div>
 
             <div className="p-8 space-y-6 max-h-[70vh] overflow-y-auto custom-scrollbar">
-              {/* Photo Upload */}
+              
               <div className="flex flex-col items-center gap-3">
                 <button
                   onClick={() => fileInputRef.current.click()}

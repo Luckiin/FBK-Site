@@ -1,9 +1,4 @@
-/**
- * /api/filiais/[id]
- * GET   — Busca filial por ID
- * PATCH — Atualiza dados ou status da filial (admin para status)
- * DELETE — Remove filial (admin)
- */
+
 
 import { NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase-server';
@@ -26,7 +21,6 @@ async function getAdminOrFilial(supabase, filialId) {
 
   const isAdmin = perfil?.role === 'admin';
 
-  // Filial só pode editar a si mesma
   const filial = await buscarFilialPorId(filialId);
   const isOwnFilial = filial?.auth_id === user.id;
 
@@ -60,7 +54,6 @@ export async function PATCH(request, { params }) {
 
     const body = await request.json();
 
-    // Apenas admin pode alterar status
     if (body.status !== undefined) {
       if (!auth.isAdmin) {
         return NextResponse.json({ erro: 'Apenas admins alteram o status' }, { status: 403 });
@@ -73,7 +66,6 @@ export async function PATCH(request, { params }) {
       return NextResponse.json({ mensagem: `Filial ${body.status} com sucesso`, filial });
     }
 
-    // Atualização de dados gerais
     const filial = await atualizarFilial(params.id, body);
     return NextResponse.json({ filial });
   } catch (err) {

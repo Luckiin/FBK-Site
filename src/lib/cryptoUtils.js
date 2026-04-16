@@ -1,21 +1,7 @@
-/**
- * cryptoUtils.js
- * Utilitários de criptografia usando Web Crypto API nativa.
- * Compatível com Node.js 18+ e Edge Runtime (Next.js middleware).
- *
- * - Hashing de senha: PBKDF2 com SHA-512 (seguro, sem dependências externas)
- * - JWT simples: HMAC-SHA256 para tokens de sessão
- */
 
-// ============================================================
-// HASHING DE SENHA (PBKDF2 — Node.js API routes)
-// ============================================================
 
-/**
- * Gera um hash seguro da senha usando PBKDF2.
- * @param {string} senha
- * @returns {Promise<string>} — formato: "salt:iterations:hash" em hex
- */
+
+
 export async function hashSenha(senha) {
   const salt = crypto.getRandomValues(new Uint8Array(16));
   const iterations = 100_000;
@@ -45,12 +31,7 @@ export async function hashSenha(senha) {
   return `${saltHex}:${iterations}:${hashHex}`;
 }
 
-/**
- * Verifica se uma senha corresponde ao hash armazenado.
- * @param {string} senha
- * @param {string} senhaHash — formato gerado por hashSenha()
- * @returns {Promise<boolean>}
- */
+
 export async function verificarSenha(senha, senhaHash) {
   const [saltHex, iterStr, storedHash] = senhaHash.split(':');
   const iterations = Number(iterStr);
@@ -77,7 +58,6 @@ export async function verificarSenha(senha, senhaHash) {
     .map((b) => b.toString(16).padStart(2, '0'))
     .join('');
 
-  // Comparação em tempo constante (evita timing attacks)
   return timingSafeEqual(candidateHash, storedHash);
 }
 
@@ -90,11 +70,7 @@ function timingSafeEqual(a, b) {
   return diff === 0;
 }
 
-/**
- * Gera uma senha aleatória legível (para senhas temporárias).
- * @param {number} length
- * @returns {string}
- */
+
 export function gerarSenhaAleatoria(length = 10) {
   const charset = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789@#$';
   const values = crypto.getRandomValues(new Uint8Array(length));
@@ -103,9 +79,6 @@ export function gerarSenhaAleatoria(length = 10) {
     .join('');
 }
 
-// ============================================================
-// JWT SIMPLES (HMAC-SHA256 — compatível com Edge Runtime)
-// ============================================================
 
 const getJwtSecret = () => {
   const secret = process.env.JWT_SECRET;
@@ -121,12 +94,7 @@ const b64url = (data) =>
 
 const strToB64url = (str) => b64url(new TextEncoder().encode(str));
 
-/**
- * Gera um JWT assinado com HMAC-SHA256.
- * @param {object} payload
- * @param {string|number} expiresIn — segundos ou string como '7d', '15m'
- * @returns {Promise<string>}
- */
+
 export async function signToken(payload, expiresIn = '7d') {
   const secret = getJwtSecret();
 
@@ -153,11 +121,7 @@ export async function signToken(payload, expiresIn = '7d') {
   return `${message}.${signature}`;
 }
 
-/**
- * Verifica e decodifica um JWT.
- * @param {string} token
- * @returns {Promise<object|null>} — payload ou null se inválido/expirado
- */
+
 export async function verifyToken(token) {
   try {
     const secret = getJwtSecret();
@@ -175,7 +139,6 @@ export async function verifyToken(token) {
       ['verify']
     );
 
-    // Converte signature de base64url para Uint8Array
     const sigBytes = Uint8Array.from(
       atob(signature.replace(/-/g, '+').replace(/_/g, '/')),
       (c) => c.charCodeAt(0)

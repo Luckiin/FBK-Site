@@ -1,13 +1,6 @@
 'use client';
 
-/**
- * /auth/entrar
- * Página de login com duas abas:
- *   - Filial: email + senha (Supabase Auth)
- *   - Filiado: telefone + senha (JWT customizado)
- *
- * Suporta ?tab=filiado para pré-selecionar a aba de filiado.
- */
+
 
 import { useEffect, useState, Suspense } from 'react';
 import Link from 'next/link';
@@ -21,7 +14,6 @@ function EntrarForm() {
   const { login } = useAuth();
   const tabParam = searchParams.get('tab');
 
-  // Aba ativa: 'filial' | 'filiado'
   const [aba, setAba] = useState(
     tabParam === 'filiado' ? 'filiado' : 'filial'
   );
@@ -59,14 +51,14 @@ function EntrarForm() {
 
   return (
     <div className="min-h-screen bg-dark-300 flex items-center justify-center px-4">
-      {/* Background glow */}
+      
       <div className="fixed inset-0 z-0 pointer-events-none">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-500/5 rounded-full blur-[150px]" />
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-gold-500/5 rounded-full blur-[120px]" />
       </div>
 
       <div className="w-full max-w-md relative z-10">
-        {/* Logo */}
+        
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-3">
             <div className="relative">
@@ -86,7 +78,7 @@ function EntrarForm() {
           <h1 className="text-xl font-bold text-ink-100 mb-1">Área Restrita</h1>
           <p className="text-sm text-ink-400 mb-6">Selecione seu tipo de acesso e entre com suas credenciais.</p>
 
-          {/* Seletor de aba */}
+          
           <div className="flex rounded-xl bg-dark-400 p-1 mb-6 gap-1">
             <button
               type="button"
@@ -114,7 +106,7 @@ function EntrarForm() {
             </button>
           </div>
 
-          {/* Erro */}
+          
           {erro && (
             <div className="bg-brand-900/30 border border-brand-500/30 text-brand-300 text-sm p-3 rounded-xl mb-4">
               {erro}
@@ -157,7 +149,7 @@ function EntrarForm() {
               </div>
             )}
 
-            {/* Senha */}
+            
             <div>
               <div className="flex justify-between items-center mb-1.5">
                 <label className="text-sm font-medium text-ink-300">Senha</label>
@@ -200,7 +192,7 @@ function EntrarForm() {
             </button>
           </form>
 
-          {/* Links extras */}
+          
           <div className="mt-6 pt-6 border-t border-dark-400 text-center space-y-2">
             {aba === 'filial' && (
               <p className="text-sm text-ink-500">

@@ -117,7 +117,6 @@ export default function AtletasPage() {
         foto: item.foto_url
       })));
     } catch (err) {
-      // Erro ao carregar atletas
       alert("Houve um erro ao carregar os atletas.");
     } finally {
       setLoading(false);
@@ -147,7 +146,6 @@ export default function AtletasPage() {
     setIsFullForm(false);
     setErrors({});
     
-    // Auto-generate next registration number
     const maxRegNum = atletas.reduce((max, a) => {
       const num = parseInt(a.registro);
       return isNaN(num) ? max : Math.max(max, num);
@@ -190,7 +188,6 @@ export default function AtletasPage() {
         await athleteService.delete(id);
         setAtletas((prev) => prev.filter((a) => a.id !== id));
       } catch (err) {
-        // Erro ao deletar atleta
         alert("Erro ao remover atleta.");
       }
     }
@@ -231,11 +228,9 @@ export default function AtletasPage() {
       const atletaData = { ...form, foto: photoPreview };
       await athleteService.save(atletaData);
       
-      // Refresh list to ensure data is updated
       await fetchAtletas();
       setShowModal(false);
     } catch (err) {
-      // Erro ao salvar atleta
       alert("Houve um erro ao salvar o atleta. Verifique se o e-mail ou CPF já estão cadastrados.");
     } finally {
       setSaving(false);

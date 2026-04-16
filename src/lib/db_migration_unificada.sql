@@ -1,22 +1,6 @@
--- ================================================================
--- FBK - MIGRACAO UNIFICADA SEGURA
--- Reune:
--- 1. Sistema de filiais e filiados
--- 2. Ajustes na tabela public.users
--- 3. Novos campos de eventos
---
--- USO:
--- - Execute este script no SQL Editor do Supabase
--- - Seguro para banco existente
--- - Nao remove tabelas nem apaga dados existentes
--- - Nao execute o supabase_schema.sql em banco ja populado
--- ================================================================
 
 create extension if not exists "pgcrypto";
 
--- ============================================================
--- 1. TABELA: filiais
--- ============================================================
 
 create table if not exists public.filiais (
   id          uuid primary key default gen_random_uuid(),
@@ -70,9 +54,6 @@ comment on table public.filiais is 'Filiais da federacao com fluxo de aprovacao'
 comment on column public.filiais.auth_id is 'Referencia ao usuario Supabase Auth da filial';
 comment on column public.filiais.status is 'pendente=aguardando aprovacao, aprovado=acesso liberado, reprovado=acesso negado';
 
--- ============================================================
--- 2. TABELA: filiados
--- ============================================================
 
 create table if not exists public.filiados (
   id               uuid primary key default gen_random_uuid(),
@@ -125,9 +106,6 @@ create index if not exists idx_filiados_cpf on public.filiados(cpf);
 comment on table public.filiados is 'Filiados vinculados a filiais, com autenticacao propria (telefone+senha)';
 comment on column public.filiados.senha_hash is 'Senha em PBKDF2 via Web Crypto API - nunca texto puro';
 
--- ============================================================
--- 3. TABELA: password_resets
--- ============================================================
 
 create table if not exists public.password_resets (
   id          uuid primary key default gen_random_uuid(),
@@ -158,9 +136,6 @@ create index if not exists idx_password_resets_email on public.password_resets(e
 
 comment on table public.password_resets is 'Tokens de recuperacao de senha com expiracao de 15 minutos';
 
--- ============================================================
--- 4. AJUSTES NA TABELA: users
--- ============================================================
 
 do $$
 begin
@@ -186,9 +161,6 @@ begin
   end if;
 end $$;
 
--- ============================================================
--- 5. AJUSTES NA TABELA: eventos
--- ============================================================
 
 do $$
 begin
@@ -221,9 +193,6 @@ end $$;
 create index if not exists idx_eventos_divulgacao
 on public.eventos (data_inicio_div, data_fim_div);
 
--- ============================================================
--- 6. FUNCOES E TRIGGERS
--- ============================================================
 
 create or replace function public.set_updated_at()
 returns trigger as $$
@@ -265,9 +234,6 @@ create trigger trg_filiados_updated_at
   before update on public.filiados
   for each row execute function public.set_updated_at();
 
--- ============================================================
--- 7. RLS E POLICIES
--- ============================================================
 
 alter table public.filiais enable row level security;
 alter table public.filiados enable row level security;
@@ -335,6 +301,3 @@ begin
   end if;
 end $$;
 
--- ============================================================
--- FIM
--- ============================================================

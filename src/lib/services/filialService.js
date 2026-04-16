@@ -1,8 +1,4 @@
-/**
- * filialService.js
- * Toda lógica de negócio relacionada a filiais.
- * Controllers (API routes) apenas chamam este service.
- */
+
 
 import { createAdminClient } from '@/lib/supabase-server';
 import {
@@ -12,14 +8,8 @@ import {
   sendNovaFilialAdmin,
 } from './emailService';
 
-// ============================================================
-// LEITURA
-// ============================================================
 
-/**
- * Lista todas as filiais (uso admin).
- * @param {{ status?: string }} filtros
- */
+
 export async function listarFiliais(filtros = {}) {
   const supabase = createAdminClient();
 
@@ -37,10 +27,7 @@ export async function listarFiliais(filtros = {}) {
   return data;
 }
 
-/**
- * Busca uma filial pelo ID.
- * @param {string} id
- */
+
 export async function buscarFilialPorId(id) {
   const supabase = createAdminClient();
   const { data, error } = await supabase
@@ -53,10 +40,7 @@ export async function buscarFilialPorId(id) {
   return data;
 }
 
-/**
- * Busca uma filial pelo auth_id do Supabase Auth.
- * @param {string} authId
- */
+
 export async function buscarFilialPorAuthId(authId) {
   const supabase = createAdminClient();
   const { data, error } = await supabase
@@ -69,10 +53,7 @@ export async function buscarFilialPorAuthId(authId) {
   return data;
 }
 
-/**
- * Busca uma filial pelo email.
- * @param {string} email
- */
+
 export async function buscarFilialPorEmail(email) {
   const supabase = createAdminClient();
   const { data, error } = await supabase
@@ -85,25 +66,16 @@ export async function buscarFilialPorEmail(email) {
   return data;
 }
 
-// ============================================================
-// CRIAÇÃO
-// ============================================================
 
-/**
- * Cria uma nova filial com status 'pendente'.
- * Cria usuário no Supabase Auth e víncula ao registro de filial.
- * @param {{ nome: string, email: string, telefone: string, senha: string }}
- */
+
 export async function criarFilial({ nome, email, telefone, senha }) {
   const supabase = createAdminClient();
 
-  // Verificar se email já existe
   const filialExistente = await buscarFilialPorEmail(email);
   if (filialExistente) {
     throw new Error('Este email já está cadastrado');
   }
 
-  // Criar usuário no Supabase Auth
   const { data: authData, error: authError } = await supabase.auth.admin.createUser({
     email,
     password: senha,
@@ -112,7 +84,6 @@ export async function criarFilial({ nome, email, telefone, senha }) {
 
   if (authError) throw new Error(`Erro ao criar conta: ${authError.message}`);
 
-  // Criar registro na tabela filiais
   const { data: filial, error: filialError } = await supabase
     .from('filiais')
     .insert({
@@ -126,27 +97,18 @@ export async function criarFilial({ nome, email, telefone, senha }) {
     .single();
 
   if (filialError) {
-    // Rollback: deletar usuário auth se insert falhar
     await supabase.auth.admin.deleteUser(authData.user.id);
     throw new Error(`Erro ao criar filial: ${filialError.message}`);
   }
 
-  // Notificar admin (mock)
   await sendFilialCadastroRecebido({ to: email, nome }).catch(console.error);
   await sendNovaFilialAdmin({ nomeFilial: nome, emailFilial: email }).catch(console.error);
 
   return filial;
 }
 
-// ============================================================
-// ATUALIZAÇÃO
-// ============================================================
 
-/**
- * Atualiza dados de uma filial.
- * @param {string} id
- * @param {{ nome?: string, telefone?: string }} dados
- */
+
 export async function atualizarFilial(id, dados) {
   const supabase = createAdminClient();
 
@@ -166,12 +128,7 @@ export async function atualizarFilial(id, dados) {
   return data;
 }
 
-/**
- * Aprova ou reprova uma filial (admin).
- * @param {string} id
- * @param {'aprovado' | 'reprovado'} novoStatus
- * @param {string} [motivoReprovacao]
- */
+
 export async function alterarStatusFilial(id, novoStatus, motivoReprovacao = '') {
   if (!['aprovado', 'reprovado'].includes(novoStatus)) {
     throw new Error('Status inválido. Use: aprovado ou reprovado');
@@ -194,7 +151,6 @@ export async function alterarStatusFilial(id, novoStatus, motivoReprovacao = '')
 
   if (error) throw new Error(`Erro ao alterar status: ${error.message}`);
 
-  // Notificar filial por email se aprovada (mock)
   if (novoStatus === 'aprovado') {
     await sendFilialAprovada({ to: data.email, nome: data.nome }).catch(console.error);
   }
@@ -209,14 +165,8 @@ export async function alterarStatusFilial(id, novoStatus, motivoReprovacao = '')
   return data;
 }
 
-// ============================================================
-// DELEÇÃO
-// ============================================================
 
-/**
- * Remove uma filial e seu usuário Auth.
- * @param {string} id
- */
+
 export async function deletarFilial(id) {
   const supabase = createAdminClient();
 
@@ -225,7 +175,6 @@ export async function deletarFilial(id) {
   const { error } = await supabase.from('filiais').delete().eq('id', id);
   if (error) throw new Error(`Erro ao deletar filial: ${error.message}`);
 
-  // Remove usuário do Supabase Auth
   if (filial.auth_id) {
     await supabase.auth.admin.deleteUser(filial.auth_id).catch(console.error);
   }

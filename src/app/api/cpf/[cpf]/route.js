@@ -1,22 +1,4 @@
-/**
- * GET /api/cpf/[cpf]
- *
- * Valida o CPF usando o algoritmo oficial dos dígitos verificadores (gratuito, offline).
- * Não retorna dados pessoais — isso é protegido pela LGPD e não há API pública gratuita.
- *
- * Resposta quando VÁLIDO:
- *   { valido: true }
- *   → O formulário exibe campos para preenchimento manual de nome/sexo/nascimento.
- *
- * Resposta quando INVÁLIDO:
- *   { valido: false, erro: "CPF inválido..." }
- *   → O formulário bloqueia o cadastro.
- *
- * Para integrar auto-preenchimento real no futuro (Serpro DataValid, etc.),
- * adicione a chamada ao serviço dentro de getDadosPorCPF() no cpfService.js.
- *
- * Acesso protegido: apenas filiais e admins logados podem validar CPFs.
- */
+
 
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
@@ -29,7 +11,6 @@ async function verificarAcesso() {
   const { data: { user } } = await supabase.auth.getUser();
   if (user) return true;
 
-  // Filiados (JWT) não têm permissão para validar CPF de outros
   const cookieStore = await cookies();
   const token = cookieStore.get('filiado-session')?.value;
   if (token) {
@@ -52,7 +33,6 @@ export async function GET(request, { params }) {
       return NextResponse.json({ erro: 'CPF não informado' }, { status: 400 });
     }
 
-    // Validação matemática dos dígitos verificadores (Receita Federal)
     if (!validarCPF(cpf)) {
       return NextResponse.json(
         {
@@ -63,7 +43,6 @@ export async function GET(request, { params }) {
       );
     }
 
-    // CPF matematicamente válido — dados pessoais devem ser preenchidos manualmente
     return NextResponse.json({
       valido: true,
       preenchimento: 'manual',

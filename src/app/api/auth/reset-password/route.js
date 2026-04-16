@@ -1,11 +1,4 @@
-/**
- * POST /api/auth/reset-password
- * Redefine a senha usando o token de recuperação.
- * Body: { token: string, novaSenha: string, confirmarSenha: string }
- *
- * GET /api/auth/reset-password?token=xxx
- * Valida se o token ainda é válido (para exibir/ocultar o formulário).
- */
+
 
 import { NextResponse } from 'next/server';
 import { redefinirSenha, validarTokenReset } from '@/lib/services/authService';

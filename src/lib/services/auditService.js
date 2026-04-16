@@ -30,7 +30,6 @@ export const auditService = {
       }]);
 
     if (error) {
-      // Auditoria não é crítica; continua o fluxo mesmo que falhe (ex: tabela não existe ainda)
       console.warn("Audit log failed:", error.message);
       return null;
     }

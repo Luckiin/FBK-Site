@@ -1,10 +1,6 @@
 'use client';
 
-/**
- * /auth/cadastro-filial
- * Cadastro de nova filial (academia/clube).
- * Após o cadastro, a filial aguarda aprovação do admin.
- */
+
 
 import { useState } from 'react';
 import Link from 'next/link';
@@ -67,7 +63,6 @@ export default function CadastroFilialPage() {
     }
   };
 
-  // ── Tela de sucesso ────────────────────────────────────────
   if (sucesso) {
     return (
       <div className="min-h-screen bg-dark-300 flex items-center justify-center px-4">
@@ -116,7 +111,6 @@ export default function CadastroFilialPage() {
     );
   }
 
-  // ── Formulário ─────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-dark-300 flex items-center justify-center px-4 py-12">
       <div className="fixed inset-0 z-0 pointer-events-none">
@@ -125,7 +119,7 @@ export default function CadastroFilialPage() {
       </div>
 
       <div className="w-full max-w-md relative z-10">
-        {/* Logo */}
+        
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-3">
             <div className="relative">
@@ -159,7 +153,7 @@ export default function CadastroFilialPage() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Nome */}
+            
             <div>
               <label className="block text-sm font-medium text-ink-300 mb-1.5">
                 Nome da academia / clube <span className="text-brand-400">*</span>
@@ -176,7 +170,7 @@ export default function CadastroFilialPage() {
               </div>
             </div>
 
-            {/* Email */}
+            
             <div>
               <label className="block text-sm font-medium text-ink-300 mb-1.5">
                 E-mail <span className="text-brand-400">*</span>
@@ -196,7 +190,7 @@ export default function CadastroFilialPage() {
               <p className="text-xs text-ink-500 mt-1">Será usado para login e comunicações</p>
             </div>
 
-            {/* Telefone */}
+            
             <div>
               <label className="block text-sm font-medium text-ink-300 mb-1.5">Telefone</label>
               <div className="relative">
@@ -212,7 +206,7 @@ export default function CadastroFilialPage() {
               </div>
             </div>
 
-            {/* Senha */}
+            
             <div>
               <label className="block text-sm font-medium text-ink-300 mb-1.5">
                 Senha <span className="text-brand-400">*</span>
@@ -238,7 +232,7 @@ export default function CadastroFilialPage() {
               </div>
             </div>
 
-            {/* Confirmar Senha */}
+            
             <div>
               <label className="block text-sm font-medium text-ink-300 mb-1.5">
                 Confirmar senha <span className="text-brand-400">*</span>

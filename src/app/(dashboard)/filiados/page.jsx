@@ -1,9 +1,6 @@
 'use client';
 
-/**
- * /filiados — Gestão de Filiados
- * Lista, cadastra e gerencia filiados da filial logada.
- */
+
 
 import { useState, useEffect, useCallback } from 'react';
 import {
@@ -14,7 +11,6 @@ import {
 import { useAuth } from '@/context/AuthContext';
 import { validateCPF } from '@/lib/utils';
 
-// ── Utilitários ────────────────────────────────────────────
 
 function formatarCPF(valor) {
   return valor
@@ -27,7 +23,6 @@ function formatarCPF(valor) {
 
 const cpfNumeros = (cpf) => cpf.replace(/\D/g, '');
 
-// ── Formulário de novo filiado ─────────────────────────────
 
 function FormNovoFiliado({ onSalvo, onCancelar }) {
   const [cpf, setCpf] = useState('');
@@ -50,7 +45,6 @@ function FormNovoFiliado({ onSalvo, onCancelar }) {
     setCpfErro('');
   };
 
-  // ── Submit ─────────────────────────────────────────────────
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateCPF(cpf)) {
@@ -82,7 +76,6 @@ function FormNovoFiliado({ onSalvo, onCancelar }) {
     setCpfErro(''); setErro(''); setResultado(null);
   };
 
-  // ── Tela de sucesso ────────────────────────────────────────
   if (resultado) {
     return (
       <div className="card p-6 border border-green-500/20 bg-green-500/5">
@@ -116,7 +109,6 @@ function FormNovoFiliado({ onSalvo, onCancelar }) {
     );
   }
 
-  // ── Formulário ─────────────────────────────────────────────
   const podeEnviar = nome.trim() && cpfNumeros(cpf).length === 11 && !cpfErro && telefone.length >= 10 && !loading;
 
   return (
@@ -136,7 +128,7 @@ function FormNovoFiliado({ onSalvo, onCancelar }) {
 
       <form onSubmit={handleSubmit} className="space-y-4">
 
-        {/* ── CPF ── */}
+        
         <div>
           <label className="block text-sm font-medium text-ink-300 mb-1.5">
             CPF <span className="text-brand-400">*</span>
@@ -165,7 +157,7 @@ function FormNovoFiliado({ onSalvo, onCancelar }) {
           )}
         </div>
 
-        {/* ── Nome ── */}
+        
         <div>
           <label className="block text-sm font-medium text-ink-300 mb-1.5">
             Nome completo <span className="text-brand-400">*</span>
@@ -182,7 +174,7 @@ function FormNovoFiliado({ onSalvo, onCancelar }) {
           </div>
         </div>
 
-        {/* ── Sexo + Nascimento ── */}
+        
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="block text-sm font-medium text-ink-300 mb-1.5">Sexo</label>
@@ -211,7 +203,7 @@ function FormNovoFiliado({ onSalvo, onCancelar }) {
           </div>
         </div>
 
-        {/* ── Telefone ── */}
+        
         <div>
           <label className="block text-sm font-medium text-ink-300 mb-1.5">
             Telefone (login) <span className="text-brand-400">*</span>
@@ -230,7 +222,7 @@ function FormNovoFiliado({ onSalvo, onCancelar }) {
           <p className="text-xs text-ink-500 mt-1">O filiado usará este número como login</p>
         </div>
 
-        {/* ── Email ── */}
+        
         <div>
           <label className="block text-sm font-medium text-ink-300 mb-1.5">
             Email <span className="text-ink-500 font-normal">(opcional)</span>
@@ -247,7 +239,7 @@ function FormNovoFiliado({ onSalvo, onCancelar }) {
           </div>
         </div>
 
-        {/* ── Ações ── */}
+        
         <div className="flex gap-3 pt-2">
           <button type="button" onClick={onCancelar} className="btn-outline flex-1">
             Cancelar
@@ -269,7 +261,6 @@ function FormNovoFiliado({ onSalvo, onCancelar }) {
   );
 }
 
-// ── Linha expandível de filiado ────────────────────────────
 
 function LinhaFiliado({ filiado, onDeletar }) {
   const [expandido, setExpandido] = useState(false);
@@ -350,7 +341,6 @@ function LinhaFiliado({ filiado, onDeletar }) {
   );
 }
 
-// ── Página principal ───────────────────────────────────────
 
 export default function FiliadosPage() {
   const { isAdmin } = useAuth();
