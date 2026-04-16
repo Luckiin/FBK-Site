@@ -76,7 +76,7 @@ export default function Header() {
             {user ? (
               <div className="flex items-center gap-3">
                 <Link
-                  href={isAdmin ? "/admin" : isFilial ? "/filial" : "/atleta"}
+                  href="/home"
                   className="text-sm font-medium text-gold-400 hover:text-gold-300 transition px-3 py-2"
                 >
                   Minha Área
@@ -146,7 +146,7 @@ export default function Header() {
               {user ? (
                 <>
                   <Link
-                    href={isAdmin ? "/admin" : isFilial ? "/filial" : "/atleta"}
+                    href="/home"
                     onClick={() => setMenuOpen(false)}
                     className="px-4 py-3 text-sm text-gold-400 font-medium hover:bg-gold-500/10 rounded-lg"
                   >

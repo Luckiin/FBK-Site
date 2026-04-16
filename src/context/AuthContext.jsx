@@ -15,17 +15,42 @@ export function AuthProvider({ children }) {
   const fetchProfile = useCallback(async (authUser) => {
     if (!authUser) { setUser(null); return; }
 
-    const { data: profile } = await supabase
+    const { data, error } = await supabase
       .from("users")
       .select("*")
       .eq("auth_id", authUser.id)
       .single();
 
-    setUser(profile ?? null);
+    if (error) {
+      // erro ao buscar perfil
+    }
+
+    const profile = data || null;
+
+    if (!profile) {
+      setUser(null);
+      return;
+    }
+
+    const role = profile.role ? profile.role.toLowerCase() : "atleta";
+    const normalizedProfile = { ...profile, role };
+
+    setUser(normalizedProfile);
   }, [supabase]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+
+      if (session?.access_token) {
+        try {
+          const payload = JSON.parse(atob(session.access_token.split(".")[1]));
+          // JWT payload analisado
+        } catch (e) {
+          // não foi possível ler o JWT
+        }
+      }
+
       setSession(session);
       fetchProfile(session?.user ?? null).finally(() => setLoading(false));
     });
@@ -33,6 +58,16 @@ export function AuthProvider({ children }) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setSession(session);
+
+        if (session?.access_token) {
+          try {
+            const payload = JSON.parse(atob(session.access_token.split(".")[1]));
+            // JWT payload analisado
+          } catch (e) {
+            // não foi possível ler o JWT
+          }
+        }
+
         fetchProfile(session?.user ?? null);
       }
     );
@@ -72,9 +107,11 @@ export function AuthProvider({ children }) {
     return data;
   };
 
-  const isAdmin = user?.role === "admin";
-  const isAtleta = user?.role === "atleta";
-  const isFilial = user?.role === "filial";
+  const normalizedRole = user?.role?.toLowerCase?.() ?? "";
+
+  const isAdmin = normalizedRole === "admin";
+  const isAtleta = normalizedRole === "atleta";
+  const isFilial = normalizedRole === "filial";
 
   return (
     <AuthContext.Provider value={{

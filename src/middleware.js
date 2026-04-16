@@ -1,9 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse } from "next/server";
 
-const ATLETA_ROUTES = ["/atleta"];
-const FILIAL_ROUTES = ["/filial"];
-const ADMIN_ROUTES = ["/admin"];
+const DASHBOARD_ROUTES = ["/home", "/atletas", "/eventos-dash", "/exames", "/documentos-dash"];
 
 export async function middleware(request) {
   let supabaseResponse = NextResponse.next({ request });
@@ -35,32 +33,14 @@ export async function middleware(request) {
 
   const { pathname } = request.nextUrl;
 
-  let role = null;
-  if (user) {
-    const { data: profile } = await supabase
-      .from("users")
-      .select("role")
-      .eq("auth_id", user.id)
-      .single();
-    role = profile?.role ?? "atleta";
-  }
-
-  const isAdmin = role === "admin";
-
   if (user && pathname.startsWith("/auth/")) {
-    const dest = isAdmin ? "/admin" : role === "filial" ? "/filial" : "/atleta";
-    return NextResponse.redirect(new URL(dest, request.url));
+    return NextResponse.redirect(new URL("/home", request.url));
   }
 
-  const isProtected = [...ATLETA_ROUTES, ...FILIAL_ROUTES, ...ADMIN_ROUTES]
-    .some(p => pathname.startsWith(p));
+  const isProtected = DASHBOARD_ROUTES.some(p => pathname.startsWith(p));
 
   if (!user && isProtected) {
     return NextResponse.redirect(new URL("/auth/entrar", request.url));
-  }
-
-  if (ADMIN_ROUTES.some(p => pathname.startsWith(p)) && !isAdmin) {
-    return NextResponse.redirect(new URL("/", request.url));
   }
 
   return supabaseResponse;

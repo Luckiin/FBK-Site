@@ -22,8 +22,7 @@ export default function EntrarPage() {
 
     try {
       const result = await login(email, senha);
-      const dest = result.role === "admin" ? "/admin" : result.role === "filial" ? "/filial" : "/atleta";
-      router.push(dest);
+      router.push("/home");
     } catch (err) {
       setError(err.message || "Erro ao entrar. Verifique suas credenciais.");
     } finally {
