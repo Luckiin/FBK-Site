@@ -10,7 +10,10 @@ import { sendRecuperacaoSenha } from './emailService';
 
 export async function loginFilial(supabase, email, senha) {
   const { data, error } = await supabase.auth.signInWithPassword({ email, password: senha });
-  if (error) throw new Error('Email ou senha incorretos');
+  if (error) {
+    console.error('[loginFilial] Supabase error:', error.message, '| status:', error.status);
+    throw new Error(error.message ?? 'Email ou senha incorretos');
+  }
 
   const filial = await buscarFilialPorAuthId(data.user.id);
   if (filial) {
