@@ -1,11 +1,9 @@
 'use client';
 
-
-
 import { useEffect, useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { Shield, Mail, Lock, Phone, ArrowRight, Eye, EyeOff, Building2, User, CheckCircle2 } from 'lucide-react';
+import { Shield, Mail, Lock, Phone, ArrowRight, Eye, EyeOff, Building2, User, CheckCircle2, ChevronLeft } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { usePageTransition } from '@/components/TransitionWrapper';
 
@@ -15,10 +13,7 @@ function EntrarForm() {
   const { navigateTo } = usePageTransition();
   const tabParam = searchParams.get('tab');
 
-  const [aba, setAba] = useState(
-    tabParam === 'filiado' ? 'filiado' : 'filial'
-  );
-
+  const [aba, setAba] = useState(tabParam === 'filiado' ? 'filiado' : 'filial');
   const [email, setEmail] = useState('');
   const [telefone, setTelefone] = useState('');
   const [senha, setSenha] = useState('');
@@ -35,7 +30,6 @@ function EntrarForm() {
     e.preventDefault();
     setErro('');
     setLoading(true);
-
     try {
       if (aba === 'filial') {
         await login('filial', { email, senha });
@@ -54,187 +48,187 @@ function EntrarForm() {
 
   if (sucesso) {
     return (
-      <div className="min-h-screen bg-dark-300 flex items-center justify-center px-4">
-        <div className="flex flex-col items-center gap-4 page-enter">
-          <div className="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center">
-            <CheckCircle2 size={32} className="text-green-400" />
+      <div className="min-h-screen bg-dark-400 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-5 page-enter">
+          <div className="w-20 h-20 rounded-full bg-green-500/10 border border-green-500/20 flex items-center justify-center">
+            <CheckCircle2 size={36} className="text-green-400" />
           </div>
-          <p className="text-ink-100 font-semibold text-lg">Bem-vindo!</p>
-          <p className="text-ink-400 text-sm">Redirecionando...</p>
+          <div className="text-center">
+            <p className="text-ink-100 font-bold text-xl mb-1">Bem-vindo!</p>
+            <p className="text-ink-500 text-sm">Redirecionando para o painel...</p>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-dark-300 flex items-center justify-center px-4 page-enter">
-      
-      <div className="fixed inset-0 z-0 pointer-events-none">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-500/5 rounded-full blur-[150px]" />
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-gold-500/5 rounded-full blur-[120px]" />
-      </div>
+    <div className="min-h-screen bg-dark-400 flex page-enter">
+      {/* Painel lateral decorativo — só desktop */}
+      <div className="hidden lg:flex flex-col justify-between w-80 xl:w-96 bg-gradient-to-b from-brand-900/40 to-dark-400 border-r border-white/[0.04] p-10 relative overflow-hidden shrink-0">
+        <div className="absolute top-0 left-0 right-0 h-64 bg-gradient-to-b from-brand-500/10 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-brand-900/20 to-transparent" />
 
-      <div className="w-full max-w-md relative z-10">
-        
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-3">
-            <div className="relative">
-              <div className="w-12 h-12 bg-gradient-to-br from-brand-500 to-brand-700 rounded-xl flex items-center justify-center shadow-lg shadow-brand-500/30">
-                <Shield size={24} className="text-white" />
-              </div>
-              <div className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-gold-500 rounded-full" />
+        <div className="relative z-10">
+          <Link href="/" className="flex items-center gap-3 group mb-16">
+            <div className="w-10 h-10 bg-gradient-to-br from-brand-400 to-brand-700 rounded-xl flex items-center justify-center shadow-lg shadow-brand-500/30 group-hover:scale-105 transition-transform">
+              <Shield size={20} className="text-white" />
             </div>
             <div>
-              <span className="text-2xl font-black text-ink-100">FBK</span>
-              <div className="text-[10px] font-medium text-gold-500 uppercase tracking-widest">Kickboxing</div>
+              <span className="text-lg font-black text-white">FBK</span>
+              <div className="text-[9px] font-bold text-gold-400 uppercase tracking-[0.2em] -mt-0.5">Kickboxing</div>
             </div>
           </Link>
+
+          <h2 className="text-3xl font-black text-ink-100 leading-tight mb-4">
+            Bem-vindo de<br />volta à FBK
+          </h2>
+          <p className="text-sm text-ink-400 leading-relaxed">
+            Acesse o portal de gerenciamento da Federação Baiana de Kickboxing.
+          </p>
         </div>
 
-        <div className="card p-8">
-          <h1 className="text-xl font-bold text-ink-100 mb-1">Área Restrita</h1>
-          <p className="text-sm text-ink-400 mb-6">Selecione seu tipo de acesso e entre com suas credenciais.</p>
+        <div className="relative z-10 space-y-3">
+          {[
+            { color: 'bg-brand-500/15 border-brand-500/20 text-brand-300', text: 'Gestão completa de atletas e filiados' },
+            { color: 'bg-gold-500/10  border-gold-500/20  text-gold-300',  text: 'Controle de eventos e competições' },
+            { color: 'bg-blue-500/10  border-blue-500/20  text-blue-300',  text: 'Documentos e comunicados oficiais' },
+          ].map((item, i) => (
+            <div key={i} className={`${item.color} border rounded-xl px-4 py-3 text-xs font-medium`}>
+              {item.text}
+            </div>
+          ))}
+        </div>
+      </div>
 
-          
-          <div className="flex rounded-xl bg-dark-400 p-1 mb-6 gap-1">
-            <button
-              type="button"
-              onClick={() => { setAba('filial'); setErro(''); }}
-              className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-medium transition-all ${
-                aba === 'filial'
-                  ? 'bg-brand-600 text-white shadow'
-                  : 'text-ink-400 hover:text-ink-200'
-              }`}
-            >
-              <Building2 size={15} />
-              Filial
-            </button>
-            <button
-              type="button"
-              onClick={() => { setAba('filiado'); setErro(''); }}
-              className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-medium transition-all ${
-                aba === 'filiado'
-                  ? 'bg-brand-600 text-white shadow'
-                  : 'text-ink-400 hover:text-ink-200'
-              }`}
-            >
-              <User size={15} />
-              Filiado
-            </button>
+      {/* Form */}
+      <div className="flex-1 flex items-center justify-center px-4 py-12 relative">
+        {/* Blob */}
+        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-brand-500/[0.04] rounded-full blur-[120px] pointer-events-none" />
+
+        <div className="w-full max-w-sm relative z-10">
+          {/* Mobile logo */}
+          <div className="flex items-center justify-center mb-8 lg:hidden">
+            <Link href="/" className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-brand-400 to-brand-700 rounded-xl flex items-center justify-center shadow-lg">
+                <Shield size={20} className="text-white" />
+              </div>
+              <div>
+                <span className="text-lg font-black text-white">FBK</span>
+                <div className="text-[9px] font-bold text-gold-400 uppercase tracking-[0.2em] -mt-0.5">Kickboxing</div>
+              </div>
+            </Link>
           </div>
 
-          
+          <h1 className="text-2xl font-black text-ink-100 mb-1">Acessar conta</h1>
+          <p className="text-sm text-ink-500 mb-7">Selecione seu tipo de acesso e entre com suas credenciais.</p>
+
+          {/* Tabs */}
+          <div className="flex rounded-xl bg-dark-300/80 border border-white/[0.05] p-1 mb-6 gap-1">
+            {[
+              { key: 'filial',  label: 'Filial',   icon: Building2 },
+              { key: 'filiado', label: 'Filiado',  icon: User },
+            ].map((tab) => {
+              const Icon = tab.icon;
+              return (
+                <button key={tab.key} type="button"
+                  onClick={() => { setAba(tab.key); setErro(''); }}
+                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+                    aba === tab.key
+                      ? 'bg-brand-500 text-white shadow-md shadow-brand-500/25'
+                      : 'text-ink-500 hover:text-ink-300'
+                  }`}>
+                  <Icon size={14} /> {tab.label}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Erro */}
           {erro && (
-            <div className="bg-brand-900/30 border border-brand-500/30 text-brand-300 text-sm p-3 rounded-xl mb-4">
-              {erro}
+            <div className="bg-red-500/10 border border-red-500/20 text-red-300 text-sm p-3.5 rounded-xl mb-5 flex items-start gap-2">
+              <span className="mt-0.5">⚠</span> {erro}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {aba === 'filial' ? (
               <div>
-                <label className="block text-sm font-medium text-ink-300 mb-1.5">E-mail da Filial</label>
+                <label className="block text-xs font-bold text-ink-400 uppercase tracking-wider mb-2">E-mail da Filial</label>
                 <div className="relative">
-                  <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-500" />
-                  <input
-                    type="email"
-                    required
-                    className="input-field pl-10"
+                  <Mail size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-600" />
+                  <input type="email" required className="input-field pl-10"
                     placeholder="filial@email.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    autoComplete="email"
-                  />
+                    value={email} onChange={(e) => setEmail(e.target.value)}
+                    autoComplete="email" />
                 </div>
               </div>
             ) : (
               <div>
-                <label className="block text-sm font-medium text-ink-300 mb-1.5">Telefone</label>
+                <label className="block text-xs font-bold text-ink-400 uppercase tracking-wider mb-2">Telefone</label>
                 <div className="relative">
-                  <Phone size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-500" />
-                  <input
-                    type="tel"
-                    required
-                    className="input-field pl-10"
+                  <Phone size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-600" />
+                  <input type="tel" required className="input-field pl-10"
                     placeholder="(11) 99999-9999"
-                    value={telefone}
-                    onChange={(e) => setTelefone(e.target.value.replace(/\D/g, ''))}
-                    autoComplete="tel"
-                  />
+                    value={telefone} onChange={(e) => setTelefone(e.target.value.replace(/\D/g, ''))}
+                    autoComplete="tel" />
                 </div>
-                <p className="text-xs text-ink-500 mt-1">Digite apenas números</p>
+                <p className="text-[11px] text-ink-600 mt-1.5">Digite apenas os números</p>
               </div>
             )}
 
-            
             <div>
-              <div className="flex justify-between items-center mb-1.5">
-                <label className="text-sm font-medium text-ink-300">Senha</label>
-                <Link
-                  href="/auth/esqueceu-senha"
-                  className="text-xs text-brand-400 hover:text-brand-300 transition"
-                >
-                  Esqueceu a senha?
+              <div className="flex justify-between items-center mb-2">
+                <label className="text-xs font-bold text-ink-400 uppercase tracking-wider">Senha</label>
+                <Link href="/auth/esqueceu-senha" className="text-[11px] text-brand-400 hover:text-brand-300 transition-colors">
+                  Esqueceu?
                 </Link>
               </div>
               <div className="relative">
-                <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-500" />
-                <input
-                  type={showPwd ? 'text' : 'password'}
-                  required
-                  className="input-field pl-10 pr-10"
+                <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-600" />
+                <input type={showPwd ? 'text' : 'password'} required className="input-field pl-10 pr-10"
                   placeholder="Sua senha"
-                  value={senha}
-                  onChange={(e) => setSenha(e.target.value)}
-                  autoComplete="current-password"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPwd(!showPwd)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-ink-500 hover:text-ink-300 transition"
-                >
-                  {showPwd ? <EyeOff size={16} /> : <Eye size={16} />}
+                  value={senha} onChange={(e) => setSenha(e.target.value)}
+                  autoComplete="current-password" />
+                <button type="button" onClick={() => setShowPwd(!showPwd)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-ink-600 hover:text-ink-300 transition-colors">
+                  {showPwd ? <EyeOff size={15} /> : <Eye size={15} />}
                 </button>
               </div>
             </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="btn-primary w-full mt-2 flex items-center justify-center gap-2"
-            >
-              {loading ? 'Entrando...' : (
-                <>Entrar <ArrowRight size={16} /></>
-              )}
+            <button type="submit" disabled={loading}
+              className="btn-primary w-full mt-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0">
+              {loading
+                ? <><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Entrando...</>
+                : <>Entrar <ArrowRight size={16} /></>
+              }
             </button>
           </form>
 
-          
-          <div className="mt-6 pt-6 border-t border-dark-400 text-center space-y-2">
+          <div className="mt-7 pt-6 border-t border-white/[0.05] space-y-2 text-center">
             {aba === 'filial' && (
-              <p className="text-sm text-ink-500">
+              <p className="text-sm text-ink-600">
                 Ainda não tem uma filial?{' '}
-                <Link href="/auth/cadastro-filial" className="text-brand-400 hover:text-brand-300 font-medium transition">
+                <Link href="/auth/cadastro-filial" className="text-brand-400 hover:text-brand-300 font-medium transition-colors">
                   Cadastre-se
                 </Link>
               </p>
             )}
             {aba === 'filiado' && (
-              <p className="text-sm text-ink-500">
+              <p className="text-sm text-ink-600">
                 Credenciais fornecidas pela sua filial.{' '}
-                <Link href="/contato" className="text-brand-400 hover:text-brand-300 font-medium transition">
+                <Link href="/contato" className="text-brand-400 hover:text-brand-300 font-medium transition-colors">
                   Precisa de ajuda?
                 </Link>
               </p>
             )}
           </div>
-        </div>
 
-        <p className="text-center text-xs text-ink-500 mt-6">
-          <Link href="/" className="hover:text-ink-300 transition">
-            ← Voltar para o site
+          <Link href="/" className="flex items-center justify-center gap-1.5 text-xs text-ink-700 hover:text-ink-400 transition-colors mt-6">
+            <ChevronLeft size={12} /> Voltar para o site
           </Link>
-        </p>
+        </div>
       </div>
     </div>
   );
@@ -243,8 +237,8 @@ function EntrarForm() {
 export default function EntrarPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-dark-300 flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-brand-500 border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-dark-400 flex items-center justify-center">
+        <div className="w-6 h-6 border-2 border-brand-500 border-t-transparent rounded-full animate-spin" />
       </div>
     }>
       <EntrarForm />
