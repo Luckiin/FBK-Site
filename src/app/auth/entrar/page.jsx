@@ -66,24 +66,30 @@ function EntrarForm() {
   return (
     <div className="min-h-screen bg-dark-400 flex page-enter">
       {/* Painel lateral decorativo — só desktop */}
-      <div className="hidden lg:flex flex-col justify-between w-80 xl:w-96 bg-gradient-to-b from-brand-900/40 to-dark-400 border-r border-white/[0.04] p-10 relative overflow-hidden shrink-0">
-        <div className="absolute top-0 left-0 right-0 h-64 bg-gradient-to-b from-brand-500/10 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-brand-900/20 to-transparent" />
+      <div className="hidden lg:flex flex-col justify-between w-80 xl:w-96 bg-gradient-to-b from-cobalt-900/30 via-dark-400 to-dark-400 border-r border-cobalt-500/[0.08] p-10 relative overflow-hidden shrink-0">
+        {/* Barra tricolor no topo */}
+        <div className="absolute top-0 left-0 right-0 h-[3px]"
+          style={{ background: "linear-gradient(90deg, #e31e24 0%, #e31e24 33%, #ffffff 33%, #ffffff 67%, #1a56db 67%, #1a56db 100%)" }} />
+        <div className="absolute top-0 left-0 right-0 h-64 bg-gradient-to-b from-cobalt-500/8 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-brand-900/15 to-transparent" />
+        {/* Grade arena sutil */}
+        <div className="absolute inset-0 bg-arena-grid opacity-60" />
 
         <div className="relative z-10">
-          <Link href="/" className="flex items-center gap-3 group mb-16">
+          <Link href="/" className="flex items-center gap-3 group mb-14">
             <div className="relative w-11 h-11 group-hover:scale-105 transition-transform">
-              <Image src="/logo.svg" alt="FBK" fill className="object-contain" />
+              <Image src="/logo.png" alt="FBK" fill className="object-contain" />
             </div>
             <div>
-              <span className="text-lg font-black text-white">FBK</span>
+              <span className="font-sport text-xl text-white">FBK</span>
               <div className="text-[9px] font-bold text-gold-400 uppercase tracking-[0.2em] -mt-0.5">Kickboxing</div>
             </div>
           </Link>
 
-          <h2 className="text-3xl font-black text-ink-100 leading-tight mb-4">
-            Bem-vindo de<br />volta à FBK
+          <h2 className="font-sport text-4xl text-ink-100 leading-tight mb-3">
+            Bem-vindo<br />de volta
           </h2>
+          <div className="w-12 tricolor-bar mb-4" />
           <p className="text-sm text-ink-400 leading-relaxed">
             Acesse o portal de gerenciamento da Federação Baiana de Kickboxing.
           </p>
@@ -112,7 +118,7 @@ function EntrarForm() {
           <div className="flex items-center justify-center mb-8 lg:hidden">
             <Link href="/" className="flex items-center gap-3">
               <div className="relative w-11 h-11">
-                <Image src="/logo.svg" alt="FBK" fill className="object-contain" />
+                <Image src="/logo.png" alt="FBK" fill className="object-contain" />
               </div>
               <div>
                 <span className="text-lg font-black text-white">FBK</span>

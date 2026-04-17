@@ -239,7 +239,7 @@ export default function AtletasPage() {
 
   return (
     <>
-      <main className="p-4 sm:p-6 lg:p-8 space-y-6">
+      <main className="p-4 sm:p-6 lg:p-8 xl:p-10 space-y-8 w-full">
         <div className="flex justify-between items-end">
           <div>
             <h1 className="text-xl font-black text-ink-100 mb-0.5">Atletas</h1>

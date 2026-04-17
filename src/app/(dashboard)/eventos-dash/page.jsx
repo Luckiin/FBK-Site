@@ -191,7 +191,7 @@ export default function DashboardEventosPage() {
   }
 
   return (
-    <main className="p-4 sm:p-6 lg:p-8 space-y-8 max-w-7xl mx-auto">
+    <main className="p-4 sm:p-6 lg:p-8 xl:p-10 space-y-8 w-full">
       <div className="flex justify-between items-end">
         <div>
           <h1 className="text-2xl font-black text-ink-100 uppercase tracking-tighter">Eventos</h1>

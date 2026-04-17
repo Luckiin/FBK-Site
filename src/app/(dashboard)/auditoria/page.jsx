@@ -38,7 +38,7 @@ export default function AuditoriaPage() {
   });
 
   return (
-    <main className="p-4 sm:p-6 lg:p-8 space-y-8">
+    <main className="p-4 sm:p-6 lg:p-8 xl:p-10 space-y-8 w-full">
       <div>
         <h1 className="text-xl font-black text-ink-100 mb-1">Auditoria</h1>
         <p className="text-sm text-ink-500">Registros de ações de usuários no sistema.</p>

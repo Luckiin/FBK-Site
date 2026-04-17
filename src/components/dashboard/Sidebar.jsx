@@ -52,8 +52,16 @@ export default function Sidebar({ open, onClose }) {
   const papelExibido = tipo === 'admin' ? 'Administrador' : tipo === 'filial' ? 'Filial' : tipo === 'filiado' ? 'Filiado' : 'Atleta';
   const inicial = nomeExibido.charAt(0).toUpperCase();
 
-  const accentColor = isAdmin ? 'from-brand-500 to-brand-700' : isFilial ? 'from-gold-500 to-gold-700' : 'from-brand-500 to-brand-700';
-  const accentText  = isAdmin ? 'text-brand-400' : isFilial ? 'text-gold-400' : 'text-brand-400';
+  const accentColor = isAdmin ? 'from-brand-500 to-brand-700' : isFilial ? 'from-gold-500 to-gold-700' : 'from-cobalt-500 to-cobalt-700';
+  const accentText  = isAdmin ? 'text-brand-400' : isFilial ? 'text-gold-400' : 'text-cobalt-400';
+  const activeItemClass = isAdmin
+    ? 'bg-gradient-to-r from-brand-500/15 to-brand-500/5 text-brand-400 border border-brand-500/20'
+    : isFilial
+    ? 'bg-gradient-to-r from-gold-500/15 to-gold-500/5 text-gold-400 border border-gold-500/20'
+    : 'bg-gradient-to-r from-cobalt-500/15 to-cobalt-500/5 text-cobalt-400 border border-cobalt-500/20';
+  const activeBarClass  = isAdmin ? 'bg-brand-500'  : isFilial ? 'bg-gold-500'  : 'bg-cobalt-500';
+  const activeIconClass = isAdmin ? 'text-brand-400' : isFilial ? 'text-gold-400' : 'text-cobalt-400';
+  const activeChevronClass = isAdmin ? 'text-brand-400/50' : isFilial ? 'text-gold-400/50' : 'text-cobalt-400/50';
 
   return (
     <>
@@ -74,7 +82,7 @@ export default function Sidebar({ open, onClose }) {
         <div className="flex items-center justify-between p-5 border-b border-white/[0.05] relative">
           <Link href="/" className="flex items-center gap-2.5 group" onClick={onClose}>
             <div className="relative w-9 h-9 group-hover:scale-105 transition-transform shrink-0">
-              <Image src="/logo.svg" alt="FBK" fill className="object-contain drop-shadow-md" />
+              <Image src="/logo.png" alt="FBK" fill className="object-contain drop-shadow-md" />
             </div>
             <div>
               <span className="text-base font-black text-ink-100 tracking-tight">FBK</span>
@@ -91,7 +99,7 @@ export default function Sidebar({ open, onClose }) {
 
         {/* Nav */}
         <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
-          <p className="text-[9px] font-black text-ink-600 uppercase tracking-[0.2em] px-3 py-2 mt-1">Menu</p>
+          <p className="sport-label text-ink-700 px-3 py-2 mt-1">Menu</p>
           {navItems.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.href);
@@ -101,17 +109,14 @@ export default function Sidebar({ open, onClose }) {
                 href={item.href}
                 onClick={onClose}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group relative
-                  ${active
-                    ? `bg-gradient-to-r from-brand-500/15 to-brand-500/5 text-brand-400 border border-brand-500/20`
-                    : 'text-ink-400 hover:bg-white/[0.04] hover:text-ink-100'
-                  }`}
+                  ${active ? activeItemClass : 'text-ink-400 hover:bg-cobalt-500/[0.06] hover:text-ink-100'}`}
               >
                 {active && (
-                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-brand-500 rounded-full" />
+                  <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 ${activeBarClass} rounded-full`} />
                 )}
-                <Icon size={16} className={active ? 'text-brand-400' : 'text-ink-600 group-hover:text-ink-300 transition-colors'} />
+                <Icon size={16} className={active ? activeIconClass : 'text-ink-600 group-hover:text-ink-300 transition-colors'} />
                 <span className="flex-1 text-[13px]">{item.label}</span>
-                {active && <ChevronRight size={12} className="text-brand-400/50" />}
+                {active && <ChevronRight size={12} className={activeChevronClass} />}
               </Link>
             );
           })}

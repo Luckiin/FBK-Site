@@ -60,7 +60,7 @@ export default function FilialPage() {
   };
 
   return (
-    <main className="p-6 max-w-4xl mx-auto">
+    <main className="p-4 sm:p-6 lg:p-8 xl:p-10 space-y-8 w-full">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-ink-100">Minha Filial</h1>
         <p className="text-ink-400 text-sm mt-1">Gerencie os dados cadastrais da sua filial</p>

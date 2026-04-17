@@ -106,7 +106,7 @@ export default function FiliaisAdminPage() {
   }
 
   return (
-    <main className="p-4 sm:p-6 lg:p-8 space-y-6">
+    <main className="p-4 sm:p-6 lg:p-8 xl:p-10 space-y-8 w-full">
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 bg-brand-500/10 rounded-xl flex items-center justify-center">
           <Building2 size={20} className="text-brand-400" />

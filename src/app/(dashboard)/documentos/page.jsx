@@ -16,7 +16,7 @@ const CATEGORIAS = [
 
 export default function DocumentosPage() {
   return (
-    <main className="p-4 sm:p-6 lg:p-8 space-y-6">
+    <main className="p-4 sm:p-6 lg:p-8 xl:p-10 space-y-8 w-full">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

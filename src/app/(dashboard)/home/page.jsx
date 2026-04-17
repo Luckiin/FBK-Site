@@ -100,7 +100,7 @@ function AdminDashboard({ usuario }) {
   }, []);
 
   return (
-    <main className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl">
+    <main className="p-4 sm:p-6 lg:p-8 xl:p-10 space-y-8 w-full">
 
       {/* Header */}
       <div className="relative overflow-hidden bg-gradient-to-br from-brand-900/30 via-dark-200 to-dark-200 border border-brand-500/15 rounded-2xl p-6">
@@ -213,7 +213,7 @@ function FilialDashboard({ usuario }) {
   }, []);
 
   return (
-    <main className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-4xl">
+    <main className="p-4 sm:p-6 lg:p-8 xl:p-10 space-y-8 w-full">
 
       {/* Header */}
       <div className="relative overflow-hidden bg-gradient-to-br from-gold-900/20 via-dark-200 to-dark-200 border border-gold-500/15 rounded-2xl p-6">
@@ -292,7 +292,7 @@ function FiliadoDashboard({ usuario }) {
   const stripeStyles = { gold: 'stat-stripe-gold', brand: 'stat-stripe-brand', blue: 'stat-stripe-blue', green: 'stat-stripe-green' };
 
   return (
-    <main className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-2xl">
+    <main className="p-4 sm:p-6 lg:p-8 xl:p-10 space-y-8 w-full">
 
       {/* Welcome */}
       <div className="relative overflow-hidden bg-gradient-to-br from-brand-900/25 via-dark-200 to-dark-200 border border-brand-500/15 rounded-2xl p-6">

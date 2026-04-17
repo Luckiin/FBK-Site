@@ -44,7 +44,7 @@ export default function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group">
             <div className="relative w-10 h-10 group-hover:scale-105 transition-transform duration-300 drop-shadow-lg">
-              <Image src="/logo.svg" alt="FBK Logo" fill className="object-contain" priority />
+              <Image src="/logo.png" alt="FBK Logo" fill className="object-contain" priority />
             </div>
             <div>
               <span className="text-lg font-black text-white tracking-tight leading-none">{APP_NAME}</span>
@@ -55,7 +55,7 @@ export default function Header() {
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden lg:flex items-center gap-0.5 bg-white/[0.04] backdrop-blur-sm border border-white/[0.06] rounded-2xl px-2 py-1.5">
+          <nav className="hidden lg:flex items-center gap-0.5 bg-dark-300/90 backdrop-blur-sm border border-cobalt-500/10 rounded-2xl px-2 py-1.5">
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}
@@ -63,7 +63,7 @@ export default function Header() {
                 className={`text-sm font-medium px-4 py-2 rounded-xl transition-all duration-200 ${
                   isActive(link.href)
                     ? "bg-brand-500 text-white shadow-sm shadow-brand-500/30"
-                    : "text-ink-300 hover:text-ink-100 hover:bg-white/[0.06]"
+                    : "text-ink-300 hover:text-ink-100 hover:bg-cobalt-500/[0.07]"
                 }`}
               >
                 {link.label}

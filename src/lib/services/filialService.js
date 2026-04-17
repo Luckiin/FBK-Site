@@ -101,8 +101,12 @@ export async function criarFilial({ nome, email, telefone, senha }) {
     throw new Error(`Erro ao criar filial: ${filialError.message}`);
   }
 
-  await sendFilialCadastroRecebido({ to: email, nome }).catch(console.error);
-  await sendNovaFilialAdmin({ nomeFilial: nome, emailFilial: email }).catch(console.error);
+  await sendFilialCadastroRecebido({ to: email, nome }).catch((err) =>
+    console.error('[FILIAL] Falha ao enviar email de confirmação para', email, ':', err.message)
+  );
+  await sendNovaFilialAdmin({ nomeFilial: nome, emailFilial: email }).catch((err) =>
+    console.error('[FILIAL] Falha ao enviar email de notificação para admin:', err.message)
+  );
 
   return filial;
 }
@@ -152,14 +156,18 @@ export async function alterarStatusFilial(id, novoStatus, motivoReprovacao = '')
   if (error) throw new Error(`Erro ao alterar status: ${error.message}`);
 
   if (novoStatus === 'aprovado') {
-    await sendFilialAprovada({ to: data.email, nome: data.nome }).catch(console.error);
+    await sendFilialAprovada({ to: data.email, nome: data.nome }).catch((err) =>
+      console.error('[FILIAL] Falha ao enviar email de aprovação para', data.email, ':', err.message)
+    );
   }
   if (novoStatus === 'reprovado') {
     await sendFilialReprovada({
       to: data.email,
       nome: data.nome,
       motivo: data.motivo_reprovacao,
-    }).catch(console.error);
+    }).catch((err) =>
+      console.error('[FILIAL] Falha ao enviar email de reprovação para', data.email, ':', err.message)
+    );
   }
 
   return data;
