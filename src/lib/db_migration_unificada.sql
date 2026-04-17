@@ -137,6 +137,43 @@ create index if not exists idx_password_resets_email on public.password_resets(e
 comment on table public.password_resets is 'Tokens de recuperacao de senha com expiracao de 15 minutos';
 
 
+create table if not exists public.noticias (
+  id              uuid primary key default gen_random_uuid(),
+  titulo          text not null,
+  resumo          text,
+  conteudo        text,
+  imagem_url      text,
+  publicado       boolean not null default false,
+  data_publicacao timestamptz,
+  autor           text,
+  created_at      timestamptz not null default now(),
+  updated_at      timestamptz not null default now()
+);
+
+do $$
+begin
+  if exists (
+    select 1
+    from information_schema.tables
+    where table_schema = 'public' and table_name = 'noticias'
+  ) then
+    alter table public.noticias
+      add column if not exists titulo text,
+      add column if not exists resumo text,
+      add column if not exists conteudo text,
+      add column if not exists imagem_url text,
+      add column if not exists publicado boolean not null default false,
+      add column if not exists data_publicacao timestamptz,
+      add column if not exists autor text,
+      add column if not exists created_at timestamptz not null default now(),
+      add column if not exists updated_at timestamptz not null default now();
+  end if;
+end $$;
+
+create index if not exists idx_noticias_publicado on public.noticias (publicado);
+create index if not exists idx_noticias_data_publicacao on public.noticias (data_publicacao desc);
+
+
 do $$
 begin
   if exists (
@@ -234,10 +271,16 @@ create trigger trg_filiados_updated_at
   before update on public.filiados
   for each row execute function public.set_updated_at();
 
+drop trigger if exists trg_noticias_updated_at on public.noticias;
+create trigger trg_noticias_updated_at
+  before update on public.noticias
+  for each row execute function public.set_updated_at();
+
 
 alter table public.filiais enable row level security;
 alter table public.filiados enable row level security;
 alter table public.password_resets enable row level security;
+alter table public.noticias enable row level security;
 
 drop policy if exists "Admin full access filiais" on public.filiais;
 create policy "Admin full access filiais" on public.filiais
@@ -286,6 +329,21 @@ drop policy if exists "Service role manages resets" on public.password_resets;
 create policy "Service role manages resets" on public.password_resets
   for all
   using (auth.role() = 'service_role');
+
+drop policy if exists "noticias: public read published" on public.noticias;
+create policy "noticias: public read published" on public.noticias
+  for select
+  using (publicado = true);
+
+drop policy if exists "noticias: admin full access" on public.noticias;
+create policy "noticias: admin full access" on public.noticias
+  for all
+  using (
+    exists (
+      select 1 from public.users u
+      where u.auth_id = auth.uid() and u.role = 'admin'
+    )
+  );
 
 do $$
 begin

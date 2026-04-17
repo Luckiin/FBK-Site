@@ -12,6 +12,7 @@ const ROTAS_PROTEGIDAS = [
   '/auditoria',
   '/filial',
   '/filiados',
+  '/noticias',
 ];
 
 const ROTAS_FILIAL = ['/filial', '/filiados'];

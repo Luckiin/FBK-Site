@@ -28,6 +28,7 @@ import {
   EVENTOS_TIPOS,
   MISSAO_VISAO_VALORES,
 } from "@/lib/constants";
+import NoticiasSection from "@/components/NoticiasSection";
 
 const STATS = [
   { value: "8+", label: "Modalidades", icon: <Target size={20} /> },
@@ -334,33 +335,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="bg-dark-400 py-20 md:py-28 border-t border-dark-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <SectionHeader
-            title="Notícias da Federação"
-            subtitle="Fique por dentro das últimas novidades do kickboxing baiano"
-          />
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[1, 2, 3].map((n) => (
-              <div key={n} className="card card-hover overflow-hidden group">
-                <div className="h-48 bg-gradient-to-br from-dark-100 to-dark-200 flex items-center justify-center">
-                  <div className="text-ink-500 text-sm">Em breve</div>
-                </div>
-                <div className="p-6">
-                  <div className="text-xs text-ink-500 mb-2">Em breve</div>
-                  <h3 className="font-bold text-ink-100 mb-2 group-hover:text-brand-300 transition">
-                    Notícia {n}
-                  </h3>
-                  <p className="text-sm text-ink-400 leading-relaxed">
-                    Conteúdo de notícia será adicionado em breve pela equipe da FBK.
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <NoticiasSection />
 
       <section className="bg-dark-300 py-20 md:py-28 border-t border-dark-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

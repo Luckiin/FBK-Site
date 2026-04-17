@@ -16,17 +16,19 @@ import {
   Building2,
   UserCheck,
   ClipboardList,
+  Newspaper,
 } from 'lucide-react';
 
 
 const NAV_ADMIN = [
   { href: '/home',         label: 'Dashboard',      icon: LayoutDashboard },
   { href: '/filiais',      label: 'Filiais',        icon: Building2 },
-  { href: '/atletas',      label: 'Atletas',         icon: Users },
-  { href: '/eventos-dash', label: 'Eventos',         icon: CalendarDays },
+  { href: '/atletas',      label: 'Atletas',        icon: Users },
+  { href: '/eventos-dash', label: 'Eventos',        icon: CalendarDays },
+  { href: '/noticias',     label: 'Notícias',       icon: Newspaper },
   { href: '/exames',       label: 'Exames de Faixa', icon: Trophy },
-  { href: '/documentos',   label: 'Documentos',      icon: FileText },
-  { href: '/auditoria',    label: 'Auditoria',       icon: ClipboardList },
+  { href: '/documentos',   label: 'Documentos',     icon: FileText },
+  { href: '/auditoria',    label: 'Auditoria',      icon: ClipboardList },
 ];
 
 const NAV_FILIAL = [

@@ -5,7 +5,7 @@ import {
   CalendarDays, Users, Trophy, TrendingUp, MapPin,
   Clock, ArrowUpRight, Zap, FileText, Loader2,
   Building2, UserCheck, Settings, ShieldCheck,
-  LayoutDashboard, Star, Bell, Lock,
+  LayoutDashboard, Star, Bell, Lock, Newspaper,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
@@ -110,10 +110,10 @@ function AdminDashboard({ usuario }) {
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
-            { label: 'Atletas',    href: '/atletas',      icon: Users,        color: 'brand' },
-            { label: 'Eventos',    href: '/eventos-dash', icon: CalendarDays, color: 'gold'  },
-            { label: 'Auditoria',  href: '/auditoria',    icon: FileText,     color: 'blue'  },
-            { label: 'Filiais',    href: '/filiais',      icon: Building2,    color: 'green' },
+            { label: 'Atletas',   href: '/atletas',      icon: Users,        color: 'brand' },
+            { label: 'Eventos',   href: '/eventos-dash', icon: CalendarDays, color: 'gold'  },
+            { label: 'Notícias',  href: '/noticias',     icon: Newspaper,    color: 'blue'  },
+            { label: 'Filiais',   href: '/filiais',      icon: Building2,    color: 'green' },
           ].map((item) => {
             const Icon = item.icon;
             const c = colorMap[item.color];
