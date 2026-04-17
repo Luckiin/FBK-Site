@@ -35,7 +35,9 @@ export async function GET(request) {
 
     return NextResponse.json({ noticias });
   } catch (err) {
-    return NextResponse.json({ erro: err.message }, { status: 500 });
+    // Tabela ainda não existe ou outro erro de DB — retorna vazio sem quebrar o site
+    console.error('[GET /api/noticias]', err.message);
+    return NextResponse.json({ noticias: [] });
   }
 }
 

@@ -11,13 +11,16 @@ export const metadata = {
   description:
     "Promovendo o Kickboxing como esporte, educação e inclusão social na Bahia.",
   keywords: ["kickboxing", "federação", "bahia", "esporte", "inclusão social", "FBK"],
+};
+
+export const viewport = {
   themeColor: "#dc2626",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="pt-BR">
-      <body>
+      <body suppressHydrationWarning>
         <AuthProvider>
           <TransitionProvider>{children}</TransitionProvider>
         </AuthProvider>
