@@ -46,7 +46,7 @@ export default function DashboardLayout({ children }) {
       <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <div className="flex-1 lg:ml-64 min-w-0 flex flex-col">
         <DashTopBar onMenuOpen={() => setSidebarOpen(true)} />
-        <div className="flex-1">
+        <div className="flex-1 page-enter">
           {children}
         </div>
       </div>

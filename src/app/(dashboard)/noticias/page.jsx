@@ -15,7 +15,7 @@ import {
 // ── Utilitário de datas ────────────────────────────────────
 
 function formatDate(iso) {
-  if (\!iso) return '—';
+  if (!iso) return '—';
   return new Date(iso).toLocaleDateString('pt-BR', {
     day: '2-digit', month: 'short', year: 'numeric',
   });
@@ -24,7 +24,7 @@ function formatDate(iso) {
 // ── Modal de criação / edição ──────────────────────────────
 
 function NoticiaModal({ noticia, onSalvo, onFechar }) {
-  const editando = \!\!noticia?.id;
+  const editando = !!noticia?.id;
 
   const [form, setForm] = useState({
     titulo:     noticia?.titulo     ?? '',
@@ -41,7 +41,7 @@ function NoticiaModal({ noticia, onSalvo, onFechar }) {
     setForm((prev) => ({ ...prev, [field]: e.target.value }));
 
   const toggle = (field) =>
-    setForm((prev) => ({ ...prev, [field]: \!prev[field] }));
+    setForm((prev) => ({ ...prev, [field]: !prev[field] }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -60,7 +60,7 @@ function NoticiaModal({ noticia, onSalvo, onFechar }) {
       });
 
       const data = await res.json();
-      if (\!res.ok) throw new Error(data.erro);
+      if (!res.ok) throw new Error(data.erro);
       onSalvo(data.noticia, editando);
     } catch (err) {
       setErro(err.message);
@@ -231,7 +231,7 @@ function NoticiaCard({ noticia, onEditar, onTogglePublicado, onToggleDestaque, o
 
   const handleToggle = async (campo) => {
     setActionLoading(campo);
-    await onTogglePublicado(noticia.id, campo, \!noticia[campo]);
+    await onTogglePublicado(noticia.id, campo, !noticia[campo]);
     setActionLoading(null);
   };
 
@@ -276,7 +276,7 @@ function NoticiaCard({ noticia, onEditar, onTogglePublicado, onToggleDestaque, o
         <p className="text-[10px] text-ink-600 mb-3">{formatDate(noticia.created_at)}</p>
 
         {/* Ações */}
-        {\!confirmando ? (
+        {!confirmando ? (
           <div className="flex items-center gap-1.5 flex-wrap">
             <button
               onClick={() => onEditar(noticia)}
@@ -413,18 +413,18 @@ export default function NoticiasPage() {
   const deletar = async (id) => {
     try {
       await fetch(`/api/noticias/${id}`, { method: 'DELETE', credentials: 'include' });
-      setNoticias((prev) => prev.filter((n) => n.id \!== id));
+      setNoticias((prev) => prev.filter((n) => n.id !== id));
     } catch { /* silencioso */ }
   };
 
   const noticiasFiltradas = noticias.filter((n) => {
     if (filtro === 'publicadas') return n.publicado;
-    if (filtro === 'rascunhos')  return \!n.publicado;
+    if (filtro === 'rascunhos')  return !n.publicado;
     return true;
   });
 
   const totalPublicadas = noticias.filter((n) => n.publicado).length;
-  const totalRascunhos  = noticias.filter((n) => \!n.publicado).length;
+  const totalRascunhos  = noticias.filter((n) => !n.publicado).length;
 
   return (
     <>
@@ -434,7 +434,7 @@ export default function NoticiasPage() {
           <div>
             <h1 className="text-xl font-black text-ink-100">Notícias</h1>
             <p className="text-sm text-ink-500 mt-0.5">
-              {totalPublicadas} publicada{totalPublicadas \!== 1 ? 's' : ''} · {totalRascunhos} rascunho{totalRascunhos \!== 1 ? 's' : ''}
+              {totalPublicadas} publicada{totalPublicadas !== 1 ? 's' : ''} · {totalRascunhos} rascunho{totalRascunhos !== 1 ? 's' : ''}
             </p>
           </div>
           <button onClick={abrirCriar} className="btn-primary flex items-center gap-2">

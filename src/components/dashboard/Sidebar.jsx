@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
+import { usePageTransition } from '@/components/TransitionWrapper';
 import {
   LayoutDashboard,
   Users,
@@ -49,10 +50,11 @@ const NAV_ATLETA = [
 export default function Sidebar({ open, onClose }) {
   const pathname = usePathname();
   const { usuario, tipo, isAdmin, isFilial, isFiliado, logout } = useAuth();
+  const { navigateTo } = usePageTransition();
 
   const handleLogout = async () => {
+    await navigateTo('/', { delay: 0 });
     await logout();
-    window.location.href = '/';
   };
 
   const isActive = (href) => pathname === href || pathname.startsWith(href + '/');

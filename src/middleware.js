@@ -8,7 +8,7 @@ const ROTAS_PROTEGIDAS = [
   '/atletas',
   '/eventos-dash',
   '/exames',
-  '/documentos-dash',
+  '/documentos',
   '/auditoria',
   '/filial',
   '/filiados',

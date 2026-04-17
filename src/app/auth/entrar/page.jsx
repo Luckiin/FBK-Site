@@ -4,14 +4,15 @@
 
 import { useEffect, useState, Suspense } from 'react';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { Shield, Mail, Lock, Phone, ArrowRight, Eye, EyeOff, Building2, User } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
+import { Shield, Mail, Lock, Phone, ArrowRight, Eye, EyeOff, Building2, User, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { usePageTransition } from '@/components/TransitionWrapper';
 
 function EntrarForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const { login } = useAuth();
+  const { navigateTo } = usePageTransition();
   const tabParam = searchParams.get('tab');
 
   const [aba, setAba] = useState(
@@ -24,6 +25,7 @@ function EntrarForm() {
   const [showPwd, setShowPwd] = useState(false);
   const [erro, setErro] = useState('');
   const [loading, setLoading] = useState(false);
+  const [sucesso, setSucesso] = useState(false);
 
   useEffect(() => {
     setAba(tabParam === 'filiado' ? 'filiado' : 'filial');
@@ -40,8 +42,9 @@ function EntrarForm() {
       } else {
         await login('filiado', { telefone, senha });
       }
+      setSucesso(true);
       const callbackUrl = searchParams.get('callbackUrl');
-      router.push(callbackUrl || '/home');
+      await navigateTo(callbackUrl || '/home', { delay: 600 });
     } catch (err) {
       setErro(err.message || 'Credenciais inválidas. Tente novamente.');
     } finally {
@@ -49,8 +52,22 @@ function EntrarForm() {
     }
   };
 
+  if (sucesso) {
+    return (
+      <div className="min-h-screen bg-dark-300 flex items-center justify-center px-4">
+        <div className="flex flex-col items-center gap-4 page-enter">
+          <div className="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center">
+            <CheckCircle2 size={32} className="text-green-400" />
+          </div>
+          <p className="text-ink-100 font-semibold text-lg">Bem-vindo!</p>
+          <p className="text-ink-400 text-sm">Redirecionando...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-dark-300 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-dark-300 flex items-center justify-center px-4 page-enter">
       
       <div className="fixed inset-0 z-0 pointer-events-none">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-500/5 rounded-full blur-[150px]" />
