@@ -1,7 +1,5 @@
-
-
 import { NextResponse } from 'next/server';
-import { createServerClient } from '@/lib/supabase-server';
+import { createServerClient as _createServerClient } from '@supabase/ssr';
 import { signToken } from '@/lib/cryptoUtils';
 import { loginFilial, loginFiliado } from '@/lib/services/authService';
 
@@ -10,8 +8,30 @@ const COOKIE_OPTIONS = {
   secure: process.env.NODE_ENV === 'production',
   sameSite: 'lax',
   path: '/',
-  maxAge: 7 * 24 * 60 * 60, // 7 dias
+  maxAge: 7 * 24 * 60 * 60,
 };
+
+/**
+ * Cria um cliente Supabase para Route Handlers.
+ * Lê cookies do request e coleta os cookies que o Supabase
+ * quer gravar para aplicarmos manualmente no NextResponse.
+ */
+function makeSupabaseForRoute(request, cookieCollector) {
+  return _createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach((c) => cookieCollector.push(c));
+        },
+      },
+    }
+  );
+}
 
 export async function POST(request) {
   try {
@@ -25,13 +45,16 @@ export async function POST(request) {
       );
     }
 
+    /* ── Filial (Supabase Auth) ─────────────────────────────── */
     if (tipo === 'filial') {
       const { email, senha } = body;
-      if (!email || !senha) {
+      if (!email || !senha)
         return NextResponse.json({ erro: 'email e senha obrigatórios' }, { status: 400 });
-      }
 
-      const supabase = await createServerClient();
+      // Cria cliente que coleta os cookies de sessão do Supabase
+      const supabaseCookies = [];
+      const supabase = makeSupabaseForRoute(request, supabaseCookies);
+
       const resultado = await loginFilial(supabase, email, senha);
 
       const response = NextResponse.json({
@@ -40,24 +63,29 @@ export async function POST(request) {
         usuario: resultado.usuario,
       });
 
+      // Aplica os cookies de sessão do Supabase no response
+      supabaseCookies.forEach(({ name, value, options }) =>
+        response.cookies.set(name, value, { ...options, ...COOKIE_OPTIONS })
+      );
+
       return response;
     }
 
+    /* ── Filiado (JWT próprio) ──────────────────────────────── */
     if (tipo === 'filiado') {
       const { telefone, senha } = body;
-      if (!telefone || !senha) {
+      if (!telefone || !senha)
         return NextResponse.json({ erro: 'telefone e senha obrigatórios' }, { status: 400 });
-      }
 
       const resultado = await loginFiliado(telefone, senha);
 
       const token = await signToken(
         {
-          sub: resultado.usuario.id,
-          telefone: resultado.usuario.telefone,
+          sub:       resultado.usuario.id,
+          telefone:  resultado.usuario.telefone,
           filial_id: resultado.usuario.filial_id,
-          nome: resultado.usuario.nome,
-          tipo: 'filiado',
+          nome:      resultado.usuario.nome,
+          tipo:      'filiado',
         },
         '7d'
       );
@@ -73,6 +101,7 @@ export async function POST(request) {
       return response;
     }
   } catch (err) {
+    console.error('[POST /api/auth/login]', err.message);
     return NextResponse.json({ erro: err.message }, { status: 401 });
   }
 }
