@@ -11,6 +11,13 @@ export const metadata = {
   description:
     "Promovendo o Kickboxing como esporte, educação e inclusão social na Bahia.",
   keywords: ["kickboxing", "federação", "bahia", "esporte", "inclusão social", "FBK"],
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+    ],
+    shortcut: '/favicon.svg',
+    apple: '/favicon.svg',
+  },
 };
 
 export const viewport = {

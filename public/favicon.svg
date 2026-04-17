@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#1a1a2e"/>
+      <stop offset="100%" stop-color="#0a0a0f"/>
+    </radialGradient>
+    <linearGradient id="red" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff4444"/>
+      <stop offset="100%" stop-color="#dc2626"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Fundo circular -->
+  <circle cx="16" cy="16" r="15.5" fill="url(#bg)"/>
+  <circle cx="16" cy="16" r="15.5" fill="none" stroke="#d4a017" stroke-width="1.2"/>
+
+  <!-- Faixa topo -->
+  <path d="M 3 11 A 14 14 0 0 1 29 11" fill="none" stroke="#dc2626" stroke-width="5"/>
+
+  <!-- FBK -->
+  <text x="4" y="23" font-family="Arial Black, sans-serif" font-size="13" font-weight="900" fill="url(#red)">F</text>
+  <text x="11.5" y="23" font-family="Arial Black, sans-serif" font-size="13" font-weight="900" fill="white">B</text>
+  <text x="20" y="23" font-family="Arial Black, sans-serif" font-size="13" font-weight="900" fill="url(#red)">K</text>
+
+  <!-- Barra dourada -->
+  <rect x="4" y="24" width="24" height="1.2" rx="0.6" fill="#d4a017" opacity="0.8"/>
+
+  <!-- KICKBOXING (mini) -->
+  <rect x="4" y="25.5" width="24" height="5" rx="1" fill="#dc2626"/>
+  <text x="16" y="29.5" font-family="Arial, sans-serif" font-size="3.2" font-weight="700"
+        fill="white" text-anchor="middle" letter-spacing="0.8">KICKBOXING</text>
+</svg>

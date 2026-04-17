@@ -1,0 +1,130 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <defs>
+    <radialGradient id="bgGrad" cx="50%" cy="40%" r="55%">
+      <stop offset="0%" stop-color="#1a1a2e"/>
+      <stop offset="100%" stop-color="#0a0a0f"/>
+    </radialGradient>
+    <radialGradient id="outerRing" cx="50%" cy="50%" r="50%">
+      <stop offset="85%" stop-color="transparent"/>
+      <stop offset="100%" stop-color="#d4a017" stop-opacity="0.6"/>
+    </radialGradient>
+    <linearGradient id="fGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff6b6b"/>
+      <stop offset="100%" stop-color="#dc2626"/>
+    </linearGradient>
+    <linearGradient id="bGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#e0e0e0"/>
+    </linearGradient>
+    <linearGradient id="kGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff6b6b"/>
+      <stop offset="100%" stop-color="#dc2626"/>
+    </linearGradient>
+    <linearGradient id="bannerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#7f1d1d"/>
+      <stop offset="50%" stop-color="#dc2626"/>
+      <stop offset="100%" stop-color="#7f1d1d"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+    <filter id="textGlow">
+      <feGaussianBlur stdDeviation="1.5" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+    <clipPath id="circleClip">
+      <circle cx="100" cy="100" r="90"/>
+    </clipPath>
+  </defs>
+
+  <!-- Sombra externa -->
+  <circle cx="100" cy="102" r="92" fill="black" opacity="0.4"/>
+
+  <!-- Anel externo dourado -->
+  <circle cx="100" cy="100" r="94" fill="none" stroke="#d4a017" stroke-width="3" opacity="0.8"/>
+  <circle cx="100" cy="100" r="90" fill="none" stroke="#d4a017" stroke-width="1" opacity="0.4"/>
+
+  <!-- Fundo principal -->
+  <circle cx="100" cy="100" r="89" fill="url(#bgGrad)"/>
+
+  <!-- Anel interno decorativo -->
+  <circle cx="100" cy="100" r="85" fill="none" stroke="#d4a017" stroke-width="0.8" opacity="0.3"/>
+  <circle cx="100" cy="100" r="82" fill="none" stroke="#ffffff" stroke-width="0.4" opacity="0.1"/>
+
+  <!-- Faixa vermelha superior (arco) -->
+  <path d="M 22 68 A 80 80 0 0 1 178 68" fill="none" stroke="url(#bannerGrad)" stroke-width="18" stroke-linecap="round"/>
+
+  <!-- Texto "FEDERAÇÃO BAIANA DE" curvado no arco -->
+  <path id="topArc" d="M 30 72 A 72 72 0 0 1 170 72" fill="none"/>
+  <text font-family="Arial, sans-serif" font-size="8.5" font-weight="700" fill="white" letter-spacing="1.8">
+    <textPath href="#topArc" startOffset="50%" text-anchor="middle">FEDERAÇÃO BAIANA DE</textPath>
+  </text>
+
+  <!-- Estrelas decorativas -->
+  <!-- Estrela esquerda -->
+  <g transform="translate(34,88)" opacity="0.9">
+    <polygon points="0,-7 1.6,-2.2 6.7,-2.2 2.7,0.8 4.1,5.7 0,3 -4.1,5.7 -2.7,0.8 -6.7,-2.2 -1.6,-2.2" fill="#ffffff"/>
+  </g>
+  <!-- Estrela direita -->
+  <g transform="translate(166,88)" opacity="0.9">
+    <polygon points="0,-7 1.6,-2.2 6.7,-2.2 2.7,0.8 4.1,5.7 0,3 -4.1,5.7 -2.7,0.8 -6.7,-2.2 -1.6,-2.2" fill="#ffffff"/>
+  </g>
+
+  <!-- Silhuetas dos lutadores (simplificadas e estilizadas) -->
+  <!-- Lutador esquerdo (chutando) -->
+  <g transform="translate(56,105)" opacity="0.18" fill="white">
+    <!-- Corpo -->
+    <ellipse cx="0" cy="-15" rx="7" ry="10"/>
+    <!-- Cabeça -->
+    <circle cx="0" cy="-28" r="6"/>
+    <!-- Braço esquerdo levantado -->
+    <line x1="0" y1="-20" x2="-14" y2="-32" stroke="white" stroke-width="5" stroke-linecap="round"/>
+    <!-- Braço direito -->
+    <line x1="0" y1="-18" x2="10" y2="-10" stroke="white" stroke-width="5" stroke-linecap="round"/>
+    <!-- Perna esquerda -->
+    <line x1="-3" y1="-5" x2="-6" y2="14" stroke="white" stroke-width="6" stroke-linecap="round"/>
+    <!-- Perna direita (chute) -->
+    <line x1="3" y1="-5" x2="22" y2="5" stroke="white" stroke-width="6" stroke-linecap="round"/>
+  </g>
+
+  <!-- Lutador direito (defendendo) -->
+  <g transform="translate(144,105)" opacity="0.18" fill="white">
+    <ellipse cx="0" cy="-15" rx="7" ry="10"/>
+    <circle cx="0" cy="-28" r="6"/>
+    <line x1="0" y1="-20" x2="14" y2="-30" stroke="white" stroke-width="5" stroke-linecap="round"/>
+    <line x1="0" y1="-18" x2="-10" y2="-10" stroke="white" stroke-width="5" stroke-linecap="round"/>
+    <line x1="3" y1="-5" x2="6" y2="14" stroke="white" stroke-width="6" stroke-linecap="round"/>
+    <line x1="-3" y1="-5" x2="-12" y2="12" stroke="white" stroke-width="6" stroke-linecap="round"/>
+  </g>
+
+  <!-- Letras FBK grandes -->
+  <!-- F -->
+  <text x="24" y="128" font-family="Arial Black, sans-serif" font-size="72" font-weight="900"
+        fill="url(#fGrad)" filter="url(#textGlow)" letter-spacing="-2">F</text>
+
+  <!-- B -->
+  <text x="68" y="128" font-family="Arial Black, sans-serif" font-size="72" font-weight="900"
+        fill="url(#bGrad)" filter="url(#textGlow)" letter-spacing="-2">B</text>
+
+  <!-- K -->
+  <text x="119" y="128" font-family="Arial Black, sans-serif" font-size="72" font-weight="900"
+        fill="url(#kGrad)" filter="url(#textGlow)" letter-spacing="-2">K</text>
+
+  <!-- Linha separadora -->
+  <rect x="28" y="133" width="144" height="2" rx="1" fill="#d4a017" opacity="0.6"/>
+
+  <!-- Banner inferior "KICKBOXING" -->
+  <path d="M 18 152 Q 100 148 182 152 L 178 168 Q 100 172 22 168 Z" fill="url(#bannerGrad)"/>
+
+  <!-- Estrela central inferior -->
+  <g transform="translate(100,159)" opacity="0.95">
+    <polygon points="0,-6 1.4,-1.9 5.7,-1.9 2.3,0.7 3.5,4.9 0,2.6 -3.5,4.9 -2.3,0.7 -5.7,-1.9 -1.4,-1.9" fill="#fbbf24"/>
+  </g>
+
+  <text x="100" y="164" font-family="Arial, sans-serif" font-size="9.5" font-weight="700"
+        fill="white" text-anchor="middle" letter-spacing="3.5">KICKBOXING</text>
+
+  <!-- Borda final -->
+  <circle cx="100" cy="100" r="94" fill="none" stroke="#d4a017" stroke-width="1.5" opacity="0.5"/>
+</svg>

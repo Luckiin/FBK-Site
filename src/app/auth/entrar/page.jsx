@@ -3,7 +3,8 @@
 import { useEffect, useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { Shield, Mail, Lock, Phone, ArrowRight, Eye, EyeOff, Building2, User, CheckCircle2, ChevronLeft } from 'lucide-react';
+import Image from 'next/image';
+import { Mail, Lock, Phone, ArrowRight, Eye, EyeOff, Building2, User, CheckCircle2, ChevronLeft } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { usePageTransition } from '@/components/TransitionWrapper';
 
@@ -71,8 +72,8 @@ function EntrarForm() {
 
         <div className="relative z-10">
           <Link href="/" className="flex items-center gap-3 group mb-16">
-            <div className="w-10 h-10 bg-gradient-to-br from-brand-400 to-brand-700 rounded-xl flex items-center justify-center shadow-lg shadow-brand-500/30 group-hover:scale-105 transition-transform">
-              <Shield size={20} className="text-white" />
+            <div className="relative w-11 h-11 group-hover:scale-105 transition-transform">
+              <Image src="/logo.svg" alt="FBK" fill className="object-contain" />
             </div>
             <div>
               <span className="text-lg font-black text-white">FBK</span>
@@ -110,8 +111,8 @@ function EntrarForm() {
           {/* Mobile logo */}
           <div className="flex items-center justify-center mb-8 lg:hidden">
             <Link href="/" className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-brand-400 to-brand-700 rounded-xl flex items-center justify-center shadow-lg">
-                <Shield size={20} className="text-white" />
+              <div className="relative w-11 h-11">
+                <Image src="/logo.svg" alt="FBK" fill className="object-contain" />
               </div>
               <div>
                 <span className="text-lg font-black text-white">FBK</span>

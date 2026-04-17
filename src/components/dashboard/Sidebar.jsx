@@ -1,12 +1,13 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { usePageTransition } from '@/components/TransitionWrapper';
 import {
   LayoutDashboard, Users, Trophy, CalendarDays,
-  FileText, LogOut, Shield, ChevronRight, X,
+  FileText, LogOut, ChevronRight, X,
   Building2, UserCheck, ClipboardList, Newspaper,
 } from 'lucide-react';
 
@@ -72,8 +73,8 @@ export default function Sidebar({ open, onClose }) {
         {/* Logo */}
         <div className="flex items-center justify-between p-5 border-b border-white/[0.05] relative">
           <Link href="/" className="flex items-center gap-2.5 group" onClick={onClose}>
-            <div className={`w-9 h-9 bg-gradient-to-br ${accentColor} rounded-xl flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform`}>
-              <Shield size={17} className="text-white" />
+            <div className="relative w-9 h-9 group-hover:scale-105 transition-transform shrink-0">
+              <Image src="/logo.svg" alt="FBK" fill className="object-contain drop-shadow-md" />
             </div>
             <div>
               <span className="text-base font-black text-ink-100 tracking-tight">FBK</span>

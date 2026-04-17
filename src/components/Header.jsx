@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Menu, X, Shield, ChevronRight } from "lucide-react";
+import { Menu, X, ChevronRight } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { APP_NAME, NAV_LINKS } from "@/lib/constants";
 
@@ -42,11 +43,8 @@ export default function Header() {
 
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="relative">
-              <div className="w-9 h-9 bg-gradient-to-br from-brand-400 to-brand-700 rounded-xl flex items-center justify-center shadow-lg shadow-brand-500/40 group-hover:shadow-brand-500/60 group-hover:scale-105 transition-all duration-300">
-                <Shield size={18} className="text-white" />
-              </div>
-              <div className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-gold-400 rounded-full ring-2 ring-dark-400" />
+            <div className="relative w-10 h-10 group-hover:scale-105 transition-transform duration-300 drop-shadow-lg">
+              <Image src="/logo.svg" alt="FBK Logo" fill className="object-contain" priority />
             </div>
             <div>
               <span className="text-lg font-black text-white tracking-tight leading-none">{APP_NAME}</span>
