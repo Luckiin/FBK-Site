@@ -6,7 +6,7 @@ import { useState, useEffect, useCallback } from 'react';
 import {
   Users, Plus, Search, Trash2, X, Save, UserCheck,
   Phone, CreditCard, ChevronDown, ChevronUp, Mail,
-  Loader2, User, Calendar, AlertCircle, Key,
+  Loader2, User, Calendar, AlertCircle, Key, Pencil
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { validateCPF } from '@/lib/utils';
@@ -484,7 +484,7 @@ function LinhaAtleta({ atleta, onDeletar, onEditar }) {
                   onClick={() => onEditar(atleta)}
                   className="flex items-center gap-2 text-sm text-gold-400 hover:text-gold-300 transition font-medium"
                 >
-                  <Save size={14} /> Editar dados
+                  <Pencil size={14} /> Editar dados
                 </button>
                 <div className="w-px h-3 bg-white/10" />
                 <button

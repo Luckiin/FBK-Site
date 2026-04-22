@@ -3,7 +3,7 @@
 
 
 import { useState, useEffect } from 'react';
-import { Building2, Users, Phone, Mail, CheckCircle, Clock, XCircle, Edit2, Save, X } from 'lucide-react';
+import { Building2, Users, Phone, Mail, CheckCircle, Clock, XCircle, Pencil, Save, X } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
 const STATUS_CONFIG = {
@@ -134,7 +134,7 @@ export default function FilialPage() {
               onClick={iniciarEdicao}
               className="btn-outline flex items-center gap-2 text-sm"
             >
-              <Edit2 size={14} /> Editar
+              <Pencil size={14} /> Editar
             </button>
           ) : (
             <div className="flex gap-2">

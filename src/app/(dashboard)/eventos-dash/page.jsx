@@ -434,7 +434,14 @@ export default function DashboardEventosPage() {
                 disabled={saving}
                 className="flex-[2] px-6 py-4 rounded-2xl bg-brand-500 text-white font-black uppercase tracking-widest hover:bg-brand-600 transition shadow-xl shadow-brand-500/20 flex items-center justify-center gap-2"
               >
-                {saving ? <Loader2 className="animate-spin" size={18} /> : (editingEvent ? "Salvar Alterações" : "Criar Evento")}
+                {saving ? (
+                  <Loader2 className="animate-spin" size={18} />
+                ) : (
+                  <>
+                    <Save size={18} />
+                    {editingEvent ? "Salvar Alterações" : "Criar Evento"}
+                  </>
+                )}
               </button>
             </div>
           </div>
