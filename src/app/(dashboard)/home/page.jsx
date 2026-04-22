@@ -21,6 +21,27 @@ function formatDate(iso) {
   return `${d}/${m}/${y}`;
 }
 
+function formatPhone(value) {
+  if (!value) return '—';
+  const digits = String(value).replace(/\D/g, '');
+  if (digits.length <= 10) {
+    return digits
+      .replace(/(\d{2})(\d)/, '($1) $2')
+      .replace(/(\d{4})(\d)/, '$1-$2')
+      .replace(/(-\d{4})\d+?$/, '$1');
+  }
+
+  return digits
+    .replace(/(\d{2})(\d)/, '($1) $2')
+    .replace(/(\d{5})(\d)/, '$1-$2')
+    .replace(/(-\d{4})\d+?$/, '$1');
+}
+
+function normalizarModalidades(modalidades = []) {
+  if (!Array.isArray(modalidades)) return [];
+  return modalidades.filter((item) => item?.modalidade || item?.graduacao || item?.data_graduacao);
+}
+
 function PageLoader() {
   return (
     <div className="flex items-center justify-center min-h-[70vh]">
@@ -593,13 +614,202 @@ function AtletaDashboard({ usuario }) {
 /* ══════════════════════════════════════════════════════════════
    MAIN
 ══════════════════════════════════════════════════════════════ */
+function AtletaDashboardV2({ usuario }) {
+  const nome = usuario?.nome ?? 'Atleta';
+  const iniciais = nome.split(' ').filter(Boolean).slice(0, 2).map((p) => p[0]).join('').toUpperCase();
+  const cpfMask = usuario?.cpf ? usuario.cpf.replace(/(\d{3})\.\d{3}\.(\d{3})-(\d{2})/, '$1.***.***-$3') : 'â€”';
+  const regNum = usuario?.id ? `FBK-${usuario.id.slice(0, 8).toUpperCase()}` : 'â€”';
+  const modalidades = normalizarModalidades(usuario?.modalidades);
+  const modalidadePrincipal = modalidades[0] ?? null;
+  const graduacaoPrincipal = modalidadePrincipal?.graduacao ?? usuario?.faixa ?? null;
+  const hour = new Date().getHours();
+  const saudacao = hour < 12 ? 'Bom dia' : hour < 18 ? 'Boa tarde' : 'Boa noite';
+  const cidadeUf = usuario?.cidade || usuario?.uf
+    ? `${usuario?.cidade ?? 'â€”'}${usuario?.uf ? ` / ${usuario.uf}` : ''}`
+    : 'â€”';
+
+  return (
+    <main className="p-6 lg:p-10 space-y-8 w-full">
+      <div className="animate-fade-in-up flex items-center justify-between gap-4">
+        <div>
+          <p className="text-xs text-brand-400 font-bold uppercase tracking-[0.2em]">{saudacao},</p>
+          <h1 className="text-3xl sm:text-4xl font-black text-ink-100 mt-1 leading-tight">{nome}</h1>
+          <p className="text-sm text-ink-600 mt-1.5">Ãrea do Atleta Â· FederaÃ§Ã£o Baiana de Kickboxing</p>
+        </div>
+        <div className="animate-fade-in-scale delay-200 shrink-0 flex items-center gap-2 bg-green-500/10 border border-green-500/25 rounded-full px-4 py-2">
+          <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+          <span className="text-sm font-bold text-green-400">Ativo</span>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
+        <div className="animate-fade-in-up delay-100 xl:col-span-2">
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-ink-600 mb-3 flex items-center gap-2">
+            <CreditCard size={11} /> Carteirinha Digital
+          </p>
+          <div
+            className="relative overflow-hidden rounded-2xl group hover:-translate-y-1.5 transition-all duration-400 hover:shadow-2xl hover:shadow-blue-900/50"
+            style={{
+              background: 'linear-gradient(135deg, #080f1e 0%, #0d1a35 55%, #121e40 100%)',
+              border: '1px solid rgba(26,86,219,0.35)',
+              boxShadow: '0 16px 50px rgba(5,10,20,0.7), 0 0 0 1px rgba(255,255,255,0.04) inset',
+              minHeight: '180px',
+            }}
+          >
+            <div className="h-[3px] tricolor-bar" />
+            <div className="absolute inset-0 bg-arena-grid opacity-[0.12] pointer-events-none" />
+            <div className="relative z-10 p-6">
+              <div className="flex items-start justify-between mb-7">
+                <div className="flex items-center gap-3">
+                  <img src="/logo.png" alt="FBK" className="w-10 h-10 rounded-full object-cover ring-2 ring-white/10" loading="eager" />
+                  <div>
+                    <p className="text-[8px] font-black uppercase tracking-[0.25em] text-blue-400/80">FederaÃ§Ã£o Baiana de</p>
+                    <p className="text-base font-black text-ink-100 tracking-wider leading-none mt-0.5">KICKBOXING</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1.5 bg-green-500/10 border border-green-500/20 rounded-full px-2.5 py-1">
+                  <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" />
+                  <span className="text-[9px] font-bold text-green-400 uppercase tracking-wider">Ativo</span>
+                </div>
+              </div>
+
+              <div className="flex items-end gap-5">
+                <div className="w-16 h-16 rounded-2xl bg-blue-900/50 border border-blue-500/20 flex items-center justify-center shrink-0 select-none">
+                  <span className="text-2xl font-black text-blue-300">{iniciais}</span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-lg font-black text-ink-100 truncate mb-3">{nome}</p>
+                  <div className="grid grid-cols-2 gap-x-6 gap-y-2">
+                    {[
+                      { label: 'Registro', value: regNum },
+                      { label: 'CPF', value: cpfMask },
+                      { label: 'Filial', value: usuario?.filial_nome ?? 'â€”' },
+                      { label: 'GraduaÃ§Ã£o', value: graduacaoPrincipal ?? 'NÃ£o informada' },
+                    ].map(({ label, value }) => (
+                      <div key={label}>
+                        <p className="text-[8px] text-blue-400/60 uppercase tracking-wider mb-0.5">{label}</p>
+                        <p className="text-xs font-mono font-bold text-ink-300 truncate">{value}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="w-14 h-14 bg-white/[0.04] border border-white/[0.07] rounded-xl flex flex-col items-center justify-center gap-1 shrink-0">
+                  <QrCode size={22} className="text-ink-700" />
+                  <p className="text-[7px] text-ink-700 font-bold uppercase tracking-wider">QR</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="xl:col-span-1 flex flex-col gap-4">
+          <div className="animate-fade-in-up delay-200 flex-1 bg-dark-200 border border-dark-50/60 rounded-2xl p-5 stat-stripe-gold">
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-ink-600 mb-4 flex items-center gap-1.5">
+              <Medal size={11} /> GraduaÃ§Ã£o principal
+            </p>
+            <p className="text-[11px] uppercase tracking-[0.18em] text-gold-400 font-bold mb-2">
+              {modalidadePrincipal?.modalidade || 'Sem modalidade principal'}
+            </p>
+            <p className="text-lg font-bold text-ink-100">{graduacaoPrincipal || 'NÃ£o informada'}</p>
+            <p className="text-xs text-ink-600 mt-2">
+              {modalidadePrincipal?.data_graduacao ? `Graduado em ${formatDate(modalidadePrincipal.data_graduacao)}` : 'Sem data de graduaÃ§Ã£o'}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="animate-fade-in-up delay-300 bg-dark-200 border border-dark-50/60 rounded-2xl p-4 stat-stripe-blue">
+              <p className="text-[9px] font-black uppercase tracking-[0.2em] text-ink-600 mb-3 flex items-center gap-1.5">
+                <Building2 size={10} /> Filial
+              </p>
+              <div className="flex items-start gap-1.5">
+                <MapPin size={12} className="text-blue-400 mt-0.5 shrink-0" />
+                <p className="text-sm font-bold text-ink-100 leading-snug">{usuario?.filial_nome ?? 'N/A'}</p>
+              </div>
+            </div>
+            <div className="animate-fade-in-up delay-400 bg-dark-200 border border-dark-50/60 rounded-2xl p-4 stat-stripe-green">
+              <p className="text-[9px] font-black uppercase tracking-[0.2em] text-ink-600 mb-3 flex items-center gap-1.5">
+                <ShieldCheck size={10} /> Status
+              </p>
+              <div className="flex items-center gap-2">
+                <CheckCircle2 size={18} className="text-green-400" />
+                <div>
+                  <p className="text-sm font-bold text-green-400">Ativo</p>
+                  <p className="text-[9px] text-ink-600">FiliaÃ§Ã£o regular</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
+        <div className="animate-fade-in-up delay-500 xl:col-span-2 bg-dark-200 border border-dark-50/60 rounded-2xl p-5">
+          <SectionTitle icon={UserCheck} label="Dados do Atleta" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-ink-600 mb-1">E-mail</p>
+              <p className="text-ink-100 font-medium">{usuario?.email || 'â€”'}</p>
+            </div>
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-ink-600 mb-1">Telefone</p>
+              <p className="text-ink-100 font-medium">{formatPhone(usuario?.telefone)}</p>
+            </div>
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-ink-600 mb-1">Professor</p>
+              <p className="text-ink-100 font-medium">{usuario?.nome_professor || 'â€”'}</p>
+            </div>
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-ink-600 mb-1">Nascimento</p>
+              <p className="text-ink-100 font-medium">{usuario?.data_nascimento ? formatDate(usuario.data_nascimento) : 'â€”'}</p>
+            </div>
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-ink-600 mb-1">Cidade / UF</p>
+              <p className="text-ink-100 font-medium">{cidadeUf}</p>
+            </div>
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-ink-600 mb-1">Endereco</p>
+              <p className="text-ink-100 font-medium">{usuario?.endereco || 'â€”'}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="animate-fade-in-up delay-550 bg-dark-200 border border-dark-50/60 rounded-2xl p-5">
+          <SectionTitle icon={GraduationCap} label="Modalidades" />
+          {modalidades.length === 0 ? (
+            <p className="text-sm text-ink-600">Nenhuma modalidade cadastrada.</p>
+          ) : (
+            <div className="space-y-3">
+              {modalidades.map((item, index) => (
+                <div key={`${item.modalidade}-${item.graduacao}-${index}`} className="rounded-xl border border-cobalt-500/15 bg-cobalt-500/5 p-3">
+                  <p className="text-[10px] uppercase tracking-[0.18em] text-cobalt-400 font-bold mb-1">{item.modalidade || 'Modalidade'}</p>
+                  <p className="text-sm text-ink-100 font-semibold">{item.graduacao || 'GraduaÃ§Ã£o nÃ£o informada'}</p>
+                  <p className="text-xs text-ink-500 mt-1">
+                    {item.data_graduacao ? `Graduado em ${formatDate(item.data_graduacao)}` : 'Sem data de graduaÃ§Ã£o'}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <EmptySection icon={GraduationCap} text="Nenhum exame disponÃ­vel." delay={500} />
+        <EmptySection icon={CalendarDays} text="Sem inscriÃ§Ãµes em eventos." delay={550} />
+        <EmptySection icon={Award} text="Nenhum certificado emitido." delay={600} />
+        <EmptySection icon={Trophy} text="Sem histÃ³rico competitivo ainda." delay={650} />
+      </div>
+    </main>
+  );
+}
+
 export default function DashboardHomePage() {
   const { usuario, tipo, carregando } = useAuth();
   if (carregando) return <PageLoader />;
   
   if (tipo === 'admin') return <AdminDashboard usuario={usuario} />;
   if (tipo === 'filial') return <FilialDashboard usuario={usuario} />;
-  if (tipo === 'atleta') return <AtletaDashboard usuario={usuario} />;
+  if (tipo === 'atleta') return <AtletaDashboardV2 usuario={usuario} />;
 
   return (
     <main className="p-8 text-center">

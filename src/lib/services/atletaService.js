@@ -18,10 +18,7 @@ function normalizarModalidades(modalidades = []) {
 
 function validarModalidades(modalidades) {
   const lista = normalizarModalidades(modalidades);
-
-  if (lista.length === 0) {
-    throw new Error('Informe ao menos uma modalidade com graduacao e data');
-  }
+  if (lista.length === 0) return [];
 
   for (const item of lista) {
     if (!item.modalidade || !item.graduacao || !item.data_graduacao) {

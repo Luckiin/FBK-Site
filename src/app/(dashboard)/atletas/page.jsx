@@ -173,7 +173,7 @@ function CampoModalidades({ modalidades, onChange, erro }) {
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <label className="block text-sm font-medium text-ink-300">
-          Modalidades <span className="text-brand-400">*</span>
+          Modalidades
         </label>
         <button
           type="button"
@@ -292,8 +292,8 @@ function FormAtleta({ modo, atleta = null, onSalvo, onCancelar }) {
     const lista = normalizarModalidades(form.modalidades);
 
     if (lista.length === 0) {
-      setModalidadesErro('Cadastre ao menos uma modalidade');
-      return false;
+      setModalidadesErro('');
+      return true;
     }
 
     const incompleta = lista.some((item) => !item.modalidade || !item.graduacao || !item.data_graduacao);

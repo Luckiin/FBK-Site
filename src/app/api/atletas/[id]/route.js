@@ -65,8 +65,25 @@ export async function PATCH(request, { params }) {
     const body = await request.json();
 
     if (acesso.tipo === 'atleta') {
-      const { nome, email, telefone } = body;
-      const atleta = await atualizarAtleta(id, acesso.filialId, { nome, email, telefone }, acesso.profile);
+      const {
+        nome,
+        email,
+        telefone,
+        sexo,
+        data_nascimento,
+        uf,
+        cidade,
+        endereco,
+        nome_professor,
+        modalidades,
+      } = body;
+
+      const atleta = await atualizarAtleta(
+        id,
+        acesso.filialId,
+        { nome, email, telefone, sexo, data_nascimento, uf, cidade, endereco, nome_professor, modalidades },
+        acesso.profile
+      );
       return NextResponse.json({ atleta });
     }
 
