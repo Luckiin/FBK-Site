@@ -82,7 +82,7 @@ export default function Sidebar({ open, onClose }) {
         <div className="flex items-center justify-between p-5 border-b border-white/[0.05] relative">
           <Link href="/" className="flex items-center gap-2.5 group" onClick={onClose}>
             <div className="relative w-9 h-9 group-hover:scale-105 transition-transform shrink-0">
-              <Image src="/logo.png" alt="FBK" fill className="object-contain drop-shadow-md" />
+              <Image src="/logo.png" alt="FBK" fill sizes="36px" className="object-contain drop-shadow-md" priority loading="eager" />
             </div>
             <div>
               <span className="text-base font-black text-ink-100 tracking-tight">FBK</span>

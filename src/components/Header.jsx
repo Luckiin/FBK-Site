@@ -44,7 +44,7 @@ export default function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group">
             <div className="relative w-10 h-10 group-hover:scale-105 transition-transform duration-300 drop-shadow-lg">
-              <Image src="/logo.png" alt="FBK Logo" fill className="object-contain" priority />
+              <Image src="/logo.png" alt="FBK Logo" fill sizes="(max-width: 768px) 100vw, 33vw" className="object-contain" priority loading="eager" />
             </div>
             <div>
               <span className="text-lg font-black text-white tracking-tight leading-none">{APP_NAME}</span>

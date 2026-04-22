@@ -98,7 +98,7 @@ function FormNovoFiliado({ onSalvo, onCancelar }) {
             <strong className="text-gold-400 font-mono">{resultado.senhaTemporaria}</strong>
           </p>
           <p className="text-xs text-ink-500 mt-2">
-            A senha foi enviada por WhatsApp ao filiado. Oriente-o a alterá-la no primeiro acesso.
+            A senha foi enviada por e-mail ao filiado. Oriente-o a alterá-la no primeiro acesso.
           </p>
         </div>
         <div className="flex gap-3">
@@ -109,7 +109,7 @@ function FormNovoFiliado({ onSalvo, onCancelar }) {
     );
   }
 
-  const podeEnviar = nome.trim() && cpfNumeros(cpf).length === 11 && !cpfErro && telefone.length >= 10 && !loading;
+  const podeEnviar = nome.trim() && cpfNumeros(cpf).length === 11 && !cpfErro && telefone.length >= 10 && email.trim() && !loading;
 
   return (
     <div className="card p-6">
@@ -225,11 +225,12 @@ function FormNovoFiliado({ onSalvo, onCancelar }) {
         
         <div>
           <label className="block text-sm font-medium text-ink-300 mb-1.5">
-            Email <span className="text-ink-500 font-normal">(opcional)</span>
+            Email <span className="text-brand-400">*</span>
           </label>
           <div className="relative">
             <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-500" />
             <input
+              required
               type="email"
               className="input-field pl-10"
               placeholder="email@exemplo.com"

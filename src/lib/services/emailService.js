@@ -294,3 +294,57 @@ export async function sendNovaFilialAdmin({ nomeFilial, emailFilial }) {
 
   return sendEmail(adminEmail, subject, body, html);
 }
+// ─── Boas-vindas para o filiado ─────────────────────────────────────────────
+export async function sendBoasVindasFiliado({ to, nome, telefone, senhaTemporaria }) {
+  const subject = 'Bem-vindo(a) à FBK — Seus dados de acesso 🥋';
+  const loginUrl = `${APP_URL}/auth/entrar`;
+
+  const body =
+    `Olá, ${nome}!\n\n` +
+    `Seu cadastro na Federação Baiana de Kickboxing foi realizado com sucesso.\n\n` +
+    `Estes são seus dados para o primeiro acesso:\n` +
+    `📲 Login: ${telefone}\n` +
+    `🔑 Senha: ${senhaTemporaria}\n\n` +
+    `Acesse o portal e altere sua senha no primeiro acesso:\n${loginUrl}\n\n` +
+    `Atenciosamente,\nEquipe FBK`;
+
+  const html = baseTemplate({
+    titulo: 'Bem-vindo(a) à FBK! 🥋',
+    corTitulo: '#1a1a2e',
+    conteudo: `
+      <p style="margin:0 0 12px;color:#333;">Olá, <strong>${nome}</strong>!</p>
+      <p style="margin:0 0 20px;color:#555;line-height:1.6;">
+        Seu cadastro como filiado na <strong>Federação Baiana de Kickboxing</strong> foi realizado com sucesso.
+        Agora você tem acesso ao nosso portal exclusivo.
+      </p>
+      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:24px;margin:0 0 24px;">
+        <table width="100%" cellpadding="0" cellspacing="0">
+          <tr>
+            <td style="padding-bottom:12px;">
+              <span style="font-size:12px;color:#64748b;text-transform:uppercase;letter-spacing:1px;font-weight:700;">Login (Telefone)</span><br/>
+              <strong style="font-size:18px;color:#1e293b;">${telefone}</strong>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span style="font-size:12px;color:#64748b;text-transform:uppercase;letter-spacing:1px;font-weight:700;">Senha Temporária</span><br/>
+              <strong style="font-size:18px;color:#dc2626;font-family:monospace;">${senhaTemporaria}</strong>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <p style="text-align:center;margin:0 0 24px;">
+        <a href="${loginUrl}"
+           style="display:inline-block;padding:14px 32px;background:#1a1a2e;color:#fff;
+                  text-decoration:none;border-radius:8px;font-weight:700;font-size:15px;">
+          Acessar meu portal
+        </a>
+      </p>
+      <p style="margin:0;padding:12px 16px;background:#fffbeb;border-left:3px solid #d97706;border-radius:4px;font-size:13px;color:#92400e;">
+        👉 <strong>Dica:</strong> Por segurança, altere sua senha no primeiro acesso.
+      </p>
+    `,
+  });
+
+  return sendEmail(to, subject, body, html);
+}

@@ -3,7 +3,7 @@
 import { createAdminClient } from '@/lib/supabase-server';
 import { hashSenha, gerarSenhaAleatoria } from '@/lib/cryptoUtils';
 import { validarCPF } from './cpfService';
-import { sendBoasVindas, sendNovoFiliado } from './whatsappService';
+import { sendBoasVindasFiliado } from './emailService';
 
 
 
@@ -75,6 +75,10 @@ export async function criarFiliado(filialId, dados) {
     throw new Error('Nome do filiado é obrigatório');
   }
 
+  if (!dados.email?.trim()) {
+    throw new Error('E-mail do filiado é obrigatório para o envio da senha');
+  }
+
   const { data: cpfExiste } = await supabase
     .from('filiados')
     .select('id')
@@ -111,9 +115,10 @@ export async function criarFiliado(filialId, dados) {
 
   if (error) throw new Error(`Erro ao criar filiado: ${error.message}`);
 
-  await sendBoasVindas({
-    telefone: dados.telefone,
+  await sendBoasVindasFiliado({
+    to: filiado.email,
     nome: filiado.nome,
+    telefone: filiado.telefone,
     senhaTemporaria,
   }).catch(console.error);
 

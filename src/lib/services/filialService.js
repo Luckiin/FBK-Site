@@ -72,14 +72,65 @@ export async function criarFilial({ nome, email, telefone, senha }) {
   const supabase = createAdminClient();
 
   const filialExistente = await buscarFilialPorEmail(email);
+
   if (filialExistente) {
-    throw new Error('Este email já está cadastrado');
+    // Email pendente ou aprovado — não pode re-cadastrar
+    if (filialExistente.status === 'pendente') {
+      throw new Error('Este email já está em análise. Aguarde o retorno da FBK.');
+    }
+    if (filialExistente.status === 'aprovado') {
+      throw new Error('Esta academia já está cadastrada e ativa. Acesse pelo login.');
+    }
+
+    // ── Re-cadastro após reprovação ───────────────────────────
+    if (filialExistente.auth_id) {
+      // Atualiza a senha no Supabase Auth
+      const { error: authError } = await supabase.auth.admin.updateUserById(
+        filialExistente.auth_id,
+        { password: senha }
+      );
+      if (authError) throw new Error(`Erro ao atualizar credenciais: ${authError.message}`);
+    } else {
+      // Caso raro: auth_id ausente — recria o usuário Auth
+      const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+        email,
+        password: senha,
+        email_confirm: true,
+      });
+      if (authError) throw new Error(`Erro ao recriar conta: ${authError.message}`);
+      await supabase.from('filiais').update({ auth_id: authData.user.id }).eq('id', filialExistente.id);
+    }
+
+    // Reseta o registro para pendente
+    const { data: filialAtualizada, error: updateError } = await supabase
+      .from('filiais')
+      .update({
+        nome,
+        telefone: telefone ?? filialExistente.telefone,
+        status: 'pendente',
+        motivo_reprovacao: null,
+      })
+      .eq('id', filialExistente.id)
+      .select()
+      .single();
+
+    if (updateError) throw new Error(`Erro ao reativar cadastro: ${updateError.message}`);
+
+    await sendFilialCadastroRecebido({ to: email, nome }).catch((err) =>
+      console.error('[FILIAL] Falha ao enviar email de confirmação para', email, ':', err.message)
+    );
+    await sendNovaFilialAdmin({ nomeFilial: nome, emailFilial: email }).catch((err) =>
+      console.error('[FILIAL] Falha ao enviar email de notificação para admin:', err.message)
+    );
+
+    return filialAtualizada;
   }
 
+  // ── Cadastro novo ─────────────────────────────────────────
   const { data: authData, error: authError } = await supabase.auth.admin.createUser({
     email,
     password: senha,
-    email_confirm: true, // Confirma automaticamente (sem email de verificação)
+    email_confirm: true,
   });
 
   if (authError) throw new Error(`Erro ao criar conta: ${authError.message}`);

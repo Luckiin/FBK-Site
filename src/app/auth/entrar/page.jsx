@@ -78,7 +78,7 @@ function EntrarForm() {
         <div className="relative z-10">
           <Link href="/" className="flex items-center gap-3 group mb-14">
             <div className="relative w-11 h-11 group-hover:scale-105 transition-transform">
-              <Image src="/logo.png" alt="FBK" fill className="object-contain" />
+              <Image src="/logo.png" alt="FBK" fill sizes="44px" className="object-contain" priority loading="eager" />
             </div>
             <div>
               <span className="font-sport text-xl text-white">FBK</span>
@@ -118,7 +118,7 @@ function EntrarForm() {
           <div className="flex items-center justify-center mb-8 lg:hidden">
             <Link href="/" className="flex items-center gap-3">
               <div className="relative w-11 h-11">
-                <Image src="/logo.png" alt="FBK" fill className="object-contain" />
+                <Image src="/logo.png" alt="FBK" fill sizes="44px" className="object-contain" priority loading="eager" />
               </div>
               <div>
                 <span className="text-lg font-black text-white">FBK</span>

@@ -6,7 +6,9 @@ import {
   Clock, ArrowUpRight, Zap, FileText, Loader2,
   Building2, UserCheck, Settings, ShieldCheck,
   Star, Bell, Lock, Newspaper, ChevronRight,
-  Activity, BarChart3,
+  Activity, BarChart3, Award, QrCode, Medal,
+  FileWarning, DollarSign, CreditCard, History,
+  GraduationCap, AlertCircle, CheckCircle2, MapPin,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
@@ -276,76 +278,281 @@ function FilialDashboard({ usuario }) {
   );
 }
 
+/* ── Filiado — helpers ─────────────────────────────────────── */
+
+function FdSectionLabel({ icon: Icon, label }) {
+  return (
+    <div className="flex items-center gap-2 mb-3">
+      <Icon size={13} className="text-ink-500" />
+      <span className="text-[10px] font-black uppercase tracking-widest text-ink-500">{label}</span>
+    </div>
+  );
+}
+
+function FdEmptyState({ icon: Icon, text }) {
+  return (
+    <div className="flex flex-col items-center justify-center py-10 gap-3 text-center">
+      <div className="w-12 h-12 rounded-2xl bg-dark-300 flex items-center justify-center">
+        <Icon size={20} className="text-ink-600" />
+      </div>
+      <p className="text-sm text-ink-600">{text}</p>
+      <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider
+                       text-ink-700 border border-dark-50/50 rounded-lg px-2.5 py-1">
+        <Lock size={9} /> Em breve
+      </span>
+    </div>
+  );
+}
+
+function FdSection({ icon, label, children }) {
+  return (
+    <div className="bg-dark-200 border border-dark-50/60 rounded-2xl p-5">
+      <FdSectionLabel icon={icon} label={label} />
+      {children}
+    </div>
+  );
+}
+
+const FAIXAS = ['Branca','Amarela','Laranja','Verde','Azul','Roxa','Marrom','Vermelha','Preta'];
+const BELT_STYLE = {
+  Branca:   'bg-white border border-gray-300',
+  Amarela:  'bg-yellow-400',
+  Laranja:  'bg-orange-500',
+  Verde:    'bg-green-600',
+  Azul:     'bg-blue-600',
+  Roxa:     'bg-purple-700',
+  Marrom:   'bg-amber-800',
+  Vermelha: 'bg-brand-500',
+  Preta:    'bg-gray-900 border border-gray-700',
+};
+
 /* ── Filiado Dashboard ─────────────────────────────────────── */
 function FiliadoDashboard({ usuario }) {
-  const nome    = usuario?.nome ?? usuario?.name ?? 'Filiado';
-  const inicial = nome.charAt(0).toUpperCase();
+  const nome    = usuario?.nome ?? 'Filiado';
+  const iniciais = nome.split(' ').filter(Boolean).slice(0,2).map(p => p[0]).join('').toUpperCase();
+  const cpfMask = usuario?.cpf
+    ? usuario.cpf.replace(/(\d{3})\.\d{3}\.(\d{3})-(\d{2})/, '$1.***.***-$3')
+    : '—';
+  const regNum  = usuario?.id
+    ? `FBK-${usuario.id.slice(0,8).toUpperCase()}`
+    : '—';
+  const faixa   = usuario?.faixa ?? null;
+  const faixaIdx = faixa ? FAIXAS.indexOf(faixa) : -1;
 
-  const cards = [
-    { icon: UserCheck, color: 'gold',  title: 'Meu Perfil',    desc: 'Acesse seus dados cadastrais e informações de contato.' },
-    { icon: Trophy,    color: 'brand', title: 'Competições',   desc: 'Acompanhe eventos e campeonatos disponíveis para inscrição.' },
-    { icon: CalendarDays, color: 'blue', title: 'Eventos',     desc: 'Calendário de cursos, seminários e campeonatos da FBK.' },
-    { icon: Bell,      color: 'green', title: 'Notificações',  desc: 'Avisos e comunicados da sua filial e da federação.' },
-  ];
-
-  const iconStyles = { gold: 'bg-gold-500/10 text-gold-400', brand: 'bg-brand-500/10 text-brand-400', blue: 'bg-blue-500/10 text-blue-400', green: 'bg-green-500/10 text-green-400' };
-  const stripeStyles = { gold: 'stat-stripe-gold', brand: 'stat-stripe-brand', blue: 'stat-stripe-blue', green: 'stat-stripe-green' };
+  const hour = new Date().getHours();
+  const saudacao = hour < 12 ? 'Bom dia' : hour < 18 ? 'Boa tarde' : 'Boa noite';
 
   return (
-    <main className="p-4 sm:p-6 lg:p-8 xl:p-10 space-y-8 w-full">
+    <main className="p-4 sm:p-6 lg:p-8 xl:p-10 space-y-6 w-full max-w-4xl">
 
-      {/* Welcome */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-brand-900/25 via-dark-200 to-dark-200 border border-brand-500/15 rounded-2xl p-6">
-        <div className="absolute inset-0 bg-gradient-to-br from-brand-500/[0.03] to-transparent pointer-events-none" />
-        <div className="relative z-10 flex items-center gap-4">
-          <div className="w-14 h-14 bg-gradient-to-br from-brand-500/30 to-brand-700/20 rounded-2xl flex items-center justify-center border border-brand-500/30 text-2xl font-black text-brand-400 shrink-0">
-            {inicial}
+      {/* ── Cabeçalho ────────────────────────────────────────── */}
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="text-xs text-brand-400 font-bold uppercase tracking-widest">{saudacao},</p>
+          <h1 className="text-2xl font-black text-ink-100 mt-0.5 leading-tight">{nome}</h1>
+          <p className="text-xs text-ink-500 mt-1">Área do Filiado · FBK</p>
+        </div>
+        <div className="flex items-center gap-2 bg-green-500/10 border border-green-500/25
+                        rounded-full px-3 py-1.5 shrink-0 mt-1">
+          <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" />
+          <span className="text-xs font-bold text-green-400">Ativo</span>
+        </div>
+      </div>
+
+      {/* ── Carteirinha Digital ───────────────────────────────── */}
+      <div>
+        <FdSectionLabel icon={CreditCard} label="Carteirinha Digital" />
+        <div
+          className="relative overflow-hidden rounded-2xl"
+          style={{
+            background: 'linear-gradient(135deg, #0c1220 0%, #111829 50%, #172038 100%)',
+            border: '1px solid rgba(26,86,219,0.28)',
+            boxShadow: '0 8px 40px rgba(7,16,26,0.6), 0 0 0 1px rgba(255,255,255,0.04) inset',
+          }}
+        >
+          {/* Topo tricolor */}
+          <div className="h-[3px] tricolor-bar" />
+
+          {/* Glow de fundo */}
+          <div className="absolute inset-0 bg-arena-grid opacity-[0.15] pointer-events-none" />
+          <div className="absolute top-0 right-0 w-72 h-72 rounded-full pointer-events-none"
+            style={{ background: 'radial-gradient(circle, rgba(26,86,219,0.10) 0%, transparent 70%)', filter: 'blur(50px)' }} />
+
+          <div className="relative z-10 p-5 sm:p-7">
+            {/* Header do card */}
+            <div className="flex items-start justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <img src="/logo.png" alt="FBK" className="w-9 h-9 rounded-full object-cover ring-1 ring-white/10" />
+                <div>
+                  <p className="text-[8px] font-black uppercase tracking-[0.22em] text-cobalt-400">
+                    Federação Baiana de
+                  </p>
+                  <p className="text-sm font-black text-ink-100 tracking-wide leading-none mt-0.5">
+                    KICKBOXING
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-1.5 bg-green-500/10 border border-green-500/20 rounded-full px-2.5 py-1 shrink-0">
+                <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" />
+                <span className="text-[9px] font-bold text-green-400 uppercase tracking-wider">Ativo</span>
+              </div>
+            </div>
+
+            {/* Corpo do card */}
+            <div className="flex items-end gap-5">
+              {/* Avatar */}
+              <div className="w-16 h-16 rounded-xl bg-cobalt-900/60 border border-cobalt-500/25 flex items-center justify-center shrink-0 text-2xl font-black text-cobalt-300 select-none">
+                {iniciais}
+              </div>
+
+              {/* Dados */}
+              <div className="flex-1 min-w-0">
+                <p className="text-base font-black text-ink-100 truncate mb-2">{nome}</p>
+                <div className="grid grid-cols-2 gap-x-5 gap-y-1.5">
+                  {[
+                    { label: 'Registro', value: regNum },
+                    { label: 'CPF',      value: cpfMask },
+                    { label: 'Filial',   value: usuario?.filial_nome ?? '—' },
+                    { label: 'Faixa',    value: faixa ?? '—' },
+                  ].map(({ label, value }) => (
+                    <div key={label}>
+                      <p className="text-[8px] text-ink-600 uppercase tracking-wider">{label}</p>
+                      <p className="text-xs font-mono font-bold text-ink-300 truncate">{value}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* QR code placeholder */}
+              <div className="w-14 h-14 bg-white/[0.04] border border-white/[0.08] rounded-xl flex flex-col items-center justify-center gap-1 shrink-0">
+                <QrCode size={22} className="text-ink-600" />
+                <p className="text-[7px] text-ink-700 font-bold uppercase tracking-wider">QR</p>
+              </div>
+            </div>
           </div>
-          <div>
-            <p className="text-xs text-brand-400 font-bold uppercase tracking-widest mb-0.5">Bem-vindo</p>
-            <h1 className="text-xl font-black text-ink-100">{nome}</h1>
-            <p className="text-xs text-ink-500 mt-0.5">Área do Filiado · FBK</p>
+
+          {/* Rodapé */}
+          <div className="relative z-10 px-6 py-2.5 border-t border-white/[0.05] flex items-center justify-between bg-black/10">
+            <p className="text-[8px] text-ink-700 uppercase tracking-[0.18em]">
+              Válido com verificação digital — fbk.org.br
+            </p>
+            <p className="text-[8px] font-mono text-ink-700">FBK · BAHIA</p>
           </div>
         </div>
       </div>
 
-      {/* Feature cards */}
+      {/* Graduação + Filial + Status */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+
+        {/* Graduação */}
+        <div className="bg-dark-200 border border-dark-50/60 rounded-2xl p-5 stat-stripe-gold">
+          <FdSectionLabel icon={Medal} label="Graduação" />
+          {faixa ? (
+            <div className="space-y-3">
+              <div className="flex items-center gap-2.5">
+                <div className={`w-10 h-3.5 rounded-full ${BELT_STYLE[faixa] ?? 'bg-dark-100'}`} />
+                <span className="font-bold text-ink-100 text-sm">{faixa}</span>
+              </div>
+              <div className="flex gap-0.5 mt-1">
+                {FAIXAS.map((f, i) => (
+                  <div key={f} title={f} className={`flex-1 h-1 rounded-full ${i <= faixaIdx ? 'bg-gold-500' : 'bg-dark-50'}`} />
+                ))}
+              </div>
+              <p className="text-[10px] text-ink-600">
+                {faixaIdx < FAIXAS.length - 1 ? `Próxima: ${FAIXAS[faixaIdx + 1]}` : 'Faixa máxima'}
+              </p>
+            </div>
+          ) : (
+            <div className="mt-2">
+              <div className="flex gap-0.5 mb-2">
+                {FAIXAS.map((f) => (
+                  <div key={f} className="flex-1 h-1.5 rounded-full bg-dark-50" />
+                ))}
+              </div>
+              <p className="text-xs text-ink-600">Não informada</p>
+            </div>
+          )}
+        </div>
+
+        {/* Filial */}
+        <div className="bg-dark-200 border border-dark-50/60 rounded-2xl p-5 stat-stripe-blue">
+          <FdSectionLabel icon={Building2} label="Filial" />
+          {usuario?.filial_nome ? (
+            <div className="flex items-start gap-2 mt-1">
+              <MapPin size={13} className="text-cobalt-400 mt-0.5 shrink-0" />
+              <p className="font-bold text-ink-100 text-sm leading-snug">{usuario.filial_nome}</p>
+            </div>
+          ) : (
+            <p className="text-sm text-ink-600 mt-1">Não vinculada</p>
+          )}
+        </div>
+
+        {/* Status */}
+        <div className="bg-dark-200 border border-dark-50/60 rounded-2xl p-5 stat-stripe-green">
+          <FdSectionLabel icon={ShieldCheck} label="Status" />
+          <div className="flex items-center gap-2.5 mt-1">
+            <div className="w-8 h-8 rounded-xl bg-green-500/10 flex items-center justify-center">
+              <CheckCircle2 size={16} className="text-green-400" />
+            </div>
+            <div>
+              <p className="font-bold text-green-400 text-sm">Ativo</p>
+              <p className="text-[10px] text-ink-600">Filiação regular</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Pendências */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {cards.map((c) => {
-          const Icon = c.icon;
-          return (
-            <div key={c.title} className={`bg-dark-200 border border-dark-50/60 rounded-2xl p-5 ${stripeStyles[c.color]}`}>
-              <div className={`w-9 h-9 rounded-xl flex items-center justify-center mb-4 ${iconStyles[c.color]}`}>
-                <Icon size={17} />
-              </div>
-              <h3 className="font-bold text-ink-100 mb-1.5 text-sm">{c.title}</h3>
-              <p className="text-xs text-ink-500 leading-relaxed mb-3">{c.desc}</p>
-              <div className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-ink-600 border border-dark-50 rounded-lg px-2.5 py-1">
-                <Lock size={9} /> Em breve
-              </div>
+        <div className="bg-dark-200 border border-green-500/20 rounded-2xl p-5">
+          <div className="flex items-center gap-2.5 mb-2">
+            <div className="w-8 h-8 rounded-xl bg-green-500/10 flex items-center justify-center">
+              <FileWarning size={15} className="text-green-400" />
             </div>
-          );
-        })}
-      </div>
-
-      {/* Dados de acesso */}
-      {usuario?.telefone && (
-        <div className="bg-dark-200 border border-dark-50/60 rounded-2xl p-5">
-          <p className="text-[10px] font-black text-ink-600 uppercase tracking-widest mb-4">Seus dados de acesso</p>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between py-2.5 border-b border-dark-50/60">
-              <span className="text-xs text-ink-500">Login (telefone)</span>
-              <span className="font-mono text-xs text-ink-200 bg-dark-100 px-3 py-1 rounded-lg">{usuario.telefone}</span>
-            </div>
-            {usuario?.filial_nome && (
-              <div className="flex items-center justify-between py-2">
-                <span className="text-xs text-ink-500">Filial</span>
-                <span className="text-xs text-ink-200 font-medium">{usuario.filial_nome}</span>
-              </div>
-            )}
+            <p className="text-xs font-bold text-ink-100">Pendências Documentais</p>
+          </div>
+          <div className="flex items-center gap-2 text-[11px] text-green-400">
+            <CheckCircle2 size={12} /> Documentação em dia
           </div>
         </div>
-      )}
+        <div className="bg-dark-200 border border-green-500/20 rounded-2xl p-5">
+          <div className="flex items-center gap-2.5 mb-2">
+            <div className="w-8 h-8 rounded-xl bg-green-500/10 flex items-center justify-center">
+              <DollarSign size={15} className="text-green-400" />
+            </div>
+            <p className="text-xs font-bold text-ink-100">Pendências Financeiras</p>
+          </div>
+          <div className="flex items-center gap-2 text-[11px] text-green-400">
+            <CheckCircle2 size={12} /> Pagamentos em dia
+          </div>
+        </div>
+      </div>
+
+      {/* Exames disponíveis */}
+      <FdSection icon={GraduationCap} label="Exames Disponíveis">
+        <FdEmptyState icon={GraduationCap} text="Nenhum exame disponível no momento." />
+      </FdSection>
+
+      {/* Inscrições em eventos */}
+      <FdSection icon={CalendarDays} label="Inscrições em Eventos">
+        <FdEmptyState icon={CalendarDays} text="Você ainda não tem inscrições em eventos." />
+      </FdSection>
+
+      {/* Certificados */}
+      <FdSection icon={Award} label="Certificados">
+        <FdEmptyState icon={Award} text="Nenhum certificado emitido ainda." />
+      </FdSection>
+
+      {/* Histórico de Graduações */}
+      <FdSection icon={History} label="Histórico de Graduações">
+        <FdEmptyState icon={History} text="Nenhuma graduação registrada." />
+      </FdSection>
+
+      {/* Histórico Competitivo */}
+      <FdSection icon={Trophy} label="Histórico Competitivo">
+        <FdEmptyState icon={Trophy} text="Nenhuma participação em campeonatos registrada." />
+      </FdSection>
+
     </main>
   );
 }

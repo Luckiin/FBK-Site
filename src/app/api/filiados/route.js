@@ -62,11 +62,11 @@ export async function POST(request) {
     }
 
     const body = await request.json();
-    const { cpf, telefone, email } = body;
+    const { cpf, telefone, email, nome, sexo, data_nascimento } = body;
 
-    if (!cpf || !telefone) {
+    if (!cpf || !telefone || !nome) {
       return NextResponse.json(
-        { erro: 'Campos obrigatórios: cpf, telefone' },
+        { erro: 'Campos obrigatórios: nome, cpf, telefone' },
         { status: 400 }
       );
     }
@@ -76,7 +76,7 @@ export async function POST(request) {
       return NextResponse.json({ erro: 'filial_id não identificado' }, { status: 400 });
     }
 
-    const resultado = await criarFiliado(filialId, { cpf, telefone, email });
+    const resultado = await criarFiliado(filialId, { cpf, telefone, email, nome, sexo, data_nascimento });
 
     return NextResponse.json(
       {
