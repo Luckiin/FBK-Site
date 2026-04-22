@@ -3,7 +3,7 @@
 import { createAdminClient } from '@/lib/supabase-server';
 import { verificarSenha } from '@/lib/cryptoUtils';
 import { buscarFilialPorAuthId, buscarFilialPorEmail } from './filialService';
-import { buscarFiliadoPorTelefone, buscarFiliadoPorEmail, atualizarSenhaFiliado } from './filiadoService';
+import { buscarAtletaPorTelefone, buscarAtletaPorEmail, atualizarSenhaAtleta } from './atletaService';
 import { sendRecuperacaoSenha } from './emailService';
 
 
@@ -50,18 +50,18 @@ export async function loginFilial(supabase, email, senha) {
 
 
 
-export async function loginFiliado(telefone, senha) {
-  const filiado = await buscarFiliadoPorTelefone(telefone);
-  if (!filiado) throw new Error('Telefone ou senha incorretos');
+export async function loginAtleta(telefone, senha) {
+  const atleta = await buscarAtletaPorTelefone(telefone);
+  if (!atleta) throw new Error('Telefone ou senha incorretos');
 
-  const senhaValida = await verificarSenha(senha, filiado.senha_hash);
+  const senhaValida = await verificarSenha(senha, atleta.senha_hash);
   if (!senhaValida) throw new Error('Telefone ou senha incorretos');
 
-  const { senha_hash, ...filiadoSeguro } = filiado;
+  const { senha_hash, ...atletaSeguro } = atleta;
 
   return {
-    tipo: 'filiado',
-    usuario: filiadoSeguro,
+    tipo: 'atleta',
+    usuario: atletaSeguro,
   };
 }
 
@@ -70,9 +70,9 @@ export async function loginFiliado(telefone, senha) {
 export async function solicitarRecuperacaoSenha(email) {
   const supabase = createAdminClient();
 
-  const filiado = await buscarFiliadoPorEmail(email);
+  const atleta = await buscarAtletaPorEmail(email);
   const filial = await buscarFilialPorEmail(email);
-  const dono = filiado || filial;
+  const dono = atleta || filial;
 
   if (!dono) {
     console.log(`[AUTH] Recuperação solicitada para email inexistente: ${email}`);
@@ -121,9 +121,9 @@ export async function redefinirSenha(token, novaSenha) {
     throw new Error('A senha deve ter pelo menos 6 caracteres');
   }
 
-  const filiado = await buscarFiliadoPorEmail(reset.email);
-  if (filiado) {
-    await atualizarSenhaFiliado(filiado.id, novaSenha);
+  const atleta = await buscarAtletaPorEmail(reset.email);
+  if (atleta) {
+    await atualizarSenhaAtleta(atleta.id, novaSenha);
   } else {
     const filial = await buscarFilialPorEmail(reset.email);
     if (filial?.auth_id) {

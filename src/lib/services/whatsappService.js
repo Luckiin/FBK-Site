@@ -31,10 +31,10 @@ export async function sendBoasVindas({ telefone, nome, senhaTemporaria }) {
 }
 
 
-export async function sendNovoFiliado({ telefoneFilial, nomeFiliado }) {
+export async function sendNovoAtleta({ telefoneFilial, nomeAtleta }) {
   const mensagem =
-    `🔔 *Novo filiado cadastrado!*\n\n` +
-    `Nome: ${nomeFiliado}\n` +
+    `🔔 *Novo atleta cadastrado!*\n\n` +
+    `Nome: ${nomeAtleta}\n` +
     `Cadastrado em: ${new Date().toLocaleDateString('pt-BR')}`;
 
   return sendWhatsApp(telefoneFilial, mensagem);

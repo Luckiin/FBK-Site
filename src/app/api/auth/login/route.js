@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createServerClient as _createServerClient } from '@supabase/ssr';
 import { signToken } from '@/lib/cryptoUtils';
-import { loginFilial, loginFiliado } from '@/lib/services/authService';
+import { loginFilial, loginAtleta } from '@/lib/services/authService';
 
 const COOKIE_OPTIONS = {
   httpOnly: true,
@@ -38,9 +38,9 @@ export async function POST(request) {
     const body = await request.json();
     const { tipo } = body;
 
-    if (!tipo || !['filial', 'filiado'].includes(tipo)) {
+    if (!tipo || !['filial', 'atleta'].includes(tipo)) {
       return NextResponse.json(
-        { erro: "Campo 'tipo' obrigatório: 'filial' ou 'filiado'" },
+        { erro: "Campo 'tipo' obrigatório: 'filial' ou 'atleta'" },
         { status: 400 }
       );
     }
@@ -71,13 +71,13 @@ export async function POST(request) {
       return response;
     }
 
-    /* ── Filiado (JWT próprio) ──────────────────────────────── */
-    if (tipo === 'filiado') {
+    /* ── Atleta (JWT próprio) ──────────────────────────────── */
+    if (tipo === 'atleta' || tipo === 'filiado') {
       const { telefone, senha } = body;
       if (!telefone || !senha)
         return NextResponse.json({ erro: 'telefone e senha obrigatórios' }, { status: 400 });
 
-      const resultado = await loginFiliado(telefone, senha);
+      const resultado = await loginAtleta(telefone, senha);
 
       const token = await signToken(
         {
@@ -85,18 +85,18 @@ export async function POST(request) {
           telefone:  resultado.usuario.telefone,
           filial_id: resultado.usuario.filial_id,
           nome:      resultado.usuario.nome,
-          tipo:      'filiado',
+          tipo:      'atleta',
         },
         '7d'
       );
 
       const response = NextResponse.json({
         mensagem: 'Login realizado com sucesso',
-        tipo: 'filiado',
+        tipo: 'atleta',
         usuario: resultado.usuario,
       });
 
-      response.cookies.set('filiado-session', token, COOKIE_OPTIONS);
+      response.cookies.set('atleta-session', token, COOKIE_OPTIONS);
 
       return response;
     }

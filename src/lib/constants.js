@@ -43,7 +43,7 @@ export const ATUACAO = [
   },
   {
     title: "Promoção da participação em torneios federais e mundiais",
-    desc: "Apoio à evolução de carreira dos atletas filiados nas arenas nacionais e internacionais.",
+    desc: "Apoio à evolução de carreira dos atletas registrados nas arenas nacionais e internacionais.",
   },
 ];
 

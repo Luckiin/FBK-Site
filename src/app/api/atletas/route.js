@@ -4,11 +4,11 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createServerClient } from '@/lib/supabase-server';
 import { verifyToken } from '@/lib/cryptoUtils';
-import { listarFiliadosPorFilial, criarFiliado } from '@/lib/services/filiadoService';
+import { listarAtletasPorFilial, criarAtleta } from '@/lib/services/atletaService';
 import { buscarFilialPorAuthId } from '@/lib/services/filialService';
 
 
-async function resolverFilialId(request) {
+async function resolverOperadorId(request) {
   const supabase = await createServerClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -22,10 +22,10 @@ async function resolverFilialId(request) {
   }
 
   const cookieStore = await cookies();
-  const filiadoToken = cookieStore.get('filiado-session')?.value;
-  if (filiadoToken) {
-    const payload = await verifyToken(filiadoToken);
-    if (payload?.filial_id) return { filialId: payload.filial_id, tipo: 'filiado' };
+  const atletaToken = cookieStore.get('atleta-session')?.value;
+  if (atletaToken) {
+    const payload = await verifyToken(atletaToken);
+    if (payload?.filial_id) return { filialId: payload.filial_id, tipo: 'atleta' };
   }
 
   return null;
@@ -33,7 +33,7 @@ async function resolverFilialId(request) {
 
 export async function GET(request) {
   try {
-    const auth = await resolverFilialId(request);
+    const auth = await resolverOperadorId(request);
     if (!auth) return NextResponse.json({ erro: 'Não autorizado' }, { status: 401 });
 
     const { searchParams } = new URL(request.url);
@@ -45,8 +45,8 @@ export async function GET(request) {
       return NextResponse.json({ erro: 'filial_id obrigatório para admins' }, { status: 400 });
     }
 
-    const filiados = await listarFiliadosPorFilial(filialId);
-    return NextResponse.json({ filiados });
+    const atletas = await listarAtletasPorFilial(filialId);
+    return NextResponse.json({ atletas });
   } catch (err) {
     return NextResponse.json({ erro: err.message }, { status: 500 });
   }
@@ -54,10 +54,10 @@ export async function GET(request) {
 
 export async function POST(request) {
   try {
-    const auth = await resolverFilialId(request);
+    const auth = await resolverOperadorId(request);
     if (!auth) return NextResponse.json({ erro: 'Não autorizado' }, { status: 401 });
 
-    if (auth.tipo === 'filiado') {
+    if (auth.tipo === 'atleta') {
       return NextResponse.json({ erro: 'Acesso negado' }, { status: 403 });
     }
 
@@ -76,12 +76,12 @@ export async function POST(request) {
       return NextResponse.json({ erro: 'filial_id não identificado' }, { status: 400 });
     }
 
-    const resultado = await criarFiliado(filialId, { cpf, telefone, email, nome, sexo, data_nascimento });
+    const resultado = await criarAtleta(filialId, { cpf, telefone, email, nome, sexo, data_nascimento });
 
     return NextResponse.json(
       {
-        mensagem: 'Filiado cadastrado com sucesso',
-        filiado: resultado.filiado,
+        mensagem: 'Atleta cadastrado com sucesso',
+        atleta: resultado.atleta,
         senhaTemporaria: resultado.senhaTemporaria,
       },
       { status: 201 }

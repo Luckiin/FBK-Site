@@ -25,18 +25,17 @@ const NAV_ADMIN = [
 const NAV_FILIAL = [
   { href: '/home',     label: 'Dashboard',    icon: LayoutDashboard },
   { href: '/filial',   label: 'Minha Filial', icon: Building2       },
-  { href: '/filiados', label: 'Filiados',     icon: UserCheck       },
+  { href: '/atletas',   label: 'Atletas',      icon: UserCheck       },
 ];
 
-const NAV_FILIADO = [
+const NAV_ATLETA = [
   { href: '/home', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/configuracoes', label: 'Configurações', icon: Settings },
 ];
-const NAV_ATLETA  = [{ href: '/home', label: 'Dashboard', icon: LayoutDashboard }];
 
 export default function Sidebar({ open, onClose }) {
   const pathname = usePathname();
-  const { usuario, tipo, isAdmin, isFilial, isFiliado, logout } = useAuth();
+  const { usuario, tipo, isAdmin, isFilial, isAtleta, logout } = useAuth();
   const { navigateTo } = usePageTransition();
 
   const handleLogout = async () => {
@@ -49,10 +48,10 @@ export default function Sidebar({ open, onClose }) {
   let navItems = NAV_ATLETA;
   if (isAdmin)   navItems = NAV_ADMIN;
   if (isFilial)  navItems = NAV_FILIAL;
-  if (isFiliado) navItems = NAV_FILIADO;
+  if (isAtleta)  navItems = NAV_ATLETA;
 
   const nomeExibido = usuario?.nome ?? usuario?.name ?? 'Usuário';
-  const papelExibido = tipo === 'admin' ? 'Administrador' : tipo === 'filial' ? 'Filial' : tipo === 'filiado' ? 'Filiado' : 'Atleta';
+  const papelExibido = tipo === 'admin' ? 'Administrador' : tipo === 'filial' ? 'Filial' : 'Atleta';
   const inicial = nomeExibido.charAt(0).toUpperCase();
 
   const accentColor = isAdmin ? 'from-brand-500 to-brand-700' : isFilial ? 'from-gold-500 to-gold-700' : 'from-cobalt-500 to-cobalt-700';
@@ -61,8 +60,8 @@ export default function Sidebar({ open, onClose }) {
     ? 'bg-gradient-to-r from-brand-500/15 to-brand-500/5 text-brand-400 border border-brand-500/20'
     : isFilial
     ? 'bg-gradient-to-r from-gold-500/15 to-gold-500/5 text-gold-400 border border-gold-500/20'
-    : 'bg-gradient-to-r from-cobalt-500/15 to-cobalt-500/5 text-cobalt-400 border border-cobalt-500/20';
-  const activeBarClass  = isAdmin ? 'bg-brand-500'  : isFilial ? 'bg-gold-500'  : 'bg-cobalt-500';
+    : 'bg-gradient-to-r from-brand-500/15 to-brand-500/5 text-brand-400 border border-brand-500/20';
+  const activeBarClass  = isAdmin ? 'bg-brand-500'  : isFilial ? 'bg-gold-500'  : 'bg-brand-500';
   const activeIconClass = isAdmin ? 'text-brand-400' : isFilial ? 'text-gold-400' : 'text-cobalt-400';
   const activeChevronClass = isAdmin ? 'text-brand-400/50' : isFilial ? 'text-gold-400/50' : 'text-cobalt-400/50';
 
@@ -112,7 +111,7 @@ export default function Sidebar({ open, onClose }) {
                 href={item.href}
                 onClick={onClose}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group relative
-                  ${active ? activeItemClass : 'text-ink-400 hover:bg-cobalt-500/[0.06] hover:text-ink-100'}`}
+                  ${active ? activeItemClass : 'text-ink-400 hover:bg-brand-500/[0.06] hover:text-ink-100'}`}
               >
                 {active && (
                   <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 ${activeBarClass} rounded-full`} />

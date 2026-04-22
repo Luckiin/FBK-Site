@@ -9,13 +9,13 @@ const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [usuario, setUsuario] = useState(null);   // dados completos do usuário
-  const [tipo, setTipo] = useState(null);          // 'admin' | 'atleta' | 'filial' | 'filiado'
+  const [tipo, setTipo] = useState(null);          // 'admin' | 'atleta' | 'filial'
   const [carregando, setCarregando] = useState(true);
 
   const isAdmin   = tipo === 'admin';
   const isAtleta  = tipo === 'atleta';
   const isFilial  = tipo === 'filial';
-  const isFiliado = tipo === 'filiado';
+  const isFiliado = tipo === 'atleta'; // Alias para compatibilidade
   const autenticado = !!usuario;
 
   const carregarSessao = useCallback(async () => {
@@ -26,7 +26,7 @@ export function AuthProvider({ children }) {
 
       if (data.autenticado) {
         setUsuario(data.usuario);
-        setTipo(data.tipo);
+        setTipo(data.tipo === 'filiado' ? 'atleta' : data.tipo);
       } else {
         setUsuario(null);
         setTipo(null);
@@ -51,7 +51,7 @@ export function AuthProvider({ children }) {
       const body =
         tipoLogin === 'filial'
           ? { tipo: 'filial', email: credenciais.email, senha: credenciais.senha }
-          : { tipo: 'filiado', telefone: credenciais.telefone, senha: credenciais.senha };
+          : { tipo: 'atleta', telefone: credenciais.telefone, senha: credenciais.senha };
 
       const res = await fetch('/api/auth/login', {
         method: 'POST',
@@ -64,7 +64,7 @@ export function AuthProvider({ children }) {
       if (!res.ok) throw new Error(data.erro || 'Erro ao fazer login');
 
       setUsuario(data.usuario);
-      setTipo(data.tipo);
+      setTipo(data.tipo === 'filiado' ? 'atleta' : data.tipo);
       return data;
     } finally {
       setCarregando(false);

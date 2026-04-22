@@ -94,10 +94,10 @@ export default function Header() {
                   Contato
                 </Link>
                 <Link
-                  href="/auth/entrar?tab=filiado"
+                  href="/auth/entrar?tab=atleta"
                   className="group relative overflow-hidden bg-gradient-to-r from-brand-500 to-brand-600 text-white text-sm font-semibold py-2.5 px-5 rounded-xl shadow-lg shadow-brand-500/25 hover:shadow-brand-500/40 hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-2"
                 >
-                  Área do Filiado
+                  Área do Atleta
                   <ChevronRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
                 </Link>
               </>
@@ -143,9 +143,9 @@ export default function Header() {
                   </button>
                 </>
               ) : (
-                <Link href="/auth/entrar?tab=filiado" onClick={() => setMenuOpen(false)}
+                <Link href="/auth/entrar?tab=atleta" onClick={() => setMenuOpen(false)}
                   className="mx-1 bg-gradient-to-r from-brand-500 to-brand-600 text-white text-sm font-semibold py-3 px-5 rounded-xl text-center shadow-lg shadow-brand-500/25">
-                  Área do Filiado
+                  Área do Atleta
                 </Link>
               )}
             </div>

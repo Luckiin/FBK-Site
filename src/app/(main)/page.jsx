@@ -28,18 +28,18 @@ export const metadata = { title: "Início" };
 async function getStats() {
   try {
     const supabase = createAdminClient();
-    const [{ count: filiais }, { count: filiados }] = await Promise.all([
+    const [{ count: filiais }, { count: atletas }] = await Promise.all([
       supabase
         .from("filiais")
         .select("*", { count: "exact", head: true })
         .eq("status", "aprovada"),
       supabase
-        .from("filiados")
+        .from("atletas")
         .select("*", { count: "exact", head: true }),
     ]);
-    return { filiais: filiais ?? 0, filiados: filiados ?? 0 };
+    return { filiais: filiais ?? 0, atletas: atletas ?? 0 };
   } catch {
-    return { filiais: 0, filiados: 0 };
+    return { filiais: 0, atletas: 0 };
   }
 }
 
@@ -140,7 +140,7 @@ export default async function HomePage() {
                   {/* Atletas */}
                   <div className="bg-gold-500/10 border border-gold-500/20 rounded-xl p-4">
                     <p className="sport-label text-gold-400 mb-1">Atletas</p>
-                    <p className="scoreboard-num text-3xl text-ink-100">{stats.filiados}</p>
+                    <p className="scoreboard-num text-3xl text-ink-100">{stats.atletas}</p>
                   </div>
 
                   {/* Filiação */}
@@ -414,7 +414,7 @@ export default async function HomePage() {
                     <div className="w-1.5 h-1.5 bg-brand-400 rounded-full" />Inscrições em Eventos
                   </li>
                 </ul>
-                <Link href="/auth/entrar?tab=filiado" className="btn-primary inline-flex text-sm py-2.5 px-5">
+                <Link href="/auth/entrar?tab=atleta" className="btn-primary inline-flex text-sm py-2.5 px-5">
                   Acessar <ArrowRight size={14} />
                 </Link>
               </div>

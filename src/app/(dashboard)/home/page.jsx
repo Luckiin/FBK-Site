@@ -233,7 +233,7 @@ function AdminDashboard({ usuario }) {
    FILIAL DASHBOARD
 ══════════════════════════════════════════════════════════════ */
 function FilialDashboard({ usuario }) {
-  const [stats, setStats] = useState({ filiados: '—', atletas: '—' });
+  const [stats, setStats] = useState({ atletas: '—' });
   const [loading, setLoading] = useState(true);
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'Bom dia' : hour < 18 ? 'Boa tarde' : 'Boa noite';
@@ -242,14 +242,10 @@ function FilialDashboard({ usuario }) {
   useEffect(() => {
     (async () => {
       try {
-        const [fr, ar] = await Promise.all([
-          fetch('/api/filiados', { credentials: 'include' }),
-          fetch('/api/atletas', { credentials: 'include' }),
-        ]);
-        const fd = fr.ok ? await fr.json() : { filiados: [] };
-        const ad = ar.ok ? await ar.json() : { atletas: [] };
-        setStats({ filiados: fd.filiados?.length ?? 0, atletas: ad.atletas?.length ?? 0 });
-      } catch { setStats({ filiados: '—', atletas: '—' }); }
+        const res = await fetch('/api/atletas', { credentials: 'include' });
+        const data = res.ok ? await res.json() : { atletas: [] };
+        setStats({ atletas: data.atletas?.length ?? 0 });
+      } catch { setStats({ atletas: '—' }); }
       finally { setLoading(false); }
     })();
   }, []);
@@ -277,9 +273,9 @@ function FilialDashboard({ usuario }) {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 gap-5">
-        <StatCard label="Filiados cadastrados" value={stats.filiados} icon={UserCheck} color="brand" loading={loading} delay={100} />
-        <StatCard label="Atletas registrados"  value={stats.atletas}  icon={Trophy}    color="gold"  loading={loading} delay={175} />
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <StatCard label="Atletas cadastrados" value={stats.atletas} icon={UserCheck} color="brand" loading={loading} delay={100} />
+        <StatCard label="Atletas Ativos" value={stats.atletas} icon={Trophy} color="gold" loading={loading} delay={175} />
       </div>
 
       {/* Quick Access */}
@@ -290,10 +286,9 @@ function FilialDashboard({ usuario }) {
           </div>
           <h2 className="text-sm font-black uppercase tracking-widest text-ink-500">Acesso Rápido</h2>
         </div>
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 gap-4">
           <QuickItem label="Minha Filial" href="/filial"   icon={Settings}  color="gold"  delay={250} />
-          <QuickItem label="Filiados"     href="/filiados" icon={UserCheck} color="brand" delay={310} />
-          <QuickItem label="Atletas"      href="/atletas"  icon={Trophy}    color="blue"  delay={370} />
+          <QuickItem label="Atletas"      href="/atletas"  icon={UserCheck} color="brand" delay={310} />
         </div>
       </div>
 
@@ -308,8 +303,7 @@ function FilialDashboard({ usuario }) {
         <div className="bg-dark-200 border border-dark-50/60 rounded-2xl overflow-hidden">
           {[
             { label: 'Complete o perfil da filial',    href: '/filial',   num: 1 },
-            { label: 'Cadastre os primeiros filiados', href: '/filiados', num: 2 },
-            { label: 'Adicione atletas à plataforma',  href: '/atletas',  num: 3 },
+            { label: 'Cadastre seus primeiros atletas', href: '/atletas',  num: 2 },
           ].map((item, i) => (
             <Link key={item.href} href={item.href}
               className={`flex items-center gap-4 px-6 py-4 hover:bg-dark-100 transition-all duration-200 group
@@ -329,7 +323,7 @@ function FilialDashboard({ usuario }) {
 }
 
 /* ══════════════════════════════════════════════════════════════
-   FILIADO DASHBOARD
+   ATLETA DASHBOARD
 ══════════════════════════════════════════════════════════════ */
 const FAIXAS = ['Branca','Amarela','Laranja','Verde','Azul','Roxa','Marrom','Vermelha','Preta'];
 const BELT_STYLE = {
@@ -367,8 +361,8 @@ function EmptySection({ icon: Icon, text, delay = 0 }) {
   );
 }
 
-function FiliadoDashboard({ usuario }) {
-  const nome     = usuario?.nome ?? 'Filiado';
+function AtletaDashboard({ usuario }) {
+  const nome     = usuario?.nome ?? 'Atleta';
   const iniciais = nome.split(' ').filter(Boolean).slice(0,2).map(p => p[0]).join('').toUpperCase();
   const cpfMask  = usuario?.cpf ? usuario.cpf.replace(/(\d{3})\.\d{3}\.(\d{3})-(\d{2})/, '$1.***.***-$3') : '—';
   const regNum   = usuario?.id ? `FBK-${usuario.id.slice(0,8).toUpperCase()}` : '—';
@@ -385,7 +379,7 @@ function FiliadoDashboard({ usuario }) {
         <div>
           <p className="text-xs text-brand-400 font-bold uppercase tracking-[0.2em]">{saudacao},</p>
           <h1 className="text-3xl sm:text-4xl font-black text-ink-100 mt-1 leading-tight">{nome}</h1>
-          <p className="text-sm text-ink-600 mt-1.5">Área do Filiado · Federação Baiana de Kickboxing</p>
+          <p className="text-sm text-ink-600 mt-1.5">Área do Atleta · Federação Baiana de Kickboxing</p>
         </div>
         <div className="animate-fade-in-scale delay-200 shrink-0 flex items-center gap-2
                         bg-green-500/10 border border-green-500/25 rounded-full px-4 py-2">
@@ -585,9 +579,10 @@ function FiliadoDashboard({ usuario }) {
 export default function DashboardHomePage() {
   const { usuario, tipo, carregando } = useAuth();
   if (carregando) return <PageLoader />;
-  if (tipo === 'admin' || tipo === 'atleta') return <AdminDashboard usuario={usuario} />;
-  if (tipo === 'filial')                     return <FilialDashboard usuario={usuario} />;
-  if (tipo === 'filiado')                    return <FiliadoDashboard usuario={usuario} />;
+  
+  if (tipo === 'admin') return <AdminDashboard usuario={usuario} />;
+  if (tipo === 'filial') return <FilialDashboard usuario={usuario} />;
+  if (tipo === 'atleta') return <AtletaDashboard usuario={usuario} />;
 
   return (
     <main className="p-8 text-center">

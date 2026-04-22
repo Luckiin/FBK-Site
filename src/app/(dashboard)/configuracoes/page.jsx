@@ -56,7 +56,7 @@ export default function ConfiguracoesPage() {
 
     setLoading(true);
     try {
-      const res = await fetch('/api/filiados/configuracoes', {
+      const res = await fetch('/api/atletas/configuracoes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ senhaAtual, novaSenha }),
@@ -82,7 +82,7 @@ export default function ConfiguracoesPage() {
     <main className="max-w-3xl mx-auto p-4 sm:p-6 lg:p-8 space-y-8 w-full">
       <div>
         <h1 className="text-2xl font-bold text-ink-100">Configurações</h1>
-        <p className="text-ink-400 text-sm mt-1">Gerencie a segurança da sua conta.</p>
+        <p className="text-ink-400 text-sm mt-1">Gerencie a segurança da sua conta de atleta.</p>
       </div>
 
       <div className="card p-6 bg-dark-200/50">

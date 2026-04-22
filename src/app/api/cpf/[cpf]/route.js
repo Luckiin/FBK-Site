@@ -12,10 +12,10 @@ async function verificarAcesso() {
   if (user) return true;
 
   const cookieStore = await cookies();
-  const token = cookieStore.get('filiado-session')?.value;
+  const token = cookieStore.get('atleta-session')?.value;
   if (token) {
     const payload = await verifyToken(token);
-    return false; // filiados não cadastram outros filiados
+    return false; // atletas não cadastram outros atletas
   }
 
   return false;
@@ -46,7 +46,7 @@ export async function GET(request, { params }) {
     return NextResponse.json({
       valido: true,
       preenchimento: 'manual',
-      mensagem: 'CPF válido. Preencha os dados do filiado abaixo.',
+      mensagem: 'CPF válido. Preencha os dados do atleta abaixo.',
     });
 
   } catch (err) {

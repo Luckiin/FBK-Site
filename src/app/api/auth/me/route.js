@@ -5,7 +5,7 @@ import { cookies } from 'next/headers';
 import { createServerClient } from '@/lib/supabase-server';
 import { verifyToken } from '@/lib/cryptoUtils';
 import { buscarFilialPorAuthId } from '@/lib/services/filialService';
-import { buscarFiliadoPorId } from '@/lib/services/filiadoService';
+import { buscarAtletaPorId } from '@/lib/services/atletaService';
 
 export async function GET() {
   try {
@@ -38,17 +38,17 @@ export async function GET() {
     }
 
     const cookieStore = await cookies();
-    const filiadoToken = cookieStore.get('filiado-session')?.value;
+    const atletaToken = cookieStore.get('atleta-session')?.value;
 
-    if (filiadoToken) {
-      const payload = await verifyToken(filiadoToken);
+    if (atletaToken) {
+      const payload = await verifyToken(atletaToken);
       if (payload?.sub) {
-        const filiado = await buscarFiliadoPorId(payload.sub);
-        if (filiado) {
+        const atleta = await buscarAtletaPorId(payload.sub);
+        if (atleta) {
           return NextResponse.json({
             autenticado: true,
-            tipo: 'filiado',
-            usuario: filiado,
+            tipo: 'atleta',
+            usuario: atleta,
           });
         }
       }

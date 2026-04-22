@@ -294,8 +294,8 @@ export async function sendNovaFilialAdmin({ nomeFilial, emailFilial }) {
 
   return sendEmail(adminEmail, subject, body, html);
 }
-// ─── Boas-vindas para o filiado ─────────────────────────────────────────────
-export async function sendBoasVindasFiliado({ to, nome, telefone, senhaTemporaria }) {
+// ─── Boas-vindas para o atleta ─────────────────────────────────────────────
+export async function sendBoasVindasAtleta({ to, nome, telefone, senhaTemporaria }) {
   const subject = 'Bem-vindo(a) à FBK — Seus dados de acesso 🥋';
   const loginUrl = `${APP_URL}/auth/entrar`;
 
@@ -314,7 +314,7 @@ export async function sendBoasVindasFiliado({ to, nome, telefone, senhaTemporari
     conteudo: `
       <p style="margin:0 0 12px;color:#333;">Olá, <strong>${nome}</strong>!</p>
       <p style="margin:0 0 20px;color:#555;line-height:1.6;">
-        Seu cadastro como filiado na <strong>Federação Baiana de Kickboxing</strong> foi realizado com sucesso.
+        Seu cadastro como atleta na <strong>Federação Baiana de Kickboxing</strong> foi realizado com sucesso.
         Agora você tem acesso ao nosso portal exclusivo.
       </p>
       <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:24px;margin:0 0 24px;">

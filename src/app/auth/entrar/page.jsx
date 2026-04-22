@@ -14,7 +14,7 @@ function EntrarForm() {
   const { navigateTo } = usePageTransition();
   const tabParam = searchParams.get('tab');
 
-  const [aba, setAba] = useState(tabParam === 'filiado' ? 'filiado' : 'filial');
+  const [aba, setAba] = useState(tabParam === 'atleta' ? 'atleta' : 'filial');
   const [email, setEmail] = useState('');
   const [telefone, setTelefone] = useState('');
   const [senha, setSenha] = useState('');
@@ -24,7 +24,7 @@ function EntrarForm() {
   const [sucesso, setSucesso] = useState(false);
 
   useEffect(() => {
-    setAba(tabParam === 'filiado' ? 'filiado' : 'filial');
+    setAba(tabParam === 'atleta' ? 'atleta' : 'filial');
   }, [tabParam]);
 
   const handleSubmit = async (e) => {
@@ -35,7 +35,7 @@ function EntrarForm() {
       if (aba === 'filial') {
         await login('filial', { email, senha });
       } else {
-        await login('filiado', { telefone, senha });
+        await login('atleta', { telefone, senha });
       }
       setSucesso(true);
       const callbackUrl = searchParams.get('callbackUrl');
@@ -66,7 +66,7 @@ function EntrarForm() {
   return (
     <div className="min-h-screen bg-dark-400 flex page-enter">
       {/* Painel lateral decorativo — só desktop */}
-      <div className="hidden lg:flex flex-col justify-between w-80 xl:w-96 bg-gradient-to-b from-cobalt-900/30 via-dark-400 to-dark-400 border-r border-cobalt-500/[0.08] p-10 relative overflow-hidden shrink-0">
+      <div className="hidden lg:flex flex-col justify-between w-80 xl:w-96 bg-gradient-to-b from-brand-900/30 via-dark-400 to-dark-400 border-r border-brand-500/[0.08] p-10 relative overflow-hidden shrink-0">
         {/* Barra tricolor no topo */}
         <div className="absolute top-0 left-0 right-0 h-[3px]"
           style={{ background: "linear-gradient(90deg, #e31e24 0%, #e31e24 33%, #ffffff 33%, #ffffff 67%, #1a56db 67%, #1a56db 100%)" }} />
@@ -97,7 +97,7 @@ function EntrarForm() {
 
         <div className="relative z-10 space-y-3">
           {[
-            { color: 'bg-brand-500/15 border-brand-500/20 text-brand-300', text: 'Gestão completa de atletas e filiados' },
+            { color: 'bg-brand-500/15 border-brand-500/20 text-brand-300', text: 'Gestão completa de atletas e filiais' },
             { color: 'bg-gold-500/10  border-gold-500/20  text-gold-300',  text: 'Controle de eventos e competições' },
             { color: 'bg-blue-500/10  border-blue-500/20  text-blue-300',  text: 'Documentos e comunicados oficiais' },
           ].map((item, i) => (
@@ -133,8 +133,8 @@ function EntrarForm() {
           {/* Tabs */}
           <div className="flex rounded-xl bg-dark-300/80 border border-white/[0.05] p-1 mb-6 gap-1">
             {[
-              { key: 'filial',  label: 'Filial',   icon: Building2 },
-              { key: 'filiado', label: 'Filiado',  icon: User },
+              { key: 'filial',  label: 'Filial',  icon: Building2 },
+              { key: 'atleta',  label: 'Atleta',  icon: User },
             ].map((tab) => {
               const Icon = tab.icon;
               return (
@@ -222,7 +222,7 @@ function EntrarForm() {
                 </Link>
               </p>
             )}
-            {aba === 'filiado' && (
+            {aba === 'atleta' && (
               <p className="text-sm text-ink-600">
                 Credenciais fornecidas pela sua filial.{' '}
                 <Link href="/contato" className="text-brand-400 hover:text-brand-300 font-medium transition-colors">

@@ -34,8 +34,8 @@ export async function POST(request) {
       response.cookies.set(name, '', EXPIRED)
     );
 
-    // Limpa explicitamente cookies conhecidos do Supabase e filiado
-    ['sb-access-token', 'sb-refresh-token', 'filiado-session'].forEach((name) =>
+    // Limpa explicitamente cookies conhecidos do Supabase e atleta
+    ['sb-access-token', 'sb-refresh-token', 'atleta-session', 'filiado-session'].forEach((name) =>
       response.cookies.set(name, '', EXPIRED)
     );
 

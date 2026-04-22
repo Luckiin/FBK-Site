@@ -5,13 +5,13 @@ import { cookies } from 'next/headers';
 import { createServerClient } from '@/lib/supabase-server';
 import { verifyToken } from '@/lib/cryptoUtils';
 import {
-  buscarFiliadoPorId,
-  atualizarFiliado,
-  deletarFiliado,
-} from '@/lib/services/filiadoService';
+  buscarAtletaPorId,
+  atualizarAtleta,
+  deletarAtleta,
+} from '@/lib/services/atletaService';
 import { buscarFilialPorAuthId } from '@/lib/services/filialService';
 
-async function resolverAcesso(filiadoId) {
+async function resolverAcesso(atletaId) {
   const supabase = await createServerClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -25,11 +25,11 @@ async function resolverAcesso(filiadoId) {
   }
 
   const cookieStore = await cookies();
-  const token = cookieStore.get('filiado-session')?.value;
+  const token = cookieStore.get('atleta-session')?.value;
   if (token) {
     const payload = await verifyToken(token);
-    if (payload?.sub === filiadoId) {
-      return { ok: true, filialId: payload.filial_id, tipo: 'filiado', filiadoId: payload.sub };
+    if (payload?.sub === atletaId) {
+      return { ok: true, filialId: payload.filial_id, tipo: 'atleta', atletaId: payload.sub };
     }
   }
 
@@ -41,8 +41,8 @@ export async function GET(request, { params }) {
     const acesso = await resolverAcesso(params.id);
     if (!acesso.ok) return NextResponse.json({ erro: 'Não autorizado' }, { status: 401 });
 
-    const filiado = await buscarFiliadoPorId(params.id);
-    return NextResponse.json({ filiado });
+    const atleta = await buscarAtletaPorId(params.id);
+    return NextResponse.json({ atleta });
   } catch (err) {
     return NextResponse.json({ erro: err.message }, { status: 404 });
   }
@@ -55,14 +55,14 @@ export async function PATCH(request, { params }) {
 
     const body = await request.json();
 
-    if (acesso.tipo === 'filiado') {
+    if (acesso.tipo === 'atleta') {
       const { nome, email, telefone } = body;
-      const filiado = await atualizarFiliado(params.id, acesso.filialId, { nome, email, telefone });
-      return NextResponse.json({ filiado });
+      const atleta = await atualizarAtleta(params.id, acesso.filialId, { nome, email, telefone });
+      return NextResponse.json({ atleta });
     }
 
-    const filiado = await atualizarFiliado(params.id, acesso.filialId, body);
-    return NextResponse.json({ filiado });
+    const atleta = await atualizarAtleta(params.id, acesso.filialId, body);
+    return NextResponse.json({ atleta });
   } catch (err) {
     return NextResponse.json({ erro: err.message }, { status: 400 });
   }
@@ -71,12 +71,12 @@ export async function PATCH(request, { params }) {
 export async function DELETE(request, { params }) {
   try {
     const acesso = await resolverAcesso(params.id);
-    if (!acesso.ok || acesso.tipo === 'filiado') {
+    if (!acesso.ok || acesso.tipo === 'atleta') {
       return NextResponse.json({ erro: 'Acesso negado' }, { status: 403 });
     }
 
-    await deletarFiliado(params.id, acesso.filialId);
-    return NextResponse.json({ mensagem: 'Filiado removido com sucesso' });
+    await deletarAtleta(params.id, acesso.filialId);
+    return NextResponse.json({ mensagem: 'Atleta removido com sucesso' });
   } catch (err) {
     return NextResponse.json({ erro: err.message }, { status: 400 });
   }

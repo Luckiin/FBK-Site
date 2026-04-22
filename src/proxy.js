@@ -11,15 +11,14 @@ const ROTAS_PROTEGIDAS = [
   '/documentos',
   '/auditoria',
   '/filial',
-  '/filiados',
   '/noticias',
 ];
 
-const ROTAS_FILIAL = ['/filial', '/filiados'];
+const ROTAS_FILIAL = ['/filial', '/atletas'];
 
 const strToBytes = (str) => new TextEncoder().encode(str);
 
-async function verificarTokenFiliado(token) {
+async function verificarTokenAtleta(token) {
   try {
     const secret = process.env.JWT_SECRET;
     if (!secret || !token) return null;
@@ -83,10 +82,10 @@ export async function proxy(request) {
     data: { user: supabaseUser },
   } = await supabase.auth.getUser();
 
-  const filiadoToken = request.cookies.get('filiado-session')?.value;
-  const filiadoPayload = filiadoToken ? await verificarTokenFiliado(filiadoToken) : null;
+  const atletaToken = request.cookies.get('atleta-session')?.value;
+  const atletaPayload = atletaToken ? await verificarTokenAtleta(atletaToken) : null;
 
-  const estaAutenticado = !!supabaseUser || !!filiadoPayload;
+  const estaAutenticado = !!supabaseUser || !!atletaPayload;
   const eRota = (prefixos) => prefixos.some((p) => pathname.startsWith(p));
 
   if (estaAutenticado && pathname.startsWith('/auth/')) {
@@ -112,14 +111,14 @@ export async function proxy(request) {
     return NextResponse.redirect(url);
   }
 
-  if (supabaseUser && !filiadoPayload) {
+  if (supabaseUser && !atletaPayload) {
     const filialStatus = request.cookies.get('filial-status')?.value;
     if (filialStatus === 'pendente' || filialStatus === 'reprovado') {
       return NextResponse.redirect(new URL('/auth/aguardando-aprovacao', request.url));
     }
   }
 
-  if (filiadoPayload && !supabaseUser && eRota(ROTAS_FILIAL)) {
+  if (atletaPayload && !supabaseUser && eRota(ROTAS_FILIAL)) {
     return NextResponse.redirect(new URL('/home', request.url));
   }
 

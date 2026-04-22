@@ -14,7 +14,7 @@ const STATUS_CONFIG = {
 
 export default function FilialPage() {
   const { usuario } = useAuth();
-  const [totalFiliados, setTotalFiliados] = useState(null);
+  const [totalAtletas, setTotalAtletas] = useState(null);
   const [editando, setEditando] = useState(false);
   const [form, setForm] = useState({ nome: '', telefone: '' });
   const [salvando, setSalvando] = useState(false);
@@ -22,10 +22,10 @@ export default function FilialPage() {
   const [sucesso, setSucesso] = useState('');
 
   useEffect(() => {
-    fetch('/api/filiados', { credentials: 'include' })
+    fetch('/api/atletas', { credentials: 'include' })
       .then((r) => r.json())
-      .then((d) => setTotalFiliados(d.filiados?.length ?? 0))
-      .catch(() => setTotalFiliados(0));
+      .then((d) => setTotalAtletas(d.atletas?.length ?? 0))
+      .catch(() => setTotalAtletas(0));
   }, []);
 
   const statusConf = STATUS_CONFIG[usuario?.status] ?? STATUS_CONFIG.pendente;
@@ -91,9 +91,9 @@ export default function FilialPage() {
           </div>
           <div>
             <p className="text-2xl font-bold text-ink-100">
-              {totalFiliados === null ? '—' : totalFiliados}
+              {totalAtletas === null ? '—' : totalAtletas}
             </p>
-            <p className="text-sm text-ink-400">Filiados</p>
+            <p className="text-sm text-ink-400">Atletas</p>
           </div>
         </div>
 
