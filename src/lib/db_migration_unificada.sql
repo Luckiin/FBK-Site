@@ -20,6 +20,22 @@ begin
   if exists (
     select 1
     from information_schema.tables
+    where table_schema = 'public' and table_name = 'atletas'
+  ) then
+    alter table public.atletas
+      add column if not exists uf text,
+      add column if not exists cidade text,
+      add column if not exists endereco text,
+      add column if not exists nome_professor text,
+      add column if not exists modalidades jsonb not null default '[]'::jsonb;
+  end if;
+end $$;
+
+do $$
+begin
+  if exists (
+    select 1
+    from information_schema.tables
     where table_schema = 'public' and table_name = 'filiais'
   ) then
     alter table public.filiais

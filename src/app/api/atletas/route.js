@@ -65,7 +65,19 @@ export async function POST(request) {
     }
 
     const body = await request.json();
-    const { cpf, telefone, email, nome, sexo, data_nascimento } = body;
+    const {
+      cpf,
+      telefone,
+      email,
+      nome,
+      sexo,
+      data_nascimento,
+      uf,
+      cidade,
+      endereco,
+      nome_professor,
+      modalidades,
+    } = body;
 
     if (!cpf || !telefone || !nome) {
       return NextResponse.json(
@@ -79,7 +91,23 @@ export async function POST(request) {
       return NextResponse.json({ erro: 'filial_id não identificado' }, { status: 400 });
     }
 
-    const resultado = await criarAtleta(filialId, { cpf, telefone, email, nome, sexo, data_nascimento }, auth.profile);
+    const resultado = await criarAtleta(
+      filialId,
+      {
+        cpf,
+        telefone,
+        email,
+        nome,
+        sexo,
+        data_nascimento,
+        uf,
+        cidade,
+        endereco,
+        nome_professor,
+        modalidades,
+      },
+      auth.profile
+    );
 
     return NextResponse.json(
       {
