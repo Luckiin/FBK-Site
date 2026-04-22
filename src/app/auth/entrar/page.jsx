@@ -37,6 +37,7 @@ function EntrarForm() {
         await login('atleta', { telefone, senha });
       }
       toast.success('Login realizado com sucesso!');
+      const callbackUrl = searchParams.get('callbackUrl');
       await navigateTo(callbackUrl || '/home', { delay: 600 });
     } catch (err) {
       toast.error(err.message || 'Credenciais inválidas. Tente novamente.');
