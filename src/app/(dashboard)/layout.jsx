@@ -52,7 +52,7 @@ export default function DashboardLayout({ children }) {
   return (
     <div className="min-h-screen bg-dark-300 flex">
       <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <div className="flex-1 lg:ml-64 min-w-0 flex flex-col min-h-screen">
+      <div className="flex-1 lg:ml-64 flex flex-col min-h-screen overflow-x-hidden">
         <DashTopBar onMenuOpen={() => setSidebarOpen(true)} />
         <div className="flex-1 w-full page-enter">
           {children}

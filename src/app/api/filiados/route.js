@@ -21,7 +21,7 @@ async function resolverFilialId(request) {
     if (perfil?.role === 'admin') return { filialId: null, tipo: 'admin' };
   }
 
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const filiadoToken = cookieStore.get('filiado-session')?.value;
   if (filiadoToken) {
     const payload = await verifyToken(filiadoToken);

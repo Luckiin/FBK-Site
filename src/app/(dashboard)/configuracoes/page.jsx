@@ -3,6 +3,32 @@
 import { useState } from 'react';
 import { Key, Save, Loader2, Eye, EyeOff, AlertCircle, CheckCircle2 } from 'lucide-react';
 
+const InputSenha = ({ label, value, onChange, placeholder, name, tipo, mostrarPwd, setMostrarPwd }) => (
+  <div>
+    <label className="block text-sm font-medium text-ink-300 mb-1.5">{label}</label>
+    <div className="relative">
+      <Key size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-500" />
+      <input
+        type={mostrarPwd[tipo] ? "text" : "password"}
+        required
+        className="input-field pl-10 pr-10"
+        placeholder={placeholder}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        autoComplete={name}
+      />
+      <button
+        type="button"
+        tabIndex="-1"
+        onClick={() => setMostrarPwd({ ...mostrarPwd, [tipo]: !mostrarPwd[tipo] })}
+        className="absolute right-3.5 top-1/2 -translate-y-1/2 text-ink-600 hover:text-ink-400"
+      >
+        {mostrarPwd[tipo] ? <EyeOff size={16} /> : <Eye size={16} />}
+      </button>
+    </div>
+  </div>
+);
+
 export default function ConfiguracoesPage() {
   const [senhaAtual, setSenhaAtual] = useState('');
   const [novaSenha, setNovaSenha] = useState('');
@@ -50,31 +76,7 @@ export default function ConfiguracoesPage() {
     }
   };
 
-  const InputSenha = ({ label, value, onChange, placeholder, name, tipo }) => (
-    <div>
-      <label className="block text-sm font-medium text-ink-300 mb-1.5">{label}</label>
-      <div className="relative">
-        <Key size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-500" />
-        <input
-          type={mostrarPwd[tipo] ? "text" : "password"}
-          required
-          className="input-field pl-10 pr-10"
-          placeholder={placeholder}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          autoComplete={name}
-        />
-        <button
-          type="button"
-          tabIndex="-1"
-          onClick={() => setMostrarPwd({ ...mostrarPwd, [tipo]: !mostrarPwd[tipo] })}
-          className="absolute right-3.5 top-1/2 -translate-y-1/2 text-ink-600 hover:text-ink-400"
-        >
-          {mostrarPwd[tipo] ? <EyeOff size={16} /> : <Eye size={16} />}
-        </button>
-      </div>
-    </div>
-  );
+
 
   return (
     <main className="max-w-3xl mx-auto p-4 sm:p-6 lg:p-8 space-y-8 w-full">
@@ -116,6 +118,8 @@ export default function ConfiguracoesPage() {
             onChange={setSenhaAtual}
             name="current-password"
             tipo="atual"
+            mostrarPwd={mostrarPwd}
+            setMostrarPwd={setMostrarPwd}
           />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2 border-t border-dark-50/60">
@@ -126,6 +130,8 @@ export default function ConfiguracoesPage() {
               onChange={setNovaSenha}
               name="new-password"
               tipo="nova"
+              mostrarPwd={mostrarPwd}
+              setMostrarPwd={setMostrarPwd}
             />
             <InputSenha
               label="Confirmar Nova Senha"
@@ -134,6 +140,8 @@ export default function ConfiguracoesPage() {
               onChange={setConfirmarSenha}
               name="new-password"
               tipo="confirm"
+              mostrarPwd={mostrarPwd}
+              setMostrarPwd={setMostrarPwd}
             />
           </div>
 

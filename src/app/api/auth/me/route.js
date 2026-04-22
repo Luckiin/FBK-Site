@@ -37,7 +37,7 @@ export async function GET() {
       }
     }
 
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const filiadoToken = cookieStore.get('filiado-session')?.value;
 
     if (filiadoToken) {

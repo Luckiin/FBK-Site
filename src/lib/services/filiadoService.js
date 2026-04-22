@@ -12,12 +12,12 @@ export async function listarFiliadosPorFilial(filialId) {
 
   const { data, error } = await supabase
     .from('filiados')
-    .select('id, cpf, nome, sexo, data_nascimento, telefone, email, filial_id, created_at, updated_at')
+    .select('id, cpf, nome, sexo, data_nascimento, telefone, email, filial_id, created_at, updated_at, senha_temporaria, filiais(nome)')
     .eq('filial_id', filialId)
     .order('nome', { ascending: true });
 
   if (error) throw new Error(`Erro ao listar filiados: ${error.message}`);
-  return data;
+  return data.map(f => ({ ...f, filial_nome: f.filiais?.nome ?? null, filiais: undefined }));
 }
 
 
@@ -26,12 +26,12 @@ export async function buscarFiliadoPorId(id) {
 
   const { data, error } = await supabase
     .from('filiados')
-    .select('id, cpf, nome, sexo, data_nascimento, telefone, email, filial_id, created_at, updated_at')
+    .select('id, cpf, nome, sexo, data_nascimento, telefone, email, filial_id, created_at, updated_at, senha_temporaria, filiais(nome)')
     .eq('id', id)
     .single();
 
   if (error) throw new Error(`Filiado não encontrado: ${error.message}`);
-  return data;
+  return { ...data, filial_nome: data.filiais?.nome ?? null, filiais: undefined };
 }
 
 
@@ -109,8 +109,9 @@ export async function criarFiliado(filialId, dados) {
       telefone: dados.telefone,
       email: dados.email || null,
       senha_hash: senhaHash,
+      senha_temporaria: senhaTemporaria,
     })
-    .select('id, cpf, nome, sexo, data_nascimento, telefone, email, filial_id, created_at')
+    .select('id, cpf, nome, sexo, data_nascimento, telefone, email, filial_id, created_at, senha_temporaria')
     .single();
 
   if (error) throw new Error(`Erro ao criar filiado: ${error.message}`);
@@ -154,7 +155,7 @@ export async function atualizarSenhaFiliado(id, novaSenha) {
 
   const { error } = await supabase
     .from('filiados')
-    .update({ senha_hash: senhaHash })
+    .update({ senha_hash: senhaHash, senha_temporaria: null })
     .eq('id', id);
 
   if (error) throw new Error(`Erro ao atualizar senha: ${error.message}`);

@@ -24,7 +24,7 @@ async function resolverAcesso(filiadoId) {
     if (filial) return { ok: true, filialId: filial.id, tipo: 'filial' };
   }
 
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const token = cookieStore.get('filiado-session')?.value;
   if (token) {
     const payload = await verifyToken(token);

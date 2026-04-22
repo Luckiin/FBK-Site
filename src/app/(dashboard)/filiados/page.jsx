@@ -6,7 +6,7 @@ import { useState, useEffect, useCallback } from 'react';
 import {
   Users, Plus, Search, Trash2, X, Save, UserCheck,
   Phone, CreditCard, ChevronDown, ChevronUp, Mail,
-  Loader2, User, Calendar, AlertCircle,
+  Loader2, User, Calendar, AlertCircle, Key,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { validateCPF } from '@/lib/utils';
@@ -78,7 +78,7 @@ function FormNovoFiliado({ onSalvo, onCancelar }) {
 
   if (resultado) {
     return (
-      <div className="card p-6 border border-green-500/20 bg-green-500/5">
+      <div className="card p-6 border border-green-500/20 bg-green-500/5 shadow-2xl relative w-full">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-10 h-10 bg-green-500/10 rounded-xl flex items-center justify-center">
             <UserCheck size={20} className="text-green-400" />
@@ -112,7 +112,7 @@ function FormNovoFiliado({ onSalvo, onCancelar }) {
   const podeEnviar = nome.trim() && cpfNumeros(cpf).length === 11 && !cpfErro && telefone.length >= 10 && email.trim() && !loading;
 
   return (
-    <div className="card p-6">
+    <div className="card p-6 shadow-2xl bg-dark-300 border border-white/[0.08] max-h-[90vh] overflow-y-auto w-full">
       <div className="flex items-center justify-between mb-5">
         <h3 className="text-lg font-semibold text-ink-100">Novo Filiado</h3>
         <button onClick={onCancelar} className="p-2 rounded-lg hover:bg-dark-100 text-ink-400 transition">
@@ -318,6 +318,17 @@ function LinhaFiliado({ filiado, onDeletar }) {
             </div>
           </div>
 
+          {filiado.senha_temporaria && (
+            <div className="mb-4 bg-dark-500/50 border border-gold-500/20 p-3 rounded-lg text-sm flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <Key size={14} className="text-gold-400" />
+                <span className="text-ink-300">Senha temporária pendente:</span>
+                <strong className="text-gold-400 font-mono tracking-wider text-base">{filiado.senha_temporaria}</strong>
+              </div>
+              <p className="text-[10px] text-ink-500 hidden sm:block">Aguardando troca pelo filiado</p>
+            </div>
+          )}
+
           {!confirmando ? (
             <button
               onClick={() => setConfirmando(true)}
@@ -404,11 +415,14 @@ export default function FiliadosPage() {
       </div>
 
       {mostrarForm && (
-        <div className="mb-6">
-          <FormNovoFiliado
-            onSalvo={() => { setMostrarForm(false); carregarFiliados(); }}
-            onCancelar={() => setMostrarForm(false)}
-          />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setMostrarForm(false)} />
+          <div className="relative w-full max-w-xl z-10 page-enter">
+            <FormNovoFiliado
+              onSalvo={() => { setMostrarForm(false); carregarFiliados(); }}
+              onCancelar={() => setMostrarForm(false)}
+            />
+          </div>
         </div>
       )}
 

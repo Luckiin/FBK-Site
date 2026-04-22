@@ -6,7 +6,7 @@ import { loginFiliado } from '@/lib/services/authService';
 
 export async function POST(request) {
   try {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const filiadoToken = cookieStore.get('filiado-session')?.value;
     
     if (!filiadoToken) {
