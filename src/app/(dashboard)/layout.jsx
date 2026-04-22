@@ -4,11 +4,13 @@ import { useState } from "react";
 import Sidebar from "@/components/dashboard/Sidebar";
 import { Menu, Bell, ArrowUpRight } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { usePageTransition } from "@/components/TransitionWrapper";
 import Link from "next/link";
 import "../globals.css";
 
 function DashTopBar({ onMenuOpen }) {
   const { usuario } = useAuth();
+  const { navigateTo } = usePageTransition();
   const nomeExibido = usuario?.nome ?? usuario?.name ?? "Usuário";
 
   return (
@@ -22,12 +24,12 @@ function DashTopBar({ onMenuOpen }) {
 
       <div className="flex-1" />
 
-      <Link
-        href="/"
+      <button
+        onClick={() => navigateTo('/')}
         className="hidden sm:flex items-center gap-1.5 text-xs text-ink-600 hover:text-ink-300 transition-colors px-3 py-1.5 rounded-lg hover:bg-white/[0.04]"
       >
         <ArrowUpRight size={12} /> Ver site
-      </Link>
+      </button>
 
       <button className="relative w-9 h-9 flex items-center justify-center rounded-xl hover:bg-white/[0.06] text-ink-500 hover:text-ink-100 transition-all">
         <Bell size={16} />
@@ -54,7 +56,7 @@ export default function DashboardLayout({ children }) {
       <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <div className="flex-1 lg:ml-64 flex flex-col min-h-screen overflow-x-hidden">
         <DashTopBar onMenuOpen={() => setSidebarOpen(true)} />
-        <div className="flex-1 w-full page-enter">
+        <div className="flex-1 w-full">
           {children}
         </div>
       </div>

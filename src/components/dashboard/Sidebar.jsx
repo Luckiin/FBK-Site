@@ -87,17 +87,23 @@ export default function Sidebar({ open, onClose }) {
 
         {/* Logo */}
         <div className="flex items-center justify-between p-5 border-b border-white/[0.05] relative">
-          <Link href="/" className="flex items-center gap-2.5 group" onClick={onClose}>
+          <button 
+            onClick={() => {
+              onClose();
+              navigateTo('/');
+            }}
+            className="flex items-center gap-2.5 group"
+          >
             <div className="relative w-9 h-9 group-hover:scale-105 transition-transform shrink-0">
               <Image src="/logo.png" alt="FBK" fill sizes="36px" className="object-contain drop-shadow-md" priority loading="eager" />
             </div>
-            <div>
+            <div className="text-left">
               <span className="text-base font-black text-ink-100 tracking-tight">FBK</span>
               <div className={`text-[9px] font-bold uppercase tracking-[0.2em] -mt-0.5 ${accentText}`}>
                 {papelExibido}
               </div>
             </div>
-          </Link>
+          </button>
           <button onClick={onClose}
             className="lg:hidden w-8 h-8 flex items-center justify-center rounded-xl hover:bg-white/[0.06] text-ink-500 hover:text-ink-100 transition-all">
             <X size={16} />
@@ -111,20 +117,22 @@ export default function Sidebar({ open, onClose }) {
             const Icon = item.icon;
             const active = isActive(item.href);
             return (
-              <Link
+              <button
                 key={item.href}
-                href={item.href}
-                onClick={onClose}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group relative
-                  ${active ? activeItemClass : 'text-ink-400 hover:bg-brand-500/[0.06] hover:text-ink-100'}`}
+                onClick={() => {
+                  onClose();
+                  if (!active) navigateTo(item.href);
+                }}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group relative
+                  ${active ? activeItemClass : 'text-ink-400 hover:bg-white/[0.04] hover:text-ink-100'}`}
               >
                 {active && (
                   <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 ${activeBarClass} rounded-full`} />
                 )}
                 <Icon size={16} className={active ? activeIconClass : 'text-ink-600 group-hover:text-ink-300 transition-colors'} />
-                <span className="flex-1 text-[13px]">{item.label}</span>
+                <span className="flex-1 text-[13px] text-left">{item.label}</span>
                 {active && <ChevronRight size={12} className={activeChevronClass} />}
-              </Link>
+              </button>
             );
           })}
         </nav>

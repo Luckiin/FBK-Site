@@ -70,9 +70,9 @@ function NoticiaModal({ noticia, onSalvo, onFechar }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 backdrop-blur-sm overflow-y-auto">
+    <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 backdrop-blur-sm overflow-y-auto animate-overlay" onClick={onFechar}>
       <div
-        className="bg-dark-200 border border-dark-50 rounded-2xl w-full max-w-2xl shadow-2xl my-8"
+        className="bg-dark-200 border border-dark-50 rounded-2xl w-full max-w-2xl shadow-2xl my-8 page-enter"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}

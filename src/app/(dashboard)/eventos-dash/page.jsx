@@ -308,8 +308,8 @@ export default function DashboardEventosPage() {
       </div>
 
       {showModal && isAdmin && (
-        <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-[100] flex items-center justify-center p-4 overflow-y-auto" onClick={() => !saving && setShowModal(false)}>
-          <div className="bg-dark-200 border border-dark-50 rounded-3xl w-full max-w-2xl my-8 relative shadow-2xl" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-[100] flex items-center justify-center p-4 overflow-y-auto animate-overlay" onClick={() => !saving && setShowModal(false)}>
+          <div className="bg-dark-200 border border-dark-50 rounded-3xl w-full max-w-2xl my-8 relative shadow-2xl page-enter" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between p-6 border-b border-dark-50/50">
               <h3 className="font-black text-ink-100 uppercase tracking-tight">{editingEvent ? "Editar Evento" : "Novo Evento"}</h3>
               <button

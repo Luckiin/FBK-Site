@@ -59,13 +59,13 @@ function AuditDiff({ anterior, novo }) {
   if (changes.length === 0) return null;
 
   return (
-    <div className="mt-2.5 space-y-1.5 border-l-2 border-white/[0.05] pl-3 py-1">
+    <div className="mt-2.5 space-y-1.5 border-l-2 border-white/10 pl-3 py-1">
       {changes.map(c => (
         <div key={c.key} className="flex items-baseline gap-2 text-[11px]">
-          <span className="text-ink-500 font-medium min-w-[50px]">{c.label}:</span>
-          <span className="text-ink-600 line-through truncate max-w-[150px]">{c.old || "—"}</span>
-          <span className="text-ink-500">→</span>
-          <span className="text-gold-500 font-semibold truncate max-w-[150px]">{c.new || "—"}</span>
+          <span className="text-ink-300 font-bold min-w-[60px] shrink-0 uppercase tracking-tighter">{c.label}</span>
+          <span className="text-ink-400 line-through truncate max-w-[200px]">{c.old || "—"}</span>
+          <span className="text-ink-400 px-1">→</span>
+          <span className="text-gold-400 font-bold truncate max-w-[200px]">{c.new || "—"}</span>
         </div>
       ))}
     </div>
@@ -143,7 +143,7 @@ export default function AuditoriaPage() {
           <option value="auth" className="bg-dark-300">Autenticação</option>
         </select>
 
-        <div className="text-xs text-ink-600 font-medium px-2">
+        <div className="text-xs text-ink-300 font-bold px-2 tracking-widest uppercase">
           {filteredLogs.length} registro(s)
         </div>
       </div>
@@ -177,11 +177,11 @@ export default function AuditoriaPage() {
                         {log.action}
                       </span>
                       {log.tabela && (
-                        <span className="text-[10px] font-mono text-ink-500 bg-white/5 px-1.5 py-0.5 rounded border border-white/5">
+                        <span className="text-[10px] font-mono text-ink-300 bg-white/10 px-1.5 py-0.5 rounded border border-white/5">
                           {log.tabela}
                         </span>
                       )}
-                      <span className="text-xs text-ink-400 font-medium">por {log.user_name || "Sistema"}</span>
+                      <span className="text-xs text-ink-300 font-bold">por {log.user_name || "Sistema"}</span>
                     </div>
 
                     <p className="text-sm text-ink-100 font-semibold mb-1">
@@ -192,14 +192,14 @@ export default function AuditoriaPage() {
                       <AuditDiff anterior={log.dados_anteriores} novo={log.dados_novos} />
                     )}
 
-                    <div className="flex items-center gap-4 mt-3 text-[11px] text-ink-600 uppercase tracking-tighter">
-                      <div className="flex items-center gap-1">
-                        <Clock size={12} className="text-ink-700" />
+                    <div className="flex items-center gap-4 mt-4 text-[11px] text-ink-400 font-medium uppercase tracking-wider">
+                      <div className="flex items-center gap-1.5">
+                        <Clock size={13} className="text-gold-500/80" />
                         {formatDateTime(log.created_at)}
                       </div>
                       {log.registro_id && (
-                        <div className="hidden sm:block">
-                          ID: <span className="font-mono text-[9px] opacity-60">{log.registro_id}</span>
+                        <div className="hidden sm:block text-ink-500">
+                          ID: <span className="font-mono text-[10px] text-ink-300">{log.registro_id}</span>
                         </div>
                       )}
                     </div>

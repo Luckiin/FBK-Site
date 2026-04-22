@@ -581,7 +581,7 @@ export default function AtletasPage() {
 
       {mostrarForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
-          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setMostrarForm(false)} />
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm animate-overlay" onClick={() => setMostrarForm(false)} />
           <div className="relative w-full max-w-xl z-10 page-enter">
             <FormNovoAtleta
               onSalvo={() => { setMostrarForm(false); carregarAtletas(); }}
@@ -593,7 +593,7 @@ export default function AtletasPage() {
 
       {atletaEditando && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
-          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setAtletaEditando(null)} />
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm animate-overlay" onClick={() => setAtletaEditando(null)} />
           <div className="relative w-full max-w-xl z-10 page-enter">
             <FormEditarAtleta
               atleta={atletaEditando}

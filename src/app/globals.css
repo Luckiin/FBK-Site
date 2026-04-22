@@ -44,6 +44,7 @@
 }
 
 .page-enter            { animation: pageFadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) both; }
+.animate-overlay       { animation: overlayIn 0.3s ease-out both; }
 .animate-float         { animation: float 6s ease-in-out infinite; }
 .animate-blob          { animation: blob 12s ease-in-out infinite; }
 .animate-blob-delay-2  { animation: blob 12s ease-in-out 2s infinite; }
