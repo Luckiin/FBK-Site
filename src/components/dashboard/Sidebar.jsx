@@ -6,36 +6,36 @@ import { usePathname } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { usePageTransition } from '@/components/TransitionWrapper';
 import {
-  LayoutDashboard, Users, Trophy, CalendarDays,
+  LayoutDashboard, Trophy, CalendarDays,
   FileText, LogOut, ChevronRight, X,
   Building2, UserCheck, ClipboardList, Newspaper, Settings,
 } from 'lucide-react';
 
 const NAV_ADMIN = [
-  { href: '/home',         label: 'Dashboard',       icon: LayoutDashboard },
-  { href: '/filiais',      label: 'Filiais',         icon: Building2       },
+  { href: '/home', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/filiais', label: 'Filiais', icon: Building2 },
 
-  { href: '/eventos-dash', label: 'Eventos',         icon: CalendarDays    },
-  { href: '/noticias',     label: 'Notícias',        icon: Newspaper       },
-  { href: '/exames',       label: 'Exames de Faixa', icon: Trophy          },
-  { href: '/documentos',   label: 'Documentos',      icon: FileText        },
-  { href: '/auditoria',    label: 'Auditoria',       icon: ClipboardList   },
+  { href: '/eventos-dash', label: 'Eventos', icon: CalendarDays },
+  { href: '/noticias', label: 'Notícias', icon: Newspaper },
+  { href: '/exames', label: 'Exames de Faixa', icon: Trophy },
+  { href: '/documentos', label: 'Documentos', icon: FileText },
+  { href: '/auditoria', label: 'Auditoria', icon: ClipboardList },
 ];
 
 const NAV_FILIAL = [
-  { href: '/home',         label: 'Dashboard',    icon: LayoutDashboard },
-  { href: '/filial',       label: 'Minha Filial', icon: Building2       },
-  { href: '/atletas',      label: 'Atletas',      icon: UserCheck       },
-  { href: '/eventos-dash', label: 'Eventos',         icon: CalendarDays    },
-  { href: '/exames',       label: 'Exames de Faixa', icon: Trophy          },
-  { href: '/documentos',   label: 'Documentos',      icon: FileText        },
-  { href: '/auditoria',    label: 'Auditoria',       icon: ClipboardList   },
+  { href: '/home', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/filial', label: 'Minha Filial', icon: Building2 },
+  { href: '/atletas', label: 'Atletas', icon: UserCheck },
+  { href: '/eventos-dash', label: 'Eventos', icon: CalendarDays },
+  { href: '/exames', label: 'Exames de Faixa', icon: Trophy },
+  { href: '/documentos', label: 'Documentos', icon: FileText },
+  { href: '/auditoria', label: 'Auditoria', icon: ClipboardList },
 ];
 
 const NAV_ATLETA = [
-  { href: '/home',         label: 'Dashboard',     icon: LayoutDashboard },
-  { href: '/eventos-dash', label: 'Eventos',       icon: CalendarDays    },
-  { href: '/configuracoes', label: 'Configurações', icon: Settings        },
+  { href: '/home', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/eventos-dash', label: 'Eventos', icon: CalendarDays },
+  { href: '/configuracoes', label: 'Configurações', icon: Settings },
 ];
 
 export default function Sidebar({ open, onClose }) {
@@ -48,25 +48,26 @@ export default function Sidebar({ open, onClose }) {
     await logout();
   };
 
-  const isActive = (href) => pathname === href || pathname.startsWith(href + '/');
+  const isActive = (href) =>
+    pathname === href || pathname.startsWith(href + '/');
 
   let navItems = NAV_ATLETA;
-  if (isAdmin)   navItems = NAV_ADMIN;
-  if (isFilial)  navItems = NAV_FILIAL;
-  if (isAtleta)  navItems = NAV_ATLETA;
+  if (isAdmin) navItems = NAV_ADMIN;
+  if (isFilial) navItems = NAV_FILIAL;
+  if (isAtleta) navItems = NAV_ATLETA;
 
   const nomeExibido = usuario?.nome ?? usuario?.name ?? 'Usuário';
   const papelExibido = tipo === 'admin' ? 'Administrador' : tipo === 'filial' ? 'Filial' : 'Atleta';
   const inicial = nomeExibido.charAt(0).toUpperCase();
 
   const accentColor = isAdmin ? 'from-brand-500 to-brand-700' : isFilial ? 'from-gold-500 to-gold-700' : 'from-cobalt-500 to-cobalt-700';
-  const accentText  = isAdmin ? 'text-brand-400' : isFilial ? 'text-gold-400' : 'text-cobalt-400';
+  const accentText = isAdmin ? 'text-brand-400' : isFilial ? 'text-gold-400' : 'text-cobalt-400';
   const activeItemClass = isAdmin
     ? 'bg-gradient-to-r from-brand-500/15 to-brand-500/5 text-brand-400 border border-brand-500/20'
     : isFilial
-    ? 'bg-gradient-to-r from-gold-500/15 to-gold-500/5 text-gold-400 border border-gold-500/20'
-    : 'bg-gradient-to-r from-brand-500/15 to-brand-500/5 text-brand-400 border border-brand-500/20';
-  const activeBarClass  = isAdmin ? 'bg-brand-500'  : isFilial ? 'bg-gold-500'  : 'bg-brand-500';
+      ? 'bg-gradient-to-r from-gold-500/15 to-gold-500/5 text-gold-400 border border-gold-500/20'
+      : 'bg-gradient-to-r from-brand-500/15 to-brand-500/5 text-brand-400 border border-brand-500/20';
+  const activeBarClass = isAdmin ? 'bg-brand-500' : isFilial ? 'bg-gold-500' : 'bg-brand-500';
   const activeIconClass = isAdmin ? 'text-brand-400' : isFilial ? 'text-gold-400' : 'text-cobalt-400';
   const activeChevronClass = isAdmin ? 'text-brand-400/50' : isFilial ? 'text-gold-400/50' : 'text-cobalt-400/50';
 
@@ -87,23 +88,17 @@ export default function Sidebar({ open, onClose }) {
 
         {/* Logo */}
         <div className="flex items-center justify-between p-5 border-b border-white/[0.05] relative">
-          <button 
-            onClick={() => {
-              onClose();
-              navigateTo('/');
-            }}
-            className="flex items-center gap-2.5 group"
-          >
+          <Link href="/" className="flex items-center gap-2.5 group" onClick={onClose}>
             <div className="relative w-9 h-9 group-hover:scale-105 transition-transform shrink-0">
               <Image src="/logo.png" alt="FBK" fill sizes="36px" className="object-contain drop-shadow-md" priority loading="eager" />
             </div>
-            <div className="text-left">
+            <div>
               <span className="text-base font-black text-ink-100 tracking-tight">FBK</span>
               <div className={`text-[9px] font-bold uppercase tracking-[0.2em] -mt-0.5 ${accentText}`}>
                 {papelExibido}
               </div>
             </div>
-          </button>
+          </Link>
           <button onClick={onClose}
             className="lg:hidden w-8 h-8 flex items-center justify-center rounded-xl hover:bg-white/[0.06] text-ink-500 hover:text-ink-100 transition-all">
             <X size={16} />
@@ -117,22 +112,20 @@ export default function Sidebar({ open, onClose }) {
             const Icon = item.icon;
             const active = isActive(item.href);
             return (
-              <button
+              <Link
                 key={item.href}
-                onClick={() => {
-                  onClose();
-                  if (!active) navigateTo(item.href);
-                }}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group relative
-                  ${active ? activeItemClass : 'text-ink-400 hover:bg-white/[0.04] hover:text-ink-100'}`}
+                href={item.href}
+                onClick={onClose}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group relative
+                  ${active ? activeItemClass : 'text-ink-400 hover:bg-brand-500/[0.06] hover:text-ink-100'}`}
               >
                 {active && (
                   <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 ${activeBarClass} rounded-full`} />
                 )}
                 <Icon size={16} className={active ? activeIconClass : 'text-ink-600 group-hover:text-ink-300 transition-colors'} />
-                <span className="flex-1 text-[13px] text-left">{item.label}</span>
+                <span className="flex-1 text-[13px]">{item.label}</span>
                 {active && <ChevronRight size={12} className={activeChevronClass} />}
-              </button>
+              </Link>
             );
           })}
         </nav>
