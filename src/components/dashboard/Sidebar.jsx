@@ -8,7 +8,7 @@ import { usePageTransition } from '@/components/TransitionWrapper';
 import {
   LayoutDashboard, Users, Trophy, CalendarDays,
   FileText, LogOut, ChevronRight, X,
-  Building2, UserCheck, ClipboardList, Newspaper,
+  Building2, UserCheck, ClipboardList, Newspaper, Settings,
 } from 'lucide-react';
 
 const NAV_ADMIN = [
@@ -28,7 +28,10 @@ const NAV_FILIAL = [
   { href: '/filiados', label: 'Filiados',     icon: UserCheck       },
 ];
 
-const NAV_FILIADO = [{ href: '/home', label: 'Dashboard', icon: LayoutDashboard }];
+const NAV_FILIADO = [
+  { href: '/home', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/configuracoes', label: 'Configurações', icon: Settings },
+];
 const NAV_ATLETA  = [{ href: '/home', label: 'Dashboard', icon: LayoutDashboard }];
 
 export default function Sidebar({ open, onClose }) {
