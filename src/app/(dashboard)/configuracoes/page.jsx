@@ -1,7 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-import { Key, Save, Loader2, Eye, EyeOff, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Key, Save, Loader2, Eye, EyeOff, AlertCircle, CheckCircle2, User, Phone, Mail } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
+import { toast } from 'sonner';
 
 const InputSenha = ({ label, value, onChange, placeholder, name, tipo, mostrarPwd, setMostrarPwd }) => (
   <div>
@@ -30,31 +32,71 @@ const InputSenha = ({ label, value, onChange, placeholder, name, tipo, mostrarPw
 );
 
 export default function ConfiguracoesPage() {
+  const { usuario, atualizarUsuario } = useAuth();
+  
+  // Dados do Perfil
+  const [nome, setNome] = useState('');
+  const [email, setEmail] = useState('');
+  const [telefone, setTelefone] = useState('');
+  const [loadingPerfil, setLoadingPerfil] = useState(false);
+
+  // Senha
   const [senhaAtual, setSenhaAtual] = useState('');
   const [novaSenha, setNovaSenha] = useState('');
   const [confirmarSenha, setConfirmarSenha] = useState('');
-  
-  const [loading, setLoading] = useState(false);
-  const [erro, setErro] = useState('');
-  const [sucesso, setSucesso] = useState('');
+  const [loadingSenha, setLoadingSenha] = useState(false);
+
   const [mostrarPwd, setMostrarPwd] = useState({ atual: false, nova: false, confirm: false });
 
-  const handleSubmit = async (e) => {
+  useEffect(() => {
+    if (usuario) {
+      setNome(usuario.nome || usuario.name || '');
+      setEmail(usuario.email || '');
+      setTelefone(usuario.telefone || '');
+    }
+  }, [usuario]);
+
+  const handleUpdatePerfil = async (e) => {
     e.preventDefault();
-    setErro('');
-    setSucesso('');
+    setLoadingPerfil(true);
+
+    try {
+      if (!usuario?.id) throw new Error('ID do usuário não identificado. Tente refazer o login.');
+
+      const res = await fetch(`/api/atletas/${usuario.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome, email, telefone }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.erro);
+
+      toast.success('Dados atualizados com sucesso!');
+      if (atualizarUsuario) {
+        atualizarUsuario({ ...usuario, nome, email, telefone });
+      }
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setLoadingPerfil(false);
+    }
+  };
+
+  const handleUpdateSenha = async (e) => {
+    e.preventDefault();
 
     if (novaSenha !== confirmarSenha) {
-      setErro('A nova senha e a confirmação não coincidem.');
+      toast.error('A nova senha e a confirmação não coincidem.');
       return;
     }
 
     if (novaSenha.length < 6) {
-      setErro('A nova senha deve ter no mínimo 6 caracteres.');
+      toast.error('A nova senha deve ter no mínimo 6 caracteres.');
       return;
     }
 
-    setLoading(true);
+    setLoadingSenha(true);
     try {
       const res = await fetch('/api/atletas/configuracoes', {
         method: 'POST',
@@ -65,14 +107,14 @@ export default function ConfiguracoesPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.erro);
 
-      setSucesso('Senha atualizada com sucesso!');
+      toast.success('Senha atualizada com sucesso!');
       setSenhaAtual('');
       setNovaSenha('');
       setConfirmarSenha('');
     } catch (err) {
-      setErro(err.message);
+      toast.error(err.message);
     } finally {
-      setLoading(false);
+      setLoadingSenha(false);
     }
   };
 
@@ -85,81 +127,142 @@ export default function ConfiguracoesPage() {
         <p className="text-ink-400 text-sm mt-1">Gerencie a segurança da sua conta de atleta.</p>
       </div>
 
-      <div className="card p-6 bg-dark-200/50">
-        <div className="flex items-center gap-3 mb-6 pb-4 border-b border-dark-50/60">
-          <div className="w-10 h-10 bg-brand-500/10 rounded-xl flex items-center justify-center pt-0.5">
-            <Key size={18} className="text-brand-400" />
+      <div className="space-y-6">
+        {/* Seção Perfil */}
+        <div className="card p-6 bg-dark-200/50">
+          <div className="flex items-center gap-3 mb-6 pb-4 border-b border-dark-50/60">
+            <div className="w-10 h-10 bg-cobalt-500/10 rounded-xl flex items-center justify-center pt-0.5">
+              <User size={18} className="text-cobalt-400" />
+            </div>
+            <div>
+              <h2 className="text-base font-semibold text-ink-100">Meus Dados</h2>
+              <p className="text-xs text-ink-500">Mantenha seu contato atualizado para receber notificações.</p>
+            </div>
           </div>
-          <div>
-            <h2 className="text-base font-semibold text-ink-100">Atualizar Senha</h2>
-            <p className="text-xs text-ink-500">Recomendamos usar uma senha segura que você não use em outro lugar.</p>
-          </div>
+
+          <form onSubmit={handleUpdatePerfil} className="space-y-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div>
+                <label className="block text-sm font-medium text-ink-300 mb-1.5">Nome Completo</label>
+                <div className="relative">
+                  <User size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-500" />
+                  <input
+                    className="input-field pl-10"
+                    placeholder="Seu nome"
+                    value={nome}
+                    onChange={(e) => setNome(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-ink-300 mb-1.5">Email</label>
+                <div className="relative">
+                  <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-500" />
+                  <input
+                    type="email"
+                    className="input-field pl-10"
+                    placeholder="exemplo@email.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-ink-300 mb-1.5">Telefone</label>
+                <div className="relative">
+                  <Phone size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-500" />
+                  <input
+                    className="input-field pl-10"
+                    placeholder="(00) 00000-0000"
+                    value={telefone}
+                    onChange={(e) => setTelefone(e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-2">
+              <button
+                type="submit"
+                disabled={loadingPerfil}
+                className="btn-primary w-full sm:w-auto px-8 flex items-center justify-center gap-2"
+              >
+                {loadingPerfil ? (
+                  <><Loader2 size={16} className="animate-spin" /> Salvando...</>
+                ) : (
+                  <><Save size={16} /> Salvar Alterações</>
+                )}
+              </button>
+            </div>
+          </form>
         </div>
 
-        {erro && (
-          <div className="bg-brand-900/30 border border-brand-500/30 text-brand-300 text-sm p-3.5 rounded-xl mb-6 flex items-start gap-2.5">
-            <AlertCircle size={16} className="shrink-0 mt-0.5" />
-            <span>{erro}</span>
+        {/* Seção Senha */}
+        <div className="card p-6 bg-dark-200/50">
+          <div className="flex items-center gap-3 mb-6 pb-4 border-b border-dark-50/60">
+            <div className="w-10 h-10 bg-brand-500/10 rounded-xl flex items-center justify-center pt-0.5">
+              <Key size={18} className="text-brand-400" />
+            </div>
+            <div>
+              <h2 className="text-base font-semibold text-ink-100">Atualizar Senha</h2>
+              <p className="text-xs text-ink-500">Recomendamos usar uma senha segura que você não use em outro lugar.</p>
+            </div>
           </div>
-        )}
 
-        {sucesso && (
-          <div className="bg-green-500/10 border border-green-500/20 text-green-400 text-sm p-3.5 rounded-xl mb-6 flex items-start gap-2.5">
-            <CheckCircle2 size={16} className="shrink-0 mt-0.5" />
-            <span>{sucesso}</span>
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <InputSenha
-            label="Senha Atual"
-            placeholder="Digite a sua senha atual"
-            value={senhaAtual}
-            onChange={setSenhaAtual}
-            name="current-password"
-            tipo="atual"
-            mostrarPwd={mostrarPwd}
-            setMostrarPwd={setMostrarPwd}
-          />
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2 border-t border-dark-50/60">
+          <form onSubmit={handleUpdateSenha} className="space-y-5">
             <InputSenha
-              label="Nova Senha"
-              placeholder="Digite a nova senha"
-              value={novaSenha}
-              onChange={setNovaSenha}
-              name="new-password"
-              tipo="nova"
+              label="Senha Atual"
+              placeholder="Digite a sua senha atual"
+              value={senhaAtual}
+              onChange={setSenhaAtual}
+              name="current-password"
+              tipo="atual"
               mostrarPwd={mostrarPwd}
               setMostrarPwd={setMostrarPwd}
             />
-            <InputSenha
-              label="Confirmar Nova Senha"
-              placeholder="Digite novamente"
-              value={confirmarSenha}
-              onChange={setConfirmarSenha}
-              name="new-password"
-              tipo="confirm"
-              mostrarPwd={mostrarPwd}
-              setMostrarPwd={setMostrarPwd}
-            />
-          </div>
 
-          <div className="pt-3">
-            <button
-              type="submit"
-              disabled={loading || !senhaAtual || !novaSenha || !confirmarSenha}
-              className="btn-primary w-full sm:w-auto px-8 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-            >
-              {loading ? (
-                <><Loader2 size={16} className="animate-spin" /> Atualizando...</>
-              ) : (
-                <><Save size={16} /> Salvar Nova Senha</>
-              )}
-            </button>
-          </div>
-        </form>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2 border-t border-dark-50/60">
+              <InputSenha
+                label="Nova Senha"
+                placeholder="Digite a nova senha"
+                value={novaSenha}
+                onChange={setNovaSenha}
+                name="new-password"
+                tipo="nova"
+                mostrarPwd={mostrarPwd}
+                setMostrarPwd={setMostrarPwd}
+              />
+              <InputSenha
+                label="Confirmar Nova Senha"
+                placeholder="Digite novamente"
+                value={confirmarSenha}
+                onChange={setConfirmarSenha}
+                name="new-password"
+                tipo="confirm"
+                mostrarPwd={mostrarPwd}
+                setMostrarPwd={setMostrarPwd}
+              />
+            </div>
+
+            <div className="pt-3">
+              <button
+                type="submit"
+                disabled={loadingSenha || !senhaAtual || !novaSenha || !confirmarSenha}
+                className="btn-primary w-full sm:w-auto px-8 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                {loadingSenha ? (
+                  <><Loader2 size={16} className="animate-spin" /> Atualizando...</>
+                ) : (
+                  <><Save size={16} /> Salvar Nova Senha</>
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
+
     </main>
   );
 }

@@ -125,6 +125,7 @@ export function AuthProvider({ children }) {
         loginLegado,
         logout,
         recarregarSessao: carregarSessao,
+        atualizarUsuario: setUsuario,
         temAcesso,
       }}
     >

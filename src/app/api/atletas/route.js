@@ -25,8 +25,8 @@ async function resolverOperadorId(request) {
   const atletaToken = cookieStore.get('atleta-session')?.value;
   if (atletaToken) {
     const payload = await verifyToken(atletaToken);
-    if (payload?.atleta_id) {
-       const { data: atleta } = await supabase.from('atletas').select('*').eq('id', payload.atleta_id).single();
+    if (payload?.sub) {
+       const { data: atleta } = await supabase.from('atletas').select('*').eq('id', payload.sub).single();
        if (atleta) return { filialId: atleta.filial_id, tipo: 'atleta', profile: atleta };
     }
   }

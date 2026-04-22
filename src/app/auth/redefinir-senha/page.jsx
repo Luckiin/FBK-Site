@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Shield, Lock, Eye, EyeOff, CheckCircle, AlertCircle } from 'lucide-react';
+import { toast } from 'sonner';
 
 function RedefinirSenhaForm() {
   const searchParams = useSearchParams();
@@ -16,7 +17,6 @@ function RedefinirSenhaForm() {
   const [showPwd, setShowPwd] = useState(false);
   const [loading, setLoading] = useState(false);
   const [sucesso, setSucesso] = useState(false);
-  const [erro, setErro] = useState('');
 
   useEffect(() => {
     if (!token) {
@@ -31,14 +31,13 @@ function RedefinirSenhaForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErro('');
 
     if (novaSenha !== confirmarSenha) {
-      setErro('As senhas não coincidem.');
+      toast.error('As senhas não coincidem.');
       return;
     }
     if (novaSenha.length < 6) {
-      setErro('A senha deve ter pelo menos 6 caracteres.');
+      toast.error('A senha deve ter pelo menos 6 caracteres.');
       return;
     }
 
@@ -52,9 +51,10 @@ function RedefinirSenhaForm() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.erro);
       setSucesso(true);
+      toast.success('Senha redefinida com sucesso!');
       setTimeout(() => router.push('/auth/entrar'), 3000);
     } catch (err) {
-      setErro(err.message || 'Erro ao redefinir senha.');
+      toast.error(err.message || 'Erro ao redefinir senha.');
     } finally {
       setLoading(false);
     }
@@ -108,11 +108,6 @@ function RedefinirSenhaForm() {
               <h1 className="text-xl font-bold text-ink-100 mb-1">Nova senha</h1>
               <p className="text-sm text-ink-400 mb-6">Defina sua nova senha de acesso.</p>
 
-              {erro && (
-                <div className="bg-brand-900/30 border border-brand-500/30 text-brand-300 text-sm p-3 rounded-xl mb-4">
-                  {erro}
-                </div>
-              )}
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>

@@ -18,7 +18,8 @@ async function getAdminProfile(supabase) {
 
 export async function GET(request, { params }) {
   try {
-    const noticia = await buscarNoticiaPorId(params.id);
+    const { id } = await params;
+    const noticia = await buscarNoticiaPorId(id);
     const supabase = await createServerClient();
     const admin = await getAdminProfile(supabase);
 
@@ -34,6 +35,7 @@ export async function GET(request, { params }) {
 
 export async function PATCH(request, { params }) {
   try {
+    const { id } = await params;
     const supabase = await createServerClient();
     const adminProfile = await getAdminProfile(supabase);
     if (!adminProfile) {
@@ -41,7 +43,7 @@ export async function PATCH(request, { params }) {
     }
 
     const dados = await request.json();
-    const noticia = await atualizarNoticia(params.id, dados, adminProfile);
+    const noticia = await atualizarNoticia(id, dados, adminProfile);
     return NextResponse.json({ noticia });
   } catch (err) {
     return NextResponse.json({ erro: err.message }, { status: 400 });
@@ -50,13 +52,14 @@ export async function PATCH(request, { params }) {
 
 export async function DELETE(request, { params }) {
   try {
+    const { id } = await params;
     const supabase = await createServerClient();
     const adminProfile = await getAdminProfile(supabase);
     if (!adminProfile) {
       return NextResponse.json({ erro: 'Não autorizado' }, { status: 401 });
     }
 
-    await deletarNoticia(params.id, adminProfile);
+    await deletarNoticia(id, adminProfile);
     return NextResponse.json({ sucesso: true });
   } catch (err) {
     return NextResponse.json({ erro: err.message }, { status: 400 });

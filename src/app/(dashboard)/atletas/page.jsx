@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { validateCPF } from '@/lib/utils';
+import { toast } from 'sonner';
 
 
 function formatarCPF(valor) {
@@ -63,8 +64,10 @@ function FormNovoAtleta({ onSalvo, onCancelar }) {
       const data = await res.json();
       if (!res.ok) throw new Error(data.erro);
       setResultado(data);
+      toast.success('Atleta cadastrado com sucesso!');
     } catch (err) {
       setErro(err.message);
+      toast.error('Erro ao cadastrar atleta: ' + err.message);
     } finally {
       setLoading(false);
     }
@@ -127,8 +130,6 @@ function FormNovoAtleta({ onSalvo, onCancelar }) {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
-
-        
         <div>
           <label className="block text-sm font-medium text-ink-300 mb-1.5">
             CPF <span className="text-brand-400">*</span>
@@ -157,7 +158,6 @@ function FormNovoAtleta({ onSalvo, onCancelar }) {
           )}
         </div>
 
-        
         <div>
           <label className="block text-sm font-medium text-ink-300 mb-1.5">
             Nome completo <span className="text-brand-400">*</span>
@@ -174,7 +174,6 @@ function FormNovoAtleta({ onSalvo, onCancelar }) {
           </div>
         </div>
 
-        
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="block text-sm font-medium text-ink-300 mb-1.5">Sexo</label>
@@ -203,7 +202,6 @@ function FormNovoAtleta({ onSalvo, onCancelar }) {
           </div>
         </div>
 
-        
         <div>
           <label className="block text-sm font-medium text-ink-300 mb-1.5">
             Telefone (login) <span className="text-brand-400">*</span>
@@ -222,7 +220,6 @@ function FormNovoAtleta({ onSalvo, onCancelar }) {
           <p className="text-xs text-ink-500 mt-1">O atleta usará este número como login</p>
         </div>
 
-        
         <div>
           <label className="block text-sm font-medium text-ink-300 mb-1.5">
             Email <span className="text-brand-400">*</span>
@@ -240,7 +237,6 @@ function FormNovoAtleta({ onSalvo, onCancelar }) {
           </div>
         </div>
 
-        
         <div className="flex gap-3 pt-2">
           <button type="button" onClick={onCancelar} className="btn-outline flex-1">
             Cancelar
@@ -263,7 +259,155 @@ function FormNovoAtleta({ onSalvo, onCancelar }) {
 }
 
 
-function LinhaAtleta({ atleta, onDeletar }) {
+function FormEditarAtleta({ atleta, onSalvo, onCancelar }) {
+  const [nome, setNome] = useState(atleta.nome || '');
+  const [sexo, setSexo] = useState(atleta.sexo || '');
+  const [dataNascimento, setDataNascimento] = useState(atleta.data_nascimento || '');
+  const [telefone, setTelefone] = useState(atleta.telefone || '');
+  const [email, setEmail] = useState(atleta.email || '');
+
+  const [loading, setLoading] = useState(false);
+  const [erro, setErro] = useState('');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErro('');
+    setLoading(true);
+    try {
+      if (!atleta?.id) throw new Error('ID do atleta não identificado.');
+
+      const res = await fetch(`/api/atletas/${atleta.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ nome, sexo, data_nascimento: dataNascimento, telefone, email }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.erro);
+      toast.success('Dados do atleta atualizados!');
+      onSalvo();
+    } catch (err) {
+      setErro(err.message);
+      toast.error('Erro ao atualizar: ' + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const podeEnviar = nome.trim() && telefone.length >= 10 && email.trim() && !loading;
+
+  return (
+    <div className="card p-6 shadow-2xl bg-dark-300 border border-white/[0.08] max-h-[90vh] overflow-y-auto w-full">
+      <div className="flex items-center justify-between mb-5">
+        <div>
+          <h3 className="text-lg font-semibold text-ink-100">Editar Atleta</h3>
+          <p className="text-xs text-ink-500 font-mono mt-0.5">{atleta.cpf}</p>
+        </div>
+        <button onClick={onCancelar} className="p-2 rounded-lg hover:bg-dark-100 text-ink-400 transition">
+          <X size={18} />
+        </button>
+      </div>
+
+      {erro && (
+        <div className="bg-brand-900/30 border border-brand-500/30 text-brand-300 text-sm p-3 rounded-xl mb-4">
+          {erro}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-ink-300 mb-1.5">Nome completo</label>
+          <div className="relative">
+            <User size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-500" />
+            <input
+              required
+              className="input-field pl-10"
+              placeholder="Nome completo"
+              value={nome}
+              onChange={(e) => setNome(e.target.value)}
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="block text-sm font-medium text-ink-300 mb-1.5">Sexo</label>
+            <select
+              className="input-field"
+              value={sexo}
+              onChange={(e) => setSexo(e.target.value)}
+            >
+              <option value="">Selecione</option>
+              <option value="M">Masculino</option>
+              <option value="F">Feminino</option>
+              <option value="Outro">Outro</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-ink-300 mb-1.5">Nascimento</label>
+            <input
+              type="date"
+              className="input-field"
+              value={dataNascimento}
+              onChange={(e) => setDataNascimento(e.target.value)}
+              max={new Date().toISOString().split('T')[0]}
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-ink-300 mb-1.5">Telefone</label>
+          <div className="relative">
+            <Phone size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-500" />
+            <input
+              required
+              type="tel"
+              className="input-field pl-10"
+              placeholder="(11) 99999-9999"
+              value={telefone}
+              onChange={(e) => setTelefone(e.target.value.replace(/\D/g, ''))}
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-ink-300 mb-1.5">Email</label>
+          <div className="relative">
+            <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-500" />
+            <input
+              required
+              type="email"
+              className="input-field pl-10"
+              placeholder="email@exemplo.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+        </div>
+
+        <div className="flex gap-3 pt-2">
+          <button type="button" onClick={onCancelar} className="btn-outline flex-1">
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            disabled={!podeEnviar}
+            className="btn-primary flex-1 flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            {loading ? (
+              <><Loader2 size={15} className="animate-spin" /> Salvando...</>
+            ) : (
+              <><Save size={15} /> Salvar alterações</>
+            )}
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+}
+
+
+function LinhaAtleta({ atleta, onDeletar, onEditar }) {
   const [expandido, setExpandido] = useState(false);
   const [confirmando, setConfirmando] = useState(false);
 
@@ -333,24 +477,35 @@ function LinhaAtleta({ atleta, onDeletar }) {
             </div>
           )}
 
-          {!confirmando ? (
-            <button
-              onClick={() => setConfirmando(true)}
-              className="flex items-center gap-2 text-sm text-brand-400 hover:text-brand-300 transition"
-            >
-              <Trash2 size={14} /> Remover atleta
-            </button>
-          ) : (
-            <div className="flex items-center gap-3">
-              <p className="text-sm text-ink-300">Confirmar remoção?</p>
-              <button onClick={() => onDeletar(atleta.id)} className="text-sm text-brand-400 font-medium hover:text-brand-300">
-                Sim, remover
-              </button>
-              <button onClick={() => setConfirmando(false)} className="text-sm text-ink-500">
-                Cancelar
-              </button>
-            </div>
-          )}
+          <div className="flex items-center gap-4">
+            {!confirmando ? (
+              <>
+                <button
+                  onClick={() => onEditar(atleta)}
+                  className="flex items-center gap-2 text-sm text-gold-400 hover:text-gold-300 transition font-medium"
+                >
+                  <Save size={14} /> Editar dados
+                </button>
+                <div className="w-px h-3 bg-white/10" />
+                <button
+                  onClick={() => setConfirmando(true)}
+                  className="flex items-center gap-2 text-sm text-brand-400 opacity-60 hover:opacity-100 transition"
+                >
+                  <Trash2 size={14} /> Remover atleta
+                </button>
+              </>
+            ) : (
+              <div className="flex items-center gap-3">
+                <p className="text-sm text-ink-300">Confirmar remoção?</p>
+                <button onClick={() => onDeletar(atleta.id)} className="text-sm text-brand-400 font-medium hover:text-brand-300">
+                  Sim, remover
+                </button>
+                <button onClick={() => setConfirmando(false)} className="text-sm text-ink-500">
+                  Cancelar
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>
@@ -364,6 +519,7 @@ export default function AtletasPage() {
   const [loading, setLoading] = useState(true);
   const [busca, setBusca] = useState('');
   const [mostrarForm, setMostrarForm] = useState(false);
+  const [atletaEditando, setAtletaEditando] = useState(null);
 
   const carregarAtletas = useCallback(async () => {
     setLoading(true);
@@ -382,10 +538,15 @@ export default function AtletasPage() {
 
   const deletarAtleta = async (id) => {
     try {
-      await fetch(`/api/atletas/${id}`, { method: 'DELETE', credentials: 'include' });
+      const res = await fetch(`/api/atletas/${id}`, { method: 'DELETE', credentials: 'include' });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.erro || 'Erro ao remover');
+      }
       setAtletas((prev) => prev.filter((a) => a.id !== id));
+      toast.success('Atleta removido com sucesso');
     } catch (err) {
-      alert('Erro ao remover atleta: ' + err.message);
+      toast.error('Erro ao remover atleta: ' + err.message);
     }
   };
 
@@ -430,6 +591,19 @@ export default function AtletasPage() {
         </div>
       )}
 
+      {atletaEditando && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setAtletaEditando(null)} />
+          <div className="relative w-full max-w-xl z-10 page-enter">
+            <FormEditarAtleta
+              atleta={atletaEditando}
+              onSalvo={() => { setAtletaEditando(null); carregarAtletas(); }}
+              onCancelar={() => setAtletaEditando(null)}
+            />
+          </div>
+        </div>
+      )}
+
       <div className="relative mb-4">
         <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-500" />
         <input
@@ -464,7 +638,12 @@ export default function AtletasPage() {
       ) : (
         <div className="space-y-2">
           {atletasFiltrados.map((a) => (
-            <LinhaAtleta key={a.id} atleta={a} onDeletar={deletarAtleta} />
+            <LinhaAtleta 
+              key={a.id} 
+              atleta={a} 
+              onDeletar={deletarAtleta} 
+              onEditar={(atl) => setAtletaEditando(atl)}
+            />
           ))}
         </div>
       )}

@@ -12,6 +12,12 @@ import {
 import { buscarFilialPorAuthId } from '@/lib/services/filialService';
 
 async function resolverAcesso(atletaId) {
+  // Validar se o ID é um UUID válido para evitar erros de sintaxe no Supabase/Postgres
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  if (!atletaId || !uuidRegex.test(atletaId)) {
+    return { ok: false, status: 400, erro: 'ID de atleta inválido' };
+  }
+
   const supabase = await createServerClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -39,10 +45,11 @@ async function resolverAcesso(atletaId) {
 
 export async function GET(request, { params }) {
   try {
-    const acesso = await resolverAcesso(params.id);
-    if (!acesso.ok) return NextResponse.json({ erro: 'Não autorizado' }, { status: 401 });
+    const { id } = await params;
+    const acesso = await resolverAcesso(id);
+    if (!acesso.ok) return NextResponse.json({ erro: acesso.erro || 'Não autorizado' }, { status: acesso.status || 401 });
 
-    const atleta = await buscarAtletaPorId(params.id);
+    const atleta = await buscarAtletaPorId(id);
     return NextResponse.json({ atleta });
   } catch (err) {
     return NextResponse.json({ erro: err.message }, { status: 404 });
@@ -51,18 +58,19 @@ export async function GET(request, { params }) {
 
 export async function PATCH(request, { params }) {
   try {
-    const acesso = await resolverAcesso(params.id);
-    if (!acesso.ok) return NextResponse.json({ erro: 'Não autorizado' }, { status: 401 });
+    const { id } = await params;
+    const acesso = await resolverAcesso(id);
+    if (!acesso.ok) return NextResponse.json({ erro: acesso.erro || 'Não autorizado' }, { status: acesso.status || 401 });
 
     const body = await request.json();
 
     if (acesso.tipo === 'atleta') {
       const { nome, email, telefone } = body;
-      const atleta = await atualizarAtleta(params.id, acesso.filialId, { nome, email, telefone }, acesso.profile);
+      const atleta = await atualizarAtleta(id, acesso.filialId, { nome, email, telefone }, acesso.profile);
       return NextResponse.json({ atleta });
     }
 
-    const atleta = await atualizarAtleta(params.id, acesso.filialId, body, acesso.profile);
+    const atleta = await atualizarAtleta(id, acesso.filialId, body, acesso.profile);
     return NextResponse.json({ atleta });
   } catch (err) {
     return NextResponse.json({ erro: err.message }, { status: 400 });
@@ -71,12 +79,15 @@ export async function PATCH(request, { params }) {
 
 export async function DELETE(request, { params }) {
   try {
-    const acesso = await resolverAcesso(params.id);
-    if (!acesso.ok || acesso.tipo === 'atleta') {
+    const { id } = await params;
+    const acesso = await resolverAcesso(id);
+    if (!acesso.ok) return NextResponse.json({ erro: acesso.erro || 'Não autorizado' }, { status: acesso.status || 401 });
+
+    if (acesso.tipo === 'atleta') {
       return NextResponse.json({ erro: 'Acesso negado' }, { status: 403 });
     }
 
-    await deletarAtleta(params.id, acesso.filialId, acesso.profile);
+    await deletarAtleta(id, acesso.filialId, acesso.profile);
     return NextResponse.json({ mensagem: 'Atleta removido com sucesso' });
   } catch (err) {
     return NextResponse.json({ erro: err.message }, { status: 400 });

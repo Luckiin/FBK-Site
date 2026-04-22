@@ -4,6 +4,7 @@ import { useEffect, useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
+import { toast } from 'sonner';
 import { Mail, Lock, Phone, ArrowRight, Eye, EyeOff, Building2, User, CheckCircle2, ChevronLeft } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { usePageTransition } from '@/components/TransitionWrapper';
@@ -19,7 +20,6 @@ function EntrarForm() {
   const [telefone, setTelefone] = useState('');
   const [senha, setSenha] = useState('');
   const [showPwd, setShowPwd] = useState(false);
-  const [erro, setErro] = useState('');
   const [loading, setLoading] = useState(false);
   const [sucesso, setSucesso] = useState(false);
 
@@ -29,7 +29,6 @@ function EntrarForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErro('');
     setLoading(true);
     try {
       if (aba === 'filial') {
@@ -37,11 +36,10 @@ function EntrarForm() {
       } else {
         await login('atleta', { telefone, senha });
       }
-      setSucesso(true);
-      const callbackUrl = searchParams.get('callbackUrl');
+      toast.success('Login realizado com sucesso!');
       await navigateTo(callbackUrl || '/home', { delay: 600 });
     } catch (err) {
-      setErro(err.message || 'Credenciais inválidas. Tente novamente.');
+      toast.error(err.message || 'Credenciais inválidas. Tente novamente.');
     } finally {
       setLoading(false);
     }
@@ -139,7 +137,7 @@ function EntrarForm() {
               const Icon = tab.icon;
               return (
                 <button key={tab.key} type="button"
-                  onClick={() => { setAba(tab.key); setErro(''); }}
+                  onClick={() => { setAba(tab.key); }}
                   className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold transition-all ${
                     aba === tab.key
                       ? 'bg-brand-500 text-white shadow-md shadow-brand-500/25'
@@ -150,13 +148,6 @@ function EntrarForm() {
               );
             })}
           </div>
-
-          {/* Erro */}
-          {erro && (
-            <div className="bg-red-500/10 border border-red-500/20 text-red-300 text-sm p-3.5 rounded-xl mb-5 flex items-start gap-2">
-              <span className="mt-0.5">⚠</span> {erro}
-            </div>
-          )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {aba === 'filial' ? (

@@ -125,22 +125,22 @@ export default function AuditoriaPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Pesquisar por usuário, ação, tabela..."
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-dark-600 border border-dark-50 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+            className="input-field pl-10"
           />
         </div>
 
         <select
           value={filtroTabela}
           onChange={(e) => setFiltroTabela(e.target.value)}
-          className="bg-dark-600 border border-dark-50 rounded-xl px-4 py-2.5 text-sm text-ink-300 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+          className="input-field md:w-64 appearance-none"
         >
-          <option value="">Todas as Tabelas</option>
-          <option value="atletas">Atletas</option>
-          <option value="filiais">Filiais</option>
-          <option value="eventos">Eventos</option>
-          <option value="noticias">Notícias</option>
-          <option value="usuarios">Usuários</option>
-          <option value="auth">Autenticação</option>
+          <option value="" className="bg-dark-300">Todas as Tabelas</option>
+          <option value="atletas" className="bg-dark-300">Atletas</option>
+          <option value="filiais" className="bg-dark-300">Filiais</option>
+          <option value="eventos" className="bg-dark-300">Eventos</option>
+          <option value="noticias" className="bg-dark-300">Notícias</option>
+          <option value="usuarios" className="bg-dark-300">Usuários</option>
+          <option value="auth" className="bg-dark-300">Autenticação</option>
         </select>
 
         <div className="text-xs text-ink-600 font-medium px-2">

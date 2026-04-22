@@ -23,12 +23,11 @@ async function verificarAcesso() {
 
 export async function GET(request, { params }) {
   try {
+    const { cpf } = await params;
     const autorizado = await verificarAcesso();
     if (!autorizado) {
       return NextResponse.json({ erro: 'Não autorizado' }, { status: 401 });
     }
-
-    const { cpf } = params;
     if (!cpf) {
       return NextResponse.json({ erro: 'CPF não informado' }, { status: 400 });
     }

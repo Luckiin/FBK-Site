@@ -135,11 +135,16 @@ export async function atualizarAtleta(id, filialId, dados, executante = null) {
     Object.entries(dados).filter(([k]) => camposPermitidos.includes(k))
   );
 
-  const { data: novo, error } = await supabase
+  let query = supabase
     .from('atletas')
     .update(update)
-    .eq('id', id)
-    .eq('filial_id', filialId)
+    .eq('id', id);
+
+  if (filialId) {
+    query = query.eq('filial_id', filialId);
+  }
+
+  const { data: novo, error } = await query
     .select('id, cpf, nome, sexo, data_nascimento, telefone, email, filial_id, updated_at')
     .single();
 
@@ -187,11 +192,16 @@ export async function deletarAtleta(id, filialId, executante = null) {
     .eq('id', id)
     .single();
 
-  const { error } = await supabase
+  let query = supabase
     .from('atletas')
     .delete()
-    .eq('id', id)
-    .eq('filial_id', filialId);
+    .eq('id', id);
+
+  if (filialId) {
+    query = query.eq('filial_id', filialId);
+  }
+
+  const { error } = await query;
 
   if (error) throw new Error(`Erro ao deletar atleta: ${error.message}`);
 

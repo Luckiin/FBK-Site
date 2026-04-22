@@ -36,11 +36,12 @@ async function getAdminOrFilial(supabase, filialId) {
 
 export async function GET(request, { params }) {
   try {
+    const { id } = await params;
     const supabase = await createServerClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ erro: 'Não autorizado' }, { status: 401 });
 
-    const filial = await buscarFilialPorId(params.id);
+    const filial = await buscarFilialPorId(id);
     return NextResponse.json({ filial });
   } catch (err) {
     return NextResponse.json({ erro: err.message }, { status: 404 });
@@ -49,8 +50,9 @@ export async function GET(request, { params }) {
 
 export async function PATCH(request, { params }) {
   try {
+    const { id } = await params;
     const supabase = await createServerClient();
-    const auth = await getAdminOrFilial(supabase, params.id);
+    const auth = await getAdminOrFilial(supabase, id);
     if (!auth.autorizado) {
       return NextResponse.json({ erro: auth.motivo }, { status: 403 });
     }
@@ -62,7 +64,7 @@ export async function PATCH(request, { params }) {
         return NextResponse.json({ erro: 'Apenas admins alteram o status' }, { status: 403 });
       }
       const filial = await alterarStatusFilial(
-        params.id,
+        id,
         body.status,
         body.motivo_reprovacao || '',
         auth.profile
@@ -70,7 +72,7 @@ export async function PATCH(request, { params }) {
       return NextResponse.json({ mensagem: `Filial ${body.status} com sucesso`, filial });
     }
 
-    const filial = await atualizarFilial(params.id, body, auth.profile);
+    const filial = await atualizarFilial(id, body, auth.profile);
     return NextResponse.json({ filial });
   } catch (err) {
     return NextResponse.json({ erro: err.message }, { status: 400 });
@@ -79,6 +81,7 @@ export async function PATCH(request, { params }) {
 
 export async function DELETE(request, { params }) {
   try {
+    const { id } = await params;
     const supabase = await createServerClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ erro: 'Não autorizado' }, { status: 401 });
@@ -93,7 +96,7 @@ export async function DELETE(request, { params }) {
       return NextResponse.json({ erro: 'Apenas admins podem excluir filiais' }, { status: 403 });
     }
 
-    await deletarFilial(params.id, perfil);
+    await deletarFilial(id, perfil);
     return NextResponse.json({ mensagem: 'Filial removida com sucesso' });
   } catch (err) {
     return NextResponse.json({ erro: err.message }, { status: 400 });

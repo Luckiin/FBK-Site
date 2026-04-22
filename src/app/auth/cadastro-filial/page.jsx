@@ -1,13 +1,12 @@
 'use client';
 
-
-
 import { useState } from 'react';
 import Link from 'next/link';
 import {
   Shield, Building2, Mail, Lock, Phone, ArrowRight,
   Eye, EyeOff, CheckCircle2, Loader2,
 } from 'lucide-react';
+import { toast } from 'sonner';
 
 export default function CadastroFilialPage() {
   const [form, setForm] = useState({
@@ -20,7 +19,6 @@ export default function CadastroFilialPage() {
   const [showPwd, setShowPwd] = useState(false);
   const [showConfirmPwd, setShowConfirmPwd] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [erro, setErro] = useState('');
   const [sucesso, setSucesso] = useState(false);
 
   const set = (field) => (e) =>
@@ -28,14 +26,13 @@ export default function CadastroFilialPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErro('');
 
     if (form.senha !== form.confirmarSenha) {
-      setErro('As senhas não coincidem.');
+      toast.error('As senhas não coincidem.');
       return;
     }
     if (form.senha.length < 6) {
-      setErro('A senha deve ter pelo menos 6 caracteres.');
+      toast.error('A senha deve ter pelo menos 6 caracteres.');
       return;
     }
 
@@ -56,8 +53,9 @@ export default function CadastroFilialPage() {
       if (!res.ok) throw new Error(data.erro || 'Erro ao cadastrar filial.');
 
       setSucesso(true);
+      toast.success('Cadastro enviado com sucesso!');
     } catch (err) {
-      setErro(err.message);
+      toast.error(err.message);
     } finally {
       setLoading(false);
     }
@@ -146,11 +144,6 @@ export default function CadastroFilialPage() {
             </div>
           </div>
 
-          {erro && (
-            <div className="bg-brand-900/30 border border-brand-500/30 text-brand-300 text-sm p-3 rounded-xl mb-5">
-              {erro}
-            </div>
-          )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             
