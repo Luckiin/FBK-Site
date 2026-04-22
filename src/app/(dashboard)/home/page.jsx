@@ -151,21 +151,6 @@ function AdminDashboard({ usuario }) {
         <StatCard label="Filiações no Mês"  value={stats.filiationsThisMonth} icon={TrendingUp}   color="green" loading={loading} delay={260} />
       </div>
 
-      {/* Quick Access */}
-      <div className="animate-fade-in-up delay-300">
-        <div className="flex items-center gap-2 mb-4">
-          <div className="w-6 h-6 bg-gold-500/15 rounded-lg flex items-center justify-center">
-            <Zap size={13} className="text-gold-400" />
-          </div>
-          <h2 className="text-sm font-black uppercase tracking-widest text-ink-500">Acesso Rápido</h2>
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <QuickItem label="Atletas"  href="/atletas"      icon={Users}        color="brand" delay={320} />
-          <QuickItem label="Eventos"  href="/eventos-dash" icon={CalendarDays} color="gold"  delay={370} />
-          <QuickItem label="Notícias" href="/noticias"     icon={Newspaper}    color="blue"  delay={420} />
-          <QuickItem label="Filiais"  href="/filiais"      icon={Building2}    color="green" delay={470} />
-        </div>
-      </div>
 
       {/* Eventos */}
       <div className="animate-fade-in-up delay-400">
@@ -234,6 +219,7 @@ function AdminDashboard({ usuario }) {
 ══════════════════════════════════════════════════════════════ */
 function FilialDashboard({ usuario }) {
   const [stats, setStats] = useState({ atletas: '—' });
+  const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'Bom dia' : hour < 18 ? 'Boa tarde' : 'Boa noite';
@@ -242,10 +228,19 @@ function FilialDashboard({ usuario }) {
   useEffect(() => {
     (async () => {
       try {
-        const res = await fetch('/api/atletas', { credentials: 'include' });
-        const data = res.ok ? await res.json() : { atletas: [] };
-        setStats({ atletas: data.atletas?.length ?? 0 });
-      } catch { setStats({ atletas: '—' }); }
+        const today = new Date().toISOString().split('T')[0];
+        const [resAtletas, activeEvents] = await Promise.all([
+          fetch('/api/atletas', { credentials: 'include' }),
+          eventService.getActive()
+        ]);
+        
+        const dataAtletas = resAtletas.ok ? await resAtletas.json() : { atletas: [] };
+        setStats({ atletas: dataAtletas.atletas?.length ?? 0 });
+        setEvents(activeEvents.filter(ev => ev.data_inicio && ev.data_fim && ev.data_inicio <= today && ev.data_fim >= today).slice(0, 3));
+      } catch { 
+        setStats({ atletas: '—' });
+        setEvents([]);
+      }
       finally { setLoading(false); }
     })();
   }, []);
@@ -278,45 +273,67 @@ function FilialDashboard({ usuario }) {
         <StatCard label="Atletas Ativos" value={stats.atletas} icon={Trophy} color="gold" loading={loading} delay={175} />
       </div>
 
-      {/* Quick Access */}
-      <div className="animate-fade-in-up delay-200">
-        <div className="flex items-center gap-2 mb-4">
-          <div className="w-6 h-6 bg-gold-500/15 rounded-lg flex items-center justify-center">
-            <Zap size={13} className="text-gold-400" />
-          </div>
-          <h2 className="text-sm font-black uppercase tracking-widest text-ink-500">Acesso Rápido</h2>
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <QuickItem label="Minha Filial" href="/filial"   icon={Settings}  color="gold"  delay={250} />
-          <QuickItem label="Atletas"      href="/atletas"  icon={UserCheck} color="brand" delay={310} />
-        </div>
-      </div>
 
-      {/* Próximos passos */}
-      <div className="animate-fade-in-up delay-300">
-        <div className="flex items-center gap-2 mb-4">
-          <div className="w-6 h-6 bg-gold-500/15 rounded-lg flex items-center justify-center">
-            <Star size={13} className="text-gold-400" />
+
+
+
+      {/* Eventos */}
+      <div className="animate-fade-in-up delay-400">
+        <div className="flex items-center justify-between mb-5">
+          <div>
+            <h2 className="text-lg font-bold text-ink-100">Eventos em Aberto</h2>
+            <p className="text-xs text-ink-600 mt-0.5">Competições e cursos ativos hoje</p>
           </div>
-          <h2 className="text-sm font-black uppercase tracking-widest text-ink-500">Próximos Passos</h2>
+          <Link href="/eventos-dash" className="flex items-center gap-1.5 text-sm font-semibold text-brand-400 hover:text-brand-300 transition group">
+            Ver todos <ArrowUpRight size={14} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+          </Link>
         </div>
-        <div className="bg-dark-200 border border-dark-50/60 rounded-2xl overflow-hidden">
-          {[
-            { label: 'Complete o perfil da filial',    href: '/filial',   num: 1 },
-            { label: 'Cadastre seus primeiros atletas', href: '/atletas',  num: 2 },
-          ].map((item, i) => (
-            <Link key={item.href} href={item.href}
-              className={`flex items-center gap-4 px-6 py-4 hover:bg-dark-100 transition-all duration-200 group
-                         ${i > 0 ? 'border-t border-dark-50/40' : ''}`}>
-              <div className="w-8 h-8 rounded-full border-2 border-dark-50 group-hover:border-gold-500/60
-                              group-hover:bg-gold-500/10 transition-all flex items-center justify-center shrink-0">
-                <span className="text-xs font-black text-ink-600 group-hover:text-gold-400 transition-colors">{item.num}</span>
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {[0,1].map(i => (
+              <div key={i} className="rounded-2xl bg-dark-200 border border-dark-50/60 overflow-hidden animate-pulse">
+                <div className="h-44 bg-dark-300" />
+                <div className="p-5 space-y-2.5">
+                  <div className="h-4 bg-dark-100 rounded-lg w-3/4" />
+                  <div className="h-3 bg-dark-100 rounded-lg w-1/2" />
+                </div>
               </div>
-              <span className="text-sm text-ink-400 group-hover:text-ink-100 transition-colors flex-1">{item.label}</span>
-              <ChevronRight size={15} className="text-ink-700 group-hover:text-ink-400 transition-all group-hover:translate-x-0.5" />
-            </Link>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : events.length === 0 ? (
+          <div className="text-center py-16 bg-dark-200/60 rounded-3xl border border-dark-50/60">
+            <div className="w-14 h-14 bg-dark-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <Activity size={24} className="text-ink-600" />
+            </div>
+            <p className="text-ink-600 font-medium">Nenhum evento em aberto no momento.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {events.map((evento, i) => (
+              <div key={evento.id}
+                className="animate-fade-in-up rounded-2xl overflow-hidden bg-dark-200 border border-dark-50/60
+                           hover:-translate-y-2 hover:shadow-2xl hover:shadow-black/50 hover:border-dark-50
+                           transition-all duration-300 group"
+                style={{ animationDelay: `${450 + i * 80}ms` }}>
+                <div className="relative h-44 overflow-hidden bg-dark-300">
+                  <img src={evento.imagem_url || eventService.getDefaultImage()} alt={evento.titulo}
+                    className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                  <span className="absolute top-3 right-3 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider
+                                   rounded-full bg-green-500/80 backdrop-blur-sm text-white">
+                    {(evento.status || 'aberto').replace('_', ' ')}
+                  </span>
+                </div>
+                <div className="p-5">
+                  <h3 className="text-sm font-bold text-ink-100 mb-2 line-clamp-2 group-hover:text-brand-300 transition-colors">{evento.titulo}</h3>
+                  <div className="flex items-center gap-1.5 text-xs text-ink-600">
+                    <Clock size={11} className="text-brand-400" /> {formatDate(evento.data_inicio)}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </main>
   );

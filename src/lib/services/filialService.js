@@ -7,6 +7,7 @@ import {
   sendFilialReprovada,
   sendNovaFilialAdmin,
 } from './emailService';
+import { auditService } from './auditService';
 
 
 
@@ -152,6 +153,17 @@ export async function criarFilial({ nome, email, telefone, senha }) {
     throw new Error(`Erro ao criar filial: ${filialError.message}`);
   }
 
+  // Auditoria
+  await auditService.log({
+    action: 'INSERT',
+    tabela: 'filiais',
+    registro_id: filial.id,
+    target: filial.nome,
+    description: `Nova solicitação de filiação: "${filial.nome}"`,
+    dados_novos: filial,
+    filial_id: filial.id // Log vinculado à própria filial nova
+  });
+
   await sendFilialCadastroRecebido({ to: email, nome }).catch((err) =>
     console.error('[FILIAL] Falha ao enviar email de confirmação para', email, ':', err.message)
   );
@@ -164,15 +176,22 @@ export async function criarFilial({ nome, email, telefone, senha }) {
 
 
 
-export async function atualizarFilial(id, dados) {
+export async function atualizarFilial(id, dados, executante = null) {
   const supabase = createAdminClient();
+
+  // Buscar dados anteriores
+  const { data: anterior } = await supabase
+    .from('filiais')
+    .select('*')
+    .eq('id', id)
+    .single();
 
   const camposPermitidos = ['nome', 'telefone'];
   const update = Object.fromEntries(
     Object.entries(dados).filter(([k]) => camposPermitidos.includes(k))
   );
 
-  const { data, error } = await supabase
+  const { data: novo, error } = await supabase
     .from('filiais')
     .update(update)
     .eq('id', id)
@@ -180,11 +199,28 @@ export async function atualizarFilial(id, dados) {
     .single();
 
   if (error) throw new Error(`Erro ao atualizar filial: ${error.message}`);
-  return data;
+
+  // Auditoria
+  if (executante && anterior) {
+    await auditService.log({
+      user_id: executante.id,
+      user_name: executante.nome || executante.name || 'Usuário',
+      action: 'UPDATE',
+      tabela: 'filiais',
+      registro_id: id,
+      target: novo.nome,
+      description: `Filial "${novo.nome}" atualizada`,
+      dados_anteriores: anterior,
+      dados_novos: novo,
+      filial_id: id
+    });
+  }
+
+  return novo;
 }
 
 
-export async function alterarStatusFilial(id, novoStatus, motivoReprovacao = '') {
+export async function alterarStatusFilial(id, novoStatus, motivoReprovacao = '', executante = null) {
   if (!['aprovado', 'reprovado'].includes(novoStatus)) {
     throw new Error('Status inválido. Use: aprovado ou reprovado');
   }
@@ -194,7 +230,14 @@ export async function alterarStatusFilial(id, novoStatus, motivoReprovacao = '')
 
   const supabase = createAdminClient();
 
-  const { data, error } = await supabase
+  // Buscar estado anterior
+  const { data: anterior } = await supabase
+    .from('filiais')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  const { data: novo, error } = await supabase
     .from('filiais')
     .update({
       status: novoStatus,
@@ -206,36 +249,67 @@ export async function alterarStatusFilial(id, novoStatus, motivoReprovacao = '')
 
   if (error) throw new Error(`Erro ao alterar status: ${error.message}`);
 
+  // Auditoria
+  if (executante && anterior) {
+    await auditService.log({
+      user_id: executante.id,
+      user_name: executante.nome || executante.name || 'Usuário',
+      action: 'UPDATE',
+      tabela: 'filiais',
+      registro_id: id,
+      target: novo.nome,
+      description: `Status da filial "${novo.nome}" alterado para ${novoStatus}`,
+      dados_anteriores: anterior,
+      dados_novos: novo,
+      filial_id: id
+    });
+  }
+
   if (novoStatus === 'aprovado') {
-    await sendFilialAprovada({ to: data.email, nome: data.nome }).catch((err) =>
-      console.error('[FILIAL] Falha ao enviar email de aprovação para', data.email, ':', err.message)
+    await sendFilialAprovada({ to: novo.email, nome: novo.nome }).catch((err) =>
+      console.error('[FILIAL] Falha ao enviar email de aprovação para', novo.email, ':', err.message)
     );
   }
   if (novoStatus === 'reprovado') {
     await sendFilialReprovada({
-      to: data.email,
-      nome: data.nome,
-      motivo: data.motivo_reprovacao,
+      to: novo.email,
+      nome: novo.nome,
+      motivo: novo.motivo_reprovacao,
     }).catch((err) =>
-      console.error('[FILIAL] Falha ao enviar email de reprovação para', data.email, ':', err.message)
+      console.error('[FILIAL] Falha ao enviar email de reprovação para', novo.email, ':', err.message)
     );
   }
 
-  return data;
+  return novo;
 }
 
 
 
-export async function deletarFilial(id) {
+export async function deletarFilial(id, executante = null) {
   const supabase = createAdminClient();
 
-  const filial = await buscarFilialPorId(id);
+  const anterior = await buscarFilialPorId(id);
 
   const { error } = await supabase.from('filiais').delete().eq('id', id);
   if (error) throw new Error(`Erro ao deletar filial: ${error.message}`);
 
-  if (filial.auth_id) {
-    await supabase.auth.admin.deleteUser(filial.auth_id).catch(console.error);
+  if (anterior.auth_id) {
+    await supabase.auth.admin.deleteUser(anterior.auth_id).catch(console.error);
+  }
+
+  // Auditoria
+  if (executante) {
+    await auditService.log({
+      user_id: executante.id,
+      user_name: executante.nome || executante.name || 'Usuário',
+      action: 'DELETE',
+      tabela: 'filiais',
+      registro_id: id,
+      target: anterior.nome,
+      description: `Filial "${anterior.nome}" excluída permanentemente`,
+      dados_anteriores: anterior,
+      filial_id: id
+    });
   }
 
   return { sucesso: true };

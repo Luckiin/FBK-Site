@@ -14,18 +14,21 @@ async function resolverOperadorId(request) {
 
   if (user) {
     const filial = await buscarFilialPorAuthId(user.id);
-    if (filial) return { filialId: filial.id, tipo: 'filial' };
+    if (filial) return { filialId: filial.id, tipo: 'filial', profile: filial };
 
     const { data: perfil } = await supabase
-      .from('users').select('role').eq('auth_id', user.id).single();
-    if (perfil?.role === 'admin') return { filialId: null, tipo: 'admin' };
+      .from('users').select('*').eq('auth_id', user.id).single();
+    if (perfil?.role === 'admin') return { filialId: null, tipo: 'admin', profile: perfil };
   }
 
   const cookieStore = await cookies();
   const atletaToken = cookieStore.get('atleta-session')?.value;
   if (atletaToken) {
     const payload = await verifyToken(atletaToken);
-    if (payload?.filial_id) return { filialId: payload.filial_id, tipo: 'atleta' };
+    if (payload?.atleta_id) {
+       const { data: atleta } = await supabase.from('atletas').select('*').eq('id', payload.atleta_id).single();
+       if (atleta) return { filialId: atleta.filial_id, tipo: 'atleta', profile: atleta };
+    }
   }
 
   return null;
@@ -76,7 +79,7 @@ export async function POST(request) {
       return NextResponse.json({ erro: 'filial_id não identificado' }, { status: 400 });
     }
 
-    const resultado = await criarAtleta(filialId, { cpf, telefone, email, nome, sexo, data_nascimento });
+    const resultado = await criarAtleta(filialId, { cpf, telefone, email, nome, sexo, data_nascimento }, auth.profile);
 
     return NextResponse.json(
       {

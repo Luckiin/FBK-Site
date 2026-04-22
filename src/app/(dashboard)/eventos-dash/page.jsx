@@ -31,7 +31,7 @@ const UFS = ["AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "
 
 export default function DashboardEventosPage() {
   const { isAdmin, isFilial, user, usuario } = useAuth();
-  const canEditEvents = isAdmin || isFilial;
+  const canEditEvents = isAdmin;
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -120,10 +120,13 @@ export default function DashboardEventosPage() {
         try {
           await auditService.log({
             user_id: user?.id,
-            user_name: user?.name,
+            user_name: user?.name || usuario?.nome,
             target,
-            action: "Excluir evento",
+            action: "DELETE",
+            tabela: "eventos",
+            registro_id: id,
             description: `Evento "${target}" excluído`,
+            dados_anteriores: events.find((e) => e.id === id) || null,
           });
         } catch {
         }
@@ -154,12 +157,16 @@ export default function DashboardEventosPage() {
       try {
         await auditService.log({
           user_id: user?.id,
-          user_name: user?.name,
+          user_name: user?.name || usuario?.nome,
           target: saved.titulo,
-          action: editingEvent ? "Atualizar evento" : "Criar evento",
+          action: editingEvent ? "UPDATE" : "INSERT",
+          tabela: "eventos",
+          registro_id: saved.id,
           description: editingEvent
-            ? `Evento "${saved.titulo}" atualizado (${diff || "sem mudanças"})`
+            ? `Evento "${saved.titulo}" atualizado`
             : `Evento "${saved.titulo}" criado`,
+          dados_anteriores: editingEvent || null,
+          dados_novos: saved,
         });
       } catch {
       }

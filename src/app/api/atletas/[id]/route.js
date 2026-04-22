@@ -17,11 +17,11 @@ async function resolverAcesso(atletaId) {
 
   if (user) {
     const { data: perfil } = await supabase
-      .from('users').select('role').eq('auth_id', user.id).single();
-    if (perfil?.role === 'admin') return { ok: true, filialId: null, tipo: 'admin' };
+      .from('users').select('*').eq('auth_id', user.id).single();
+    if (perfil?.role === 'admin') return { ok: true, filialId: null, tipo: 'admin', profile: perfil };
 
     const filial = await buscarFilialPorAuthId(user.id);
-    if (filial) return { ok: true, filialId: filial.id, tipo: 'filial' };
+    if (filial) return { ok: true, filialId: filial.id, tipo: 'filial', profile: filial };
   }
 
   const cookieStore = await cookies();
@@ -29,7 +29,8 @@ async function resolverAcesso(atletaId) {
   if (token) {
     const payload = await verifyToken(token);
     if (payload?.sub === atletaId) {
-      return { ok: true, filialId: payload.filial_id, tipo: 'atleta', atletaId: payload.sub };
+      const { data: atleta } = await supabase.from('atletas').select('*').eq('id', payload.sub).single();
+      return { ok: true, filialId: payload.filial_id, tipo: 'atleta', atletaId: payload.sub, profile: atleta };
     }
   }
 
@@ -57,11 +58,11 @@ export async function PATCH(request, { params }) {
 
     if (acesso.tipo === 'atleta') {
       const { nome, email, telefone } = body;
-      const atleta = await atualizarAtleta(params.id, acesso.filialId, { nome, email, telefone });
+      const atleta = await atualizarAtleta(params.id, acesso.filialId, { nome, email, telefone }, acesso.profile);
       return NextResponse.json({ atleta });
     }
 
-    const atleta = await atualizarAtleta(params.id, acesso.filialId, body);
+    const atleta = await atualizarAtleta(params.id, acesso.filialId, body, acesso.profile);
     return NextResponse.json({ atleta });
   } catch (err) {
     return NextResponse.json({ erro: err.message }, { status: 400 });
@@ -75,7 +76,7 @@ export async function DELETE(request, { params }) {
       return NextResponse.json({ erro: 'Acesso negado' }, { status: 403 });
     }
 
-    await deletarAtleta(params.id, acesso.filialId);
+    await deletarAtleta(params.id, acesso.filialId, acesso.profile);
     return NextResponse.json({ mensagem: 'Atleta removido com sucesso' });
   } catch (err) {
     return NextResponse.json({ erro: err.message }, { status: 400 });

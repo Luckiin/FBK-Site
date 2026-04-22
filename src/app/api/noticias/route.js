@@ -8,29 +8,29 @@ import { NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase-server';
 import { listarNoticias, criarNoticia } from '@/lib/services/noticiasService';
 
-async function isAdmin(supabase) {
+async function getAdminProfile(supabase) {
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return false;
+  if (!user) return null;
 
   const { data: perfil } = await supabase
     .from('users')
-    .select('role')
+    .select('*')
     .eq('auth_id', user.id)
     .single();
 
-  return perfil?.role === 'admin';
+  return perfil?.role === 'admin' ? perfil : null;
 }
 
 export async function GET(request) {
   try {
     const supabase = await createServerClient();
-    const admin = await isAdmin(supabase);
+    const adminProfile = await getAdminProfile(supabase);
 
     const { searchParams } = new URL(request.url);
     const limit = searchParams.get('limit') ? Number(searchParams.get('limit')) : undefined;
 
     // Admins veem tudo; público vê só publicadas
-    const filtros = admin ? { limit } : { publicado: true, limit };
+    const filtros = adminProfile ? { limit } : { publicado: true, limit };
     const noticias = await listarNoticias(filtros);
 
     return NextResponse.json({ noticias });
@@ -44,12 +44,13 @@ export async function GET(request) {
 export async function POST(request) {
   try {
     const supabase = await createServerClient();
-    if (!(await isAdmin(supabase))) {
+    const adminProfile = await getAdminProfile(supabase);
+    if (!adminProfile) {
       return NextResponse.json({ erro: 'Não autorizado' }, { status: 401 });
     }
 
     const dados = await request.json();
-    const noticia = await criarNoticia(dados);
+    const noticia = await criarNoticia(dados, adminProfile);
 
     return NextResponse.json({ noticia }, { status: 201 });
   } catch (err) {

@@ -1,9 +1,5 @@
-/**
- * noticiasService.js
- * Lógica de negócio para notícias do site.
- */
-
 import { createAdminClient } from '@/lib/supabase-server';
+import { auditService } from './auditService';
 
 // ============================================================
 // LEITURA
@@ -55,7 +51,7 @@ export async function buscarNoticiaPorId(id) {
  * Cria uma nova notícia (admin).
  * @param {{ titulo: string, resumo?: string, conteudo?: string, imagem_url?: string, publicado?: boolean, destaque?: boolean }} dados
  */
-export async function criarNoticia(dados) {
+export async function criarNoticia(dados, executante = null) {
   const supabase = createAdminClient();
 
   if (!dados.titulo?.trim()) throw new Error('Título é obrigatório');
@@ -74,6 +70,21 @@ export async function criarNoticia(dados) {
     .single();
 
   if (error) throw new Error(`Erro ao criar notícia: ${error.message}`);
+
+  // Auditoria
+  if (executante) {
+    await auditService.log({
+      user_id: executante.id,
+      user_name: executante.nome || executante.name || 'Usuário',
+      action: 'INSERT',
+      tabela: 'noticias',
+      registro_id: data.id,
+      target: data.titulo,
+      description: `Notícia "${data.titulo}" publicada`,
+      dados_novos: data,
+    });
+  }
+
   return data;
 }
 
@@ -86,15 +97,22 @@ export async function criarNoticia(dados) {
  * @param {string} id
  * @param {object} dados
  */
-export async function atualizarNoticia(id, dados) {
+export async function atualizarNoticia(id, dados, executante = null) {
   const supabase = createAdminClient();
+
+  // Buscar dados anteriores
+  const { data: anterior } = await supabase
+    .from('noticias')
+    .select('*')
+    .eq('id', id)
+    .single();
 
   const permitidos = ['titulo', 'resumo', 'conteudo', 'imagem_url', 'publicado', 'destaque'];
   const update = Object.fromEntries(
     Object.entries(dados).filter(([k]) => permitidos.includes(k))
   );
 
-  const { data, error } = await supabase
+  const { data: novo, error } = await supabase
     .from('noticias')
     .update(update)
     .eq('id', id)
@@ -102,7 +120,23 @@ export async function atualizarNoticia(id, dados) {
     .single();
 
   if (error) throw new Error(`Erro ao atualizar notícia: ${error.message}`);
-  return data;
+
+  // Auditoria
+  if (executante && anterior) {
+    await auditService.log({
+      user_id: executante.id,
+      user_name: executante.nome || executante.name || 'Usuário',
+      action: 'UPDATE',
+      tabela: 'noticias',
+      registro_id: id,
+      target: novo.titulo,
+      description: `Notícia "${novo.titulo}" atualizada`,
+      dados_anteriores: anterior,
+      dados_novos: novo,
+    });
+  }
+
+  return novo;
 }
 
 // ============================================================
@@ -113,8 +147,10 @@ export async function atualizarNoticia(id, dados) {
  * Remove uma notícia (admin).
  * @param {string} id
  */
-export async function deletarNoticia(id) {
+export async function deletarNoticia(id, executante = null) {
   const supabase = createAdminClient();
+
+  const anterior = await buscarNoticiaPorId(id);
 
   const { error } = await supabase
     .from('noticias')
@@ -122,5 +158,20 @@ export async function deletarNoticia(id) {
     .eq('id', id);
 
   if (error) throw new Error(`Erro ao deletar notícia: ${error.message}`);
+
+  // Auditoria
+  if (executante) {
+    await auditService.log({
+      user_id: executante.id,
+      user_name: executante.nome || executante.name || 'Usuário',
+      action: 'DELETE',
+      tabela: 'noticias',
+      registro_id: id,
+      target: anterior.titulo,
+      description: `Notícia "${anterior.titulo}" excluída`,
+      dados_anteriores: anterior,
+    });
+  }
+
   return { sucesso: true };
 }

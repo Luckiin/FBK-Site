@@ -14,7 +14,7 @@ import {
 const NAV_ADMIN = [
   { href: '/home',         label: 'Dashboard',       icon: LayoutDashboard },
   { href: '/filiais',      label: 'Filiais',         icon: Building2       },
-  { href: '/atletas',      label: 'Atletas',         icon: Users           },
+
   { href: '/eventos-dash', label: 'Eventos',         icon: CalendarDays    },
   { href: '/noticias',     label: 'Notícias',        icon: Newspaper       },
   { href: '/exames',       label: 'Exames de Faixa', icon: Trophy          },
@@ -23,14 +23,19 @@ const NAV_ADMIN = [
 ];
 
 const NAV_FILIAL = [
-  { href: '/home',     label: 'Dashboard',    icon: LayoutDashboard },
-  { href: '/filial',   label: 'Minha Filial', icon: Building2       },
-  { href: '/atletas',   label: 'Atletas',      icon: UserCheck       },
+  { href: '/home',         label: 'Dashboard',    icon: LayoutDashboard },
+  { href: '/filial',       label: 'Minha Filial', icon: Building2       },
+  { href: '/atletas',      label: 'Atletas',      icon: UserCheck       },
+  { href: '/eventos-dash', label: 'Eventos',         icon: CalendarDays    },
+  { href: '/exames',       label: 'Exames de Faixa', icon: Trophy          },
+  { href: '/documentos',   label: 'Documentos',      icon: FileText        },
+  { href: '/auditoria',    label: 'Auditoria',       icon: ClipboardList   },
 ];
 
 const NAV_ATLETA = [
-  { href: '/home', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/configuracoes', label: 'Configurações', icon: Settings },
+  { href: '/home',         label: 'Dashboard',     icon: LayoutDashboard },
+  { href: '/eventos-dash', label: 'Eventos',       icon: CalendarDays    },
+  { href: '/configuracoes', label: 'Configurações', icon: Settings        },
 ];
 
 export default function Sidebar({ open, onClose }) {

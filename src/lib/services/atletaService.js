@@ -3,6 +3,7 @@ import { createAdminClient } from '@/lib/supabase-server';
 import { hashSenha, gerarSenhaAleatoria } from '@/lib/cryptoUtils';
 import { validarCPF } from './cpfService';
 import { sendBoasVindasAtleta } from './emailService';
+import { auditService } from './auditService';
 
 /* ─────────────────────────────────────────────────── */
 /* Atleta Service                                      */
@@ -56,7 +57,7 @@ export async function buscarAtletaPorEmail(email) {
   return { ...data, filial_nome: data.filiais?.nome ?? null, filiais: undefined };
 }
 
-export async function criarAtleta(filialId, dados) {
+export async function criarAtleta(filialId, dados, executante = null) {
   const supabase = createAdminClient();
 
   if (!validarCPF(dados.cpf)) throw new Error('CPF inválido');
@@ -94,6 +95,21 @@ export async function criarAtleta(filialId, dados) {
 
   const atletaEnriquecido = { ...atleta, filial_nome: atleta.filiais?.nome ?? null, filiais: undefined };
 
+  // Auditoria
+  if (executante) {
+    await auditService.log({
+      user_id: executante.id,
+      user_name: executante.nome || executante.name || 'Usuário',
+      action: 'INSERT',
+      tabela: 'atletas',
+      registro_id: atletaEnriquecido.id,
+      target: atletaEnriquecido.nome,
+      description: `Atleta "${atletaEnriquecido.nome}" cadastrado`,
+      dados_novos: atletaEnriquecido,
+      filial_id: filialId
+    });
+  }
+
   await sendBoasVindasAtleta({
     to: atletaEnriquecido.email,
     nome: atletaEnriquecido.nome,
@@ -104,14 +120,22 @@ export async function criarAtleta(filialId, dados) {
   return { atleta: atletaEnriquecido, senhaTemporaria };
 }
 
-export async function atualizarAtleta(id, filialId, dados) {
+export async function atualizarAtleta(id, filialId, dados, executante = null) {
   const supabase = createAdminClient();
+  
+  // Buscar dados anteriores para o log
+  const { data: anterior } = await supabase
+    .from('atletas')
+    .select('*')
+    .eq('id', id)
+    .single();
+
   const camposPermitidos = ['nome', 'sexo', 'data_nascimento', 'telefone', 'email'];
   const update = Object.fromEntries(
     Object.entries(dados).filter(([k]) => camposPermitidos.includes(k))
   );
 
-  const { data, error } = await supabase
+  const { data: novo, error } = await supabase
     .from('atletas')
     .update(update)
     .eq('id', id)
@@ -120,7 +144,24 @@ export async function atualizarAtleta(id, filialId, dados) {
     .single();
 
   if (error) throw new Error(`Erro ao atualizar atleta: ${error.message}`);
-  return data;
+
+  // Auditoria
+  if (executante && anterior) {
+    await auditService.log({
+      user_id: executante.id,
+      user_name: executante.nome || executante.name || 'Usuário',
+      action: 'UPDATE',
+      tabela: 'atletas',
+      registro_id: id,
+      target: novo.nome,
+      description: `Atleta "${novo.nome}" atualizado`,
+      dados_anteriores: anterior,
+      dados_novos: novo,
+      filial_id: filialId
+    });
+  }
+
+  return novo;
 }
 
 export async function atualizarSenhaAtleta(id, novaSenha) {
@@ -136,8 +177,16 @@ export async function atualizarSenhaAtleta(id, novaSenha) {
   return { sucesso: true };
 }
 
-export async function deletarAtleta(id, filialId) {
+export async function deletarAtleta(id, filialId, executante = null) {
   const supabase = createAdminClient();
+
+  // Buscar dados antes de deletar
+  const { data: anterior } = await supabase
+    .from('atletas')
+    .select('id, nome')
+    .eq('id', id)
+    .single();
+
   const { error } = await supabase
     .from('atletas')
     .delete()
@@ -145,5 +194,21 @@ export async function deletarAtleta(id, filialId) {
     .eq('filial_id', filialId);
 
   if (error) throw new Error(`Erro ao deletar atleta: ${error.message}`);
+
+  // Auditoria
+  if (executante && anterior) {
+    await auditService.log({
+      user_id: executante.id,
+      user_name: executante.nome || executante.name || 'Usuário',
+      action: 'DELETE',
+      tabela: 'atletas',
+      registro_id: id,
+      target: anterior.nome,
+      description: `Atleta "${anterior.nome}" removido do sistema`,
+      dados_anteriores: anterior,
+      filial_id: filialId
+    });
+  }
+
   return { sucesso: true };
 }
