@@ -113,7 +113,7 @@ function RedefinirSenhaForm() {
                 <div>
                   <label className="block text-sm font-medium text-ink-300 mb-1.5">Nova senha</label>
                   <div className="relative">
-                    <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-500" />
+                    <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-400" />
                     <input
                       type={showPwd ? 'text' : 'password'}
                       required
@@ -126,17 +126,17 @@ function RedefinirSenhaForm() {
                     <button
                       type="button"
                       onClick={() => setShowPwd(!showPwd)}
-                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-ink-500 hover:text-ink-300 transition"
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-ink-400 hover:text-ink-200 transition"
                     >
                       {showPwd ? <EyeOff size={16} /> : <Eye size={16} />}
                     </button>
                   </div>
                 </div>
-
+ 
                 <div>
                   <label className="block text-sm font-medium text-ink-300 mb-1.5">Confirmar senha</label>
                   <div className="relative">
-                    <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-500" />
+                    <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-400" />
                     <input
                       type={showPwd ? 'text' : 'password'}
                       required

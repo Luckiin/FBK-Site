@@ -140,7 +140,7 @@ export default function CadastroFilialPage() {
             </div>
             <div>
               <h1 className="text-lg font-bold text-ink-100">Cadastrar Filial</h1>
-              <p className="text-xs text-ink-500">Academia ou clube — sujeito a aprovação</p>
+              <p className="text-xs text-ink-400">Academia ou clube — sujeito a aprovação</p>
             </div>
           </div>
 
@@ -152,7 +152,7 @@ export default function CadastroFilialPage() {
                 Nome da academia / clube <span className="text-brand-400">*</span>
               </label>
               <div className="relative">
-                <Building2 size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-500" />
+                <Building2 size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-400" />
                 <input
                   required
                   className="input-field pl-10"
@@ -169,7 +169,7 @@ export default function CadastroFilialPage() {
                 E-mail <span className="text-brand-400">*</span>
               </label>
               <div className="relative">
-                <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-500" />
+                <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-400" />
                 <input
                   required
                   type="email"
@@ -180,14 +180,14 @@ export default function CadastroFilialPage() {
                   autoComplete="email"
                 />
               </div>
-              <p className="text-xs text-ink-500 mt-1">Será usado para login e comunicações</p>
+              <p className="text-xs text-ink-400 mt-1">Será usado para login e comunicações</p>
             </div>
 
             
             <div>
               <label className="block text-sm font-medium text-ink-300 mb-1.5">Telefone</label>
               <div className="relative">
-                <Phone size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-500" />
+                <Phone size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-400" />
                 <input
                   type="tel"
                   className="input-field pl-10"
@@ -205,7 +205,7 @@ export default function CadastroFilialPage() {
                 Senha <span className="text-brand-400">*</span>
               </label>
               <div className="relative">
-                <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-500" />
+                <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-400" />
                 <input
                   required
                   type={showPwd ? 'text' : 'password'}
@@ -218,7 +218,7 @@ export default function CadastroFilialPage() {
                 <button
                   type="button"
                   onClick={() => setShowPwd(!showPwd)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-ink-500 hover:text-ink-300 transition"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-ink-400 hover:text-ink-200 transition"
                 >
                   {showPwd ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
@@ -231,7 +231,7 @@ export default function CadastroFilialPage() {
                 Confirmar senha <span className="text-brand-400">*</span>
               </label>
               <div className="relative">
-                <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-500" />
+                <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-400" />
                 <input
                   required
                   type={showConfirmPwd ? 'text' : 'password'}
@@ -248,7 +248,7 @@ export default function CadastroFilialPage() {
                 <button
                   type="button"
                   onClick={() => setShowConfirmPwd(!showConfirmPwd)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-ink-500 hover:text-ink-300 transition"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-ink-400 hover:text-ink-200 transition"
                 >
                   {showConfirmPwd ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
@@ -274,7 +274,7 @@ export default function CadastroFilialPage() {
           </form>
 
           <div className="mt-6 pt-6 border-t border-dark-400 text-center">
-            <p className="text-sm text-ink-500">
+            <p className="text-sm text-ink-400">
               Já tem cadastro?{' '}
               <Link href="/auth/entrar" className="text-brand-400 hover:text-brand-300 font-medium transition">
                 Entrar
@@ -283,8 +283,8 @@ export default function CadastroFilialPage() {
           </div>
         </div>
 
-        <p className="text-center text-xs text-ink-500 mt-6">
-          <Link href="/" className="hover:text-ink-300 transition">
+        <p className="text-center text-xs text-ink-400 mt-6">
+          <Link href="/" className="hover:text-ink-200 transition">
             ← Voltar para o site
           </Link>
         </p>

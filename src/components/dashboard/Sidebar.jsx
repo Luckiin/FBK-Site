@@ -100,14 +100,14 @@ export default function Sidebar({ open, onClose }) {
             </div>
           </Link>
           <button onClick={onClose}
-            className="lg:hidden w-8 h-8 flex items-center justify-center rounded-xl hover:bg-white/[0.06] text-ink-500 hover:text-ink-100 transition-all">
+            className="lg:hidden w-8 h-8 flex items-center justify-center rounded-xl hover:bg-white/[0.06] text-ink-400 hover:text-ink-100 transition-all">
             <X size={16} />
           </button>
         </div>
 
         {/* Nav */}
         <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
-          <p className="sport-label text-ink-700 px-3 py-2 mt-1">Menu</p>
+          <p className="sport-label text-ink-400 px-3 py-2 mt-1">Menu</p>
           {navItems.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.href);
@@ -122,7 +122,7 @@ export default function Sidebar({ open, onClose }) {
                 {active && (
                   <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 ${activeBarClass} rounded-full`} />
                 )}
-                <Icon size={16} className={active ? activeIconClass : 'text-ink-600 group-hover:text-ink-300 transition-colors'} />
+                <Icon size={16} className={active ? activeIconClass : 'text-ink-400 group-hover:text-ink-200 transition-colors'} />
                 <span className="flex-1 text-[13px]">{item.label}</span>
                 {active && <ChevronRight size={12} className={activeChevronClass} />}
               </Link>
@@ -138,12 +138,12 @@ export default function Sidebar({ open, onClose }) {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-[13px] font-semibold text-ink-100 truncate leading-none">{nomeExibido}</p>
-              <p className="text-[10px] text-ink-600 capitalize mt-0.5">{papelExibido}</p>
+              <p className="text-[10px] text-ink-400 capitalize mt-0.5">{papelExibido}</p>
             </div>
           </div>
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-ink-600 hover:bg-red-500/10 hover:text-red-400 transition-all duration-200 group"
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-ink-400 hover:bg-red-500/10 hover:text-red-400 transition-all duration-200 group"
           >
             <LogOut size={15} className="group-hover:rotate-12 transition-transform duration-200" />
             <span className="text-[13px]">Sair da conta</span>

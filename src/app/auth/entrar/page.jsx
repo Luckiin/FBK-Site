@@ -127,8 +127,8 @@ function EntrarForm() {
           </div>
 
           <h1 className="text-2xl font-black text-ink-100 mb-1">Acessar conta</h1>
-          <p className="text-sm text-ink-500 mb-7">Selecione seu tipo de acesso e entre com suas credenciais.</p>
-
+          <p className="text-sm text-ink-400 mb-7">Selecione seu tipo de acesso e entre com suas credenciais.</p>
+ 
           {/* Tabs */}
           <div className="flex rounded-xl bg-dark-300/80 border border-white/[0.05] p-1 mb-6 gap-1">
             {[
@@ -142,20 +142,20 @@ function EntrarForm() {
                   className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold transition-all ${
                     aba === tab.key
                       ? 'bg-brand-500 text-white shadow-md shadow-brand-500/25'
-                      : 'text-ink-500 hover:text-ink-300'
+                      : 'text-ink-400 hover:text-ink-200'
                   }`}>
                   <Icon size={14} /> {tab.label}
                 </button>
               );
             })}
           </div>
-
+ 
           <form onSubmit={handleSubmit} className="space-y-4">
             {aba === 'filial' ? (
               <div>
-                <label className="block text-xs font-bold text-ink-400 uppercase tracking-wider mb-2">E-mail da Filial</label>
+                <label className="block text-xs font-bold text-ink-300 uppercase tracking-wider mb-2">E-mail da Filial</label>
                 <div className="relative">
-                  <Mail size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-600" />
+                  <Mail size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-400" />
                   <input type="email" required className="input-field pl-10"
                     placeholder="filial@email.com"
                     value={email} onChange={(e) => setEmail(e.target.value)}
@@ -164,38 +164,38 @@ function EntrarForm() {
               </div>
             ) : (
               <div>
-                <label className="block text-xs font-bold text-ink-400 uppercase tracking-wider mb-2">Telefone</label>
+                <label className="block text-xs font-bold text-ink-300 uppercase tracking-wider mb-2">Telefone</label>
                 <div className="relative">
-                  <Phone size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-600" />
+                  <Phone size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-400" />
                   <input type="tel" required className="input-field pl-10"
                     placeholder="(11) 99999-9999"
                     value={telefone} onChange={(e) => setTelefone(e.target.value.replace(/\D/g, ''))}
                     autoComplete="tel" />
                 </div>
-                <p className="text-[11px] text-ink-600 mt-1.5">Digite apenas os números</p>
+                <p className="text-[11px] text-ink-400 mt-1.5">Digite apenas os números</p>
               </div>
             )}
-
+ 
             <div>
               <div className="flex justify-between items-center mb-2">
-                <label className="text-xs font-bold text-ink-400 uppercase tracking-wider">Senha</label>
+                <label className="text-xs font-bold text-ink-300 uppercase tracking-wider">Senha</label>
                 <Link href="/auth/esqueceu-senha" className="text-[11px] text-brand-400 hover:text-brand-300 transition-colors">
                   Esqueceu?
                 </Link>
               </div>
               <div className="relative">
-                <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-600" />
+                <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-400" />
                 <input type={showPwd ? 'text' : 'password'} required className="input-field pl-10 pr-10"
                   placeholder="Sua senha"
                   value={senha} onChange={(e) => setSenha(e.target.value)}
                   autoComplete="current-password" />
                 <button type="button" onClick={() => setShowPwd(!showPwd)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-ink-600 hover:text-ink-300 transition-colors">
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-ink-400 hover:text-ink-200 transition-colors">
                   {showPwd ? <EyeOff size={15} /> : <Eye size={15} />}
                 </button>
               </div>
             </div>
-
+ 
             <button type="submit" disabled={loading}
               className="btn-primary w-full mt-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0">
               {loading
@@ -204,10 +204,10 @@ function EntrarForm() {
               }
             </button>
           </form>
-
+ 
           <div className="mt-7 pt-6 border-t border-white/[0.05] space-y-2 text-center">
             {aba === 'filial' && (
-              <p className="text-sm text-ink-600">
+              <p className="text-sm text-ink-400">
                 Ainda não tem uma filial?{' '}
                 <Link href="/auth/cadastro-filial" className="text-brand-400 hover:text-brand-300 font-medium transition-colors">
                   Cadastre-se
@@ -215,7 +215,7 @@ function EntrarForm() {
               </p>
             )}
             {aba === 'atleta' && (
-              <p className="text-sm text-ink-600">
+              <p className="text-sm text-ink-400">
                 Credenciais fornecidas pela sua filial.{' '}
                 <Link href="/contato" className="text-brand-400 hover:text-brand-300 font-medium transition-colors">
                   Precisa de ajuda?
@@ -223,8 +223,8 @@ function EntrarForm() {
               </p>
             )}
           </div>
-
-          <Link href="/" className="flex items-center justify-center gap-1.5 text-xs text-ink-700 hover:text-ink-400 transition-colors mt-6">
+ 
+          <Link href="/" className="flex items-center justify-center gap-1.5 text-xs text-ink-400 hover:text-ink-200 transition-colors mt-6">
             <ChevronLeft size={12} /> Voltar para o site
           </Link>
         </div>

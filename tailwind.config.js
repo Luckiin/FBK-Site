@@ -57,13 +57,13 @@ module.exports = {
         },
         // Texto — cinza com leve toque azulado (condizente com o marinho)
         ink: {
-          100: "#ffffff",
-          200: "#eef2ff",
-          300: "#a8b8d8",
-          400: "#6b82a6",
-          500: "#4a5870",
-          600: "#2e3b52",
-          700: "#1a2438",
+          100: "#ffffff", // Branco puro
+          200: "#eef2ff", // Off-white azulado
+          300: "#a8b8d8", // Cinza-azul claro
+          400: "#8ca0c2", // Cinza-azul médio claro (antigo #6b82a6)
+          500: "#6e81a3", // Cinza-azul médio (antigo #4a5870)
+          600: "#50617e", // Cinza-azul escuro legível (antigo #2e3b52)
+          700: "#37455c", // Cinza-azul de baixo contraste legível (antigo #1a2438)
         },
       },
       fontFamily: {

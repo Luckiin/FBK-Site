@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { FadeUp, FadeIn, SlideInRight, SlideInLeft } from "@/components/animations";
 import SectionHeader from "@/components/SectionHeader";
 import ParceirosBanner from "@/components/ParceirosBanner";
 import { createAdminClient } from "@/lib/supabase-server";
@@ -28,16 +29,20 @@ export const metadata = { title: "Início" };
 async function getStats() {
   try {
     const supabase = createAdminClient();
-    const [{ count: filiais }, { count: atletas }] = await Promise.all([
+    const [{ count: filiais }, { count: atletas }, { count: filiados }] = await Promise.all([
       supabase
         .from("filiais")
         .select("*", { count: "exact", head: true })
-        .eq("status", "aprovada"),
+        .in("status", ["aprovado", "aprovada"]),
       supabase
         .from("atletas")
         .select("*", { count: "exact", head: true }),
+      supabase
+        .from("filiados")
+        .select("*", { count: "exact", head: true }),
     ]);
-    return { filiais: filiais ?? 0, atletas: atletas ?? 0 };
+    const totalAtletas = (atletas && atletas > 0) ? atletas : (filiados ?? 0);
+    return { filiais: filiais ?? 0, atletas: totalAtletas };
   } catch {
     return { filiais: 0, atletas: 0 };
   }
@@ -67,47 +72,57 @@ export default async function HomePage() {
             {/* Left — texto */}
             <div>
               {/* Badge */}
-              <div className="inline-flex items-center gap-2.5 bg-brand-500/10 border border-brand-500/25 rounded-full px-4 py-2 text-sm font-medium mb-8 backdrop-blur-sm">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-500" />
-                </span>
-                <span className="text-brand-300 text-xs font-bold uppercase tracking-widest sport-label">
-                  Federação Oficial · Bahia
-                </span>
-              </div>
+              <FadeUp delay={0.1}>
+                <div className="inline-flex items-center gap-2.5 bg-brand-500/10 border border-brand-500/25 rounded-full px-4 py-2 text-sm font-medium mb-8 backdrop-blur-sm">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-500" />
+                  </span>
+                  <span className="text-brand-300 text-xs font-bold uppercase tracking-widest sport-label">
+                    Federação Oficial · Bahia
+                  </span>
+                </div>
+              </FadeUp>
 
               {/* Título FBK — estilo esportivo */}
-              <h1 className="font-sport text-5xl md:text-6xl lg:text-7xl font-black mb-3 leading-[1.0] tracking-tight">
-                <span className="text-ink-100">FEDERAÇÃO BAIANA DE</span>
-                <span className="block gradient-text-tricolor mt-1">KICKBOXING</span>
-              </h1>
+              <FadeUp delay={0.2}>
+                <h1 className="font-sport text-5xl md:text-6xl lg:text-7xl font-black mb-3 leading-[1.0] tracking-tight">
+                  <span className="text-ink-100">FEDERAÇÃO BAIANA DE</span>
+                  <span className="block gradient-text-tricolor mt-1">KICKBOXING</span>
+                </h1>
+              </FadeUp>
 
               {/* Barra tricolor decorativa */}
-              <div className="tricolor-bar w-24 mb-6" />
+              <FadeUp delay={0.3}>
+                <div className="tricolor-bar w-24 mb-6" />
+              </FadeUp>
 
-              <p className="text-lg text-ink-300 mb-4 max-w-lg leading-relaxed">
-                {APP_TAGLINE}
-              </p>
-              <p className="text-sm text-ink-500 mb-10 max-w-md leading-relaxed">
-                {APP_SUBTITLE}
-              </p>
+              <FadeUp delay={0.4}>
+                <p className="text-lg text-ink-300 mb-4 max-w-lg leading-relaxed">
+                  {APP_TAGLINE}
+                </p>
+                <p className="text-sm text-ink-500 mb-10 max-w-md leading-relaxed">
+                  {APP_SUBTITLE}
+                </p>
+              </FadeUp>
 
-              <div className="flex flex-col sm:flex-row gap-3">
-                <Link href="/sobre" className="btn-primary text-base py-4 px-8">
-                  Conheça a FBK <ArrowRight size={18} />
-                </Link>
-                <Link href="/comunidade" className="btn-cobalt text-base py-4 px-8">
-                  Filiar-se
-                </Link>
-                <Link href="/eventos" className="btn-outline text-base py-4 px-7">
-                  Eventos
-                </Link>
-              </div>
+              <FadeUp delay={0.5}>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Link href="/sobre" className="btn-primary text-base py-4 px-8">
+                    Conheça a FBK <ArrowRight size={18} />
+                  </Link>
+                  <Link href="/comunidade" className="btn-cobalt text-base py-4 px-8">
+                    Filiar-se
+                  </Link>
+                  <Link href="/eventos" className="btn-outline text-base py-4 px-7">
+                    Eventos
+                  </Link>
+                </div>
+              </FadeUp>
             </div>
 
             {/* Right — card de stats esportivo */}
-            <div className="hidden lg:flex flex-col gap-4">
+            <SlideInRight delay={0.3} className="hidden lg:flex flex-col gap-4">
               {/* Card principal */}
               <div className="relative bg-dark-200/80 backdrop-blur-md border border-cobalt-500/30 rounded-2xl p-6 overflow-hidden glow-cobalt">
                 {/* Barra tricolor no topo do card */}
@@ -170,7 +185,7 @@ export default async function HomePage() {
                   <ArrowRight size={16} />
                 </Link>
               </div>
-            </div>
+            </SlideInRight>
           </div>
         </div>
       </section>
@@ -179,7 +194,7 @@ export default async function HomePage() {
       <section className="bg-dark-300 py-24 md:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div>
+            <SlideInLeft>
               <div className="inline-flex items-center gap-2 text-brand-400 text-xs font-bold uppercase tracking-widest mb-4 bg-brand-500/10 px-3 py-1.5 rounded-full border border-brand-500/20">
                 <span className="w-1.5 h-1.5 bg-brand-400 rounded-full" />
                 Sobre a FBK
@@ -200,9 +215,9 @@ export default async function HomePage() {
               <Link href="/sobre" className="btn-primary inline-flex">
                 Conheça nossa atuação <ArrowRight size={16} />
               </Link>
-            </div>
+            </SlideInLeft>
 
-            <div className="relative">
+            <SlideInRight className="relative">
               <div className="absolute -top-8 -right-8 w-48 h-48 bg-brand-500/5 rounded-3xl -z-10" />
               <div className="absolute -bottom-8 -left-8 w-32 h-32 bg-gold-500/5 rounded-2xl -z-10" />
               <div className="absolute top-1/2 -translate-y-1/2 -right-3 w-1 h-24 bg-gradient-to-b from-brand-500/50 to-transparent rounded-full" />
@@ -229,7 +244,7 @@ export default async function HomePage() {
                   ))}
                 </div>
               </div>
-            </div>
+            </SlideInRight>
           </div>
         </div>
       </section>
@@ -248,18 +263,20 @@ export default async function HomePage() {
               { icon: <Target size={26} />,        title: "Desenvolvimento Técnico", desc: "Programas de evolução contínua para treinadores e atletas" },
               { icon: <Trophy size={26} />,        title: "Eventos Esportivos",     desc: "Campeonatos oficiais com chancela estadual e nacional" },
             ].map((item, i) => (
-              <div key={i} className="card card-hover p-7 group flex flex-col">
-                <div className="w-14 h-14 mb-5 bg-dark-300 rounded-2xl flex items-center justify-center text-ink-500
-                                group-hover:bg-gradient-to-br group-hover:from-brand-500 group-hover:to-brand-600
-                                group-hover:text-white group-hover:shadow-lg group-hover:shadow-brand-500/25
-                                transition-all duration-300">
-                  {item.icon}
+              <FadeUp delay={i * 0.1} key={i}>
+                <div className="card card-hover p-7 group flex flex-col h-full">
+                  <div className="w-14 h-14 mb-5 bg-dark-300 rounded-2xl flex items-center justify-center text-ink-500
+                                  group-hover:bg-gradient-to-br group-hover:from-brand-500 group-hover:to-brand-600
+                                  group-hover:text-white group-hover:shadow-lg group-hover:shadow-brand-500/25
+                                  transition-all duration-300">
+                    {item.icon}
+                  </div>
+                  <h3 className="font-bold text-ink-100 mb-2.5 group-hover:text-brand-300 transition-colors text-[15px]">
+                    {item.title}
+                  </h3>
+                  <p className="text-sm text-ink-500 leading-relaxed flex-1">{item.desc}</p>
                 </div>
-                <h3 className="font-bold text-ink-100 mb-2.5 group-hover:text-brand-300 transition-colors text-[15px]">
-                  {item.title}
-                </h3>
-                <p className="text-sm text-ink-500 leading-relaxed flex-1">{item.desc}</p>
-              </div>
+              </FadeUp>
             ))}
           </div>
           <div className="text-center mt-10">
@@ -283,19 +300,21 @@ export default async function HomePage() {
               { title: "Curso de Arbitragem", desc: "Formação e certificação de árbitros e oficiais para atuação em eventos oficiais da FBK.", tag: "Formação",    tagClass: "bg-gold-500/15  text-gold-300  border-gold-500/25",  accent: "from-gold-500/10"  },
               { title: "Seminário Técnico",   desc: "Atualização profissional para treinadores com especialistas nacionais e internacionais.", tag: "Técnico",    tagClass: "bg-cobalt-500/15 text-cobalt-300 border-cobalt-500/25", accent: "from-cobalt-500/10" },
             ].map((evento, i) => (
-              <div key={i} className="card card-hover p-7 group relative overflow-hidden">
-                <div className={`absolute top-0 left-0 right-0 h-32 bg-gradient-to-b ${evento.accent} to-transparent pointer-events-none`} />
-                <div className="relative z-10">
-                  <span className={`badge ${evento.tagClass} mb-5`}>{evento.tag}</span>
-                  <h3 className="text-[17px] font-bold text-ink-100 mb-3 group-hover:text-brand-300 transition-colors">
-                    {evento.title}
-                  </h3>
-                  <p className="text-sm text-ink-500 leading-relaxed mb-5">{evento.desc}</p>
-                  <Link href="/eventos" className="flex items-center gap-1 text-sm font-semibold text-brand-400 hover:text-brand-300 transition-colors">
-                    Saiba mais <ChevronRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
-                  </Link>
+              <FadeUp delay={i * 0.15} key={i}>
+                <div className="card card-hover p-7 group relative overflow-hidden h-full">
+                  <div className={`absolute top-0 left-0 right-0 h-32 bg-gradient-to-b ${evento.accent} to-transparent pointer-events-none`} />
+                  <div className="relative z-10">
+                    <span className={`badge ${evento.tagClass} mb-5`}>{evento.tag}</span>
+                    <h3 className="text-[17px] font-bold text-ink-100 mb-3 group-hover:text-brand-300 transition-colors">
+                      {evento.title}
+                    </h3>
+                    <p className="text-sm text-ink-500 leading-relaxed mb-5">{evento.desc}</p>
+                    <Link href="/eventos" className="flex items-center gap-1 text-sm font-semibold text-brand-400 hover:text-brand-300 transition-colors">
+                      Saiba mais <ChevronRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+                    </Link>
+                  </div>
                 </div>
-              </div>
+              </FadeUp>
             ))}
           </div>
           <div className="text-center mt-10">
@@ -320,18 +339,20 @@ export default async function HomePage() {
           />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {IMPACTO_SOCIAL.map((item, i) => (
-              <div key={i} className="text-center group">
-                <div className="relative w-20 h-20 mx-auto mb-6">
-                  <div className="absolute inset-0 bg-brand-500/10 rounded-2xl group-hover:bg-brand-500/20 transition-all duration-300 group-hover:scale-110" />
-                  <div className="absolute inset-0 flex items-center justify-center text-brand-400 group-hover:text-brand-300 transition-colors">
-                    {ICON_MAP[item.icon]}
+              <FadeUp delay={i * 0.15} key={i}>
+                <div className="text-center group h-full">
+                  <div className="relative w-20 h-20 mx-auto mb-6">
+                    <div className="absolute inset-0 bg-brand-500/10 rounded-2xl group-hover:bg-brand-500/20 transition-all duration-300 group-hover:scale-110" />
+                    <div className="absolute inset-0 flex items-center justify-center text-brand-400 group-hover:text-brand-300 transition-colors">
+                      {ICON_MAP[item.icon]}
+                    </div>
                   </div>
+                  <h3 className="text-lg font-bold text-ink-100 mb-3 group-hover:text-brand-300 transition-colors">
+                    {item.title}
+                  </h3>
+                  <p className="text-[15px] text-ink-500 leading-relaxed max-w-xs mx-auto">{item.desc}</p>
                 </div>
-                <h3 className="text-lg font-bold text-ink-100 mb-3 group-hover:text-brand-300 transition-colors">
-                  {item.title}
-                </h3>
-                <p className="text-[15px] text-ink-500 leading-relaxed max-w-xs mx-auto">{item.desc}</p>
-              </div>
+              </FadeUp>
             ))}
           </div>
         </div>
@@ -345,37 +366,41 @@ export default async function HomePage() {
             subtitle="Atletas, técnicos, árbitros, academias e representantes municipais em rede"
           />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-            <Link href="/comunidade" className="group relative card card-hover p-8 block overflow-hidden">
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-gold-500 to-gold-600/50 rounded-t-2xl" />
-              <div className="w-12 h-12 bg-gold-500/10 border border-gold-500/20 text-gold-500 rounded-2xl flex items-center justify-center mb-5
-                              group-hover:bg-gold-500 group-hover:text-dark-400 group-hover:border-transparent
-                              group-hover:shadow-lg group-hover:shadow-gold-500/20 transition-all duration-300">
-                <Building size={22} />
-              </div>
-              <h3 className="text-[17px] font-bold text-ink-100 mb-2 group-hover:text-gold-400 transition-colors">Academias Filiadas</h3>
-              <p className="text-sm text-ink-500 leading-relaxed mb-5">
-                Conheça as academias que fazem parte da rede oficial da FBK em todo o estado.
-              </p>
-              <div className="flex items-center gap-1.5 text-sm font-semibold text-gold-500 group-hover:text-gold-400 transition-colors">
-                Ver academias <ChevronRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
-              </div>
-            </Link>
+            <SlideInLeft delay={0.1}>
+              <Link href="/comunidade" className="group relative card card-hover p-8 block overflow-hidden h-full">
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-gold-500 to-gold-600/50 rounded-t-2xl" />
+                <div className="w-12 h-12 bg-gold-500/10 border border-gold-500/20 text-gold-500 rounded-2xl flex items-center justify-center mb-5
+                                group-hover:bg-gold-500 group-hover:text-dark-400 group-hover:border-transparent
+                                group-hover:shadow-lg group-hover:shadow-gold-500/20 transition-all duration-300">
+                  <Building size={22} />
+                </div>
+                <h3 className="text-[17px] font-bold text-ink-100 mb-2 group-hover:text-gold-400 transition-colors">Academias Filiadas</h3>
+                <p className="text-sm text-ink-500 leading-relaxed mb-5">
+                  Conheça as academias que fazem parte da rede oficial da FBK em todo o estado.
+                </p>
+                <div className="flex items-center gap-1.5 text-sm font-semibold text-gold-500 group-hover:text-gold-400 transition-colors">
+                  Ver academias <ChevronRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+                </div>
+              </Link>
+            </SlideInLeft>
 
-            <Link href="/comunidade#filiar" className="group relative card card-hover p-8 block overflow-hidden">
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-500 to-brand-600/50 rounded-t-2xl" />
-              <div className="w-12 h-12 bg-brand-500/10 border border-brand-500/20 text-brand-400 rounded-2xl flex items-center justify-center mb-5
-                              group-hover:bg-brand-500 group-hover:text-white group-hover:border-transparent
-                              group-hover:shadow-lg group-hover:shadow-brand-500/20 transition-all duration-300">
-                <Users size={22} />
-              </div>
-              <h3 className="text-[17px] font-bold text-ink-100 mb-2 group-hover:text-brand-400 transition-colors">Quero me Filiar</h3>
-              <p className="text-sm text-ink-500 leading-relaxed mb-5">
-                Filie-se à FBK como atleta, técnico, árbitro ou como academia representante.
-              </p>
-              <div className="flex items-center gap-1.5 text-sm font-semibold text-brand-400 group-hover:text-brand-300 transition-colors">
-                Iniciar filiação <ChevronRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
-              </div>
-            </Link>
+            <SlideInRight delay={0.2}>
+              <Link href="/comunidade#filiar" className="group relative card card-hover p-8 block overflow-hidden h-full">
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-500 to-brand-600/50 rounded-t-2xl" />
+                <div className="w-12 h-12 bg-brand-500/10 border border-brand-500/20 text-brand-400 rounded-2xl flex items-center justify-center mb-5
+                                group-hover:bg-brand-500 group-hover:text-white group-hover:border-transparent
+                                group-hover:shadow-lg group-hover:shadow-brand-500/20 transition-all duration-300">
+                  <Users size={22} />
+                </div>
+                <h3 className="text-[17px] font-bold text-ink-100 mb-2 group-hover:text-brand-400 transition-colors">Quero me Filiar</h3>
+                <p className="text-sm text-ink-500 leading-relaxed mb-5">
+                  Filie-se à FBK como atleta, técnico, árbitro ou como academia representante.
+                </p>
+                <div className="flex items-center gap-1.5 text-sm font-semibold text-brand-400 group-hover:text-brand-300 transition-colors">
+                  Iniciar filiação <ChevronRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+                </div>
+              </Link>
+            </SlideInRight>
           </div>
         </div>
       </section>
@@ -389,68 +414,72 @@ export default async function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 
             {/* Atleta */}
-            <div className="relative overflow-hidden rounded-2xl bg-dark-200 border border-brand-500/20 p-8 group hover:border-brand-500/40 transition-all duration-300 hover:-translate-y-0.5">
-              <div className="absolute inset-0 bg-gradient-to-br from-brand-500/[0.07] via-transparent to-transparent pointer-events-none" />
-              <div className="absolute top-0 right-0 w-48 h-48 bg-brand-500/5 rounded-full blur-[60px]" />
-              <div className="relative z-10">
-                <div className="flex items-center gap-3 mb-5">
-                  <div className="w-10 h-10 bg-brand-500/15 rounded-xl flex items-center justify-center">
-                    <Shield size={18} className="text-brand-400" />
+            <SlideInLeft delay={0.1}>
+              <div className="relative overflow-hidden rounded-2xl bg-dark-200 border border-brand-500/20 p-8 group hover:border-brand-500/40 transition-all duration-300 hover:-translate-y-0.5 h-full">
+                <div className="absolute inset-0 bg-gradient-to-br from-brand-500/[0.07] via-transparent to-transparent pointer-events-none" />
+                <div className="absolute top-0 right-0 w-48 h-48 bg-brand-500/5 rounded-full blur-[60px]" />
+                <div className="relative z-10">
+                  <div className="flex items-center gap-3 mb-5">
+                    <div className="w-10 h-10 bg-brand-500/15 rounded-xl flex items-center justify-center">
+                      <Shield size={18} className="text-brand-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-extrabold text-ink-100 uppercase tracking-wide">Área do Atleta</h3>
+                      <p className="text-xs text-ink-500">Portal de acesso</p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-lg font-extrabold text-ink-100 uppercase tracking-wide">Área do Atleta</h3>
-                    <p className="text-xs text-ink-500">Portal de acesso</p>
-                  </div>
+                  <div className="gold-divider mb-5" />
+                  <ul className="space-y-2.5 mb-7">
+                    <li className="flex items-center gap-2.5 text-sm text-ink-300">
+                      <div className="w-1.5 h-1.5 bg-brand-400 rounded-full" />Meu Perfil e Dados
+                    </li>
+                    <li className="flex items-center gap-2.5 text-sm text-ink-300">
+                      <div className="w-1.5 h-1.5 bg-brand-400 rounded-full" />Ranking e Competições
+                    </li>
+                    <li className="flex items-center gap-2.5 text-sm text-ink-300">
+                      <div className="w-1.5 h-1.5 bg-brand-400 rounded-full" />Inscrições em Eventos
+                    </li>
+                  </ul>
+                  <Link href="/auth/entrar?tab=atleta" className="btn-primary inline-flex text-sm py-2.5 px-5">
+                    Acessar <ArrowRight size={14} />
+                  </Link>
                 </div>
-                <div className="gold-divider mb-5" />
-                <ul className="space-y-2.5 mb-7">
-                  <li className="flex items-center gap-2.5 text-sm text-ink-300">
-                    <div className="w-1.5 h-1.5 bg-brand-400 rounded-full" />Meu Perfil e Dados
-                  </li>
-                  <li className="flex items-center gap-2.5 text-sm text-ink-300">
-                    <div className="w-1.5 h-1.5 bg-brand-400 rounded-full" />Ranking e Competições
-                  </li>
-                  <li className="flex items-center gap-2.5 text-sm text-ink-300">
-                    <div className="w-1.5 h-1.5 bg-brand-400 rounded-full" />Inscrições em Eventos
-                  </li>
-                </ul>
-                <Link href="/auth/entrar?tab=atleta" className="btn-primary inline-flex text-sm py-2.5 px-5">
-                  Acessar <ArrowRight size={14} />
-                </Link>
               </div>
-            </div>
+            </SlideInLeft>
 
             {/* Filial */}
-            <div className="relative overflow-hidden rounded-2xl bg-dark-200 border border-gold-500/20 p-8 group hover:border-gold-500/40 transition-all duration-300 hover:-translate-y-0.5">
-              <div className="absolute inset-0 bg-gradient-to-br from-gold-500/[0.06] via-transparent to-transparent pointer-events-none" />
-              <div className="absolute top-0 right-0 w-48 h-48 bg-gold-500/5 rounded-full blur-[60px]" />
-              <div className="relative z-10">
-                <div className="flex items-center gap-3 mb-5">
-                  <div className="w-10 h-10 bg-gold-500/15 rounded-xl flex items-center justify-center">
-                    <Building size={18} className="text-gold-400" />
+            <SlideInRight delay={0.2}>
+              <div className="relative overflow-hidden rounded-2xl bg-dark-200 border border-gold-500/20 p-8 group hover:border-gold-500/40 transition-all duration-300 hover:-translate-y-0.5 h-full">
+                <div className="absolute inset-0 bg-gradient-to-br from-gold-500/[0.06] via-transparent to-transparent pointer-events-none" />
+                <div className="absolute top-0 right-0 w-48 h-48 bg-gold-500/5 rounded-full blur-[60px]" />
+                <div className="relative z-10">
+                  <div className="flex items-center gap-3 mb-5">
+                    <div className="w-10 h-10 bg-gold-500/15 rounded-xl flex items-center justify-center">
+                      <Building size={18} className="text-gold-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-extrabold text-ink-100 uppercase tracking-wide">Área das Filiais</h3>
+                      <p className="text-xs text-ink-500">Portal de gestão</p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-lg font-extrabold text-ink-100 uppercase tracking-wide">Área das Filiais</h3>
-                    <p className="text-xs text-ink-500">Portal de gestão</p>
-                  </div>
+                  <div className="gold-divider mb-5" />
+                  <ul className="space-y-2.5 mb-7">
+                    <li className="flex items-center gap-2.5 text-sm text-ink-300">
+                      <div className="w-1.5 h-1.5 bg-gold-400 rounded-full" />Gestão de Atletas
+                    </li>
+                    <li className="flex items-center gap-2.5 text-sm text-ink-300">
+                      <div className="w-1.5 h-1.5 bg-gold-400 rounded-full" />Documentos Oficiais
+                    </li>
+                    <li className="flex items-center gap-2.5 text-sm text-ink-300">
+                      <div className="w-1.5 h-1.5 bg-gold-400 rounded-full" />Filiações e Inscrições
+                    </li>
+                  </ul>
+                  <Link href="/auth/entrar?tab=filial" className="btn-gold inline-flex text-sm py-2.5 px-5">
+                    Acessar <ArrowRight size={14} />
+                  </Link>
                 </div>
-                <div className="gold-divider mb-5" />
-                <ul className="space-y-2.5 mb-7">
-                  <li className="flex items-center gap-2.5 text-sm text-ink-300">
-                    <div className="w-1.5 h-1.5 bg-gold-400 rounded-full" />Gestão de Atletas
-                  </li>
-                  <li className="flex items-center gap-2.5 text-sm text-ink-300">
-                    <div className="w-1.5 h-1.5 bg-gold-400 rounded-full" />Documentos Oficiais
-                  </li>
-                  <li className="flex items-center gap-2.5 text-sm text-ink-300">
-                    <div className="w-1.5 h-1.5 bg-gold-400 rounded-full" />Filiações e Inscrições
-                  </li>
-                </ul>
-                <Link href="/auth/entrar?tab=filial" className="btn-gold inline-flex text-sm py-2.5 px-5">
-                  Acessar <ArrowRight size={14} />
-                </Link>
               </div>
-            </div>
+            </SlideInRight>
           </div>
         </div>
       </section>

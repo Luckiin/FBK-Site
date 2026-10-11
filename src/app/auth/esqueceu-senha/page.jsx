@@ -66,7 +66,7 @@ export default function EsqueceuSenhaPage() {
                 Se o email <strong className="text-ink-200">{email}</strong> estiver cadastrado,
                 você receberá um link de recuperação em breve.
               </p>
-              <p className="text-xs text-ink-500 mb-6">
+              <p className="text-xs text-ink-400 mb-6">
                 O link expira em <strong>15 minutos</strong>. Verifique sua caixa de spam.
               </p>
               <Link
@@ -95,7 +95,7 @@ export default function EsqueceuSenhaPage() {
                 <div>
                   <label className="block text-sm font-medium text-ink-300 mb-1.5">E-mail</label>
                   <div className="relative">
-                    <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-500" />
+                    <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-400" />
                     <input
                       type="email"
                       required
@@ -116,7 +116,7 @@ export default function EsqueceuSenhaPage() {
                 </button>
               </form>
 
-              <p className="text-center text-sm text-ink-500 mt-6">
+              <p className="text-center text-sm text-ink-400 mt-6">
                 <Link
                   href="/auth/entrar"
                   className="text-brand-400 hover:text-brand-300 font-medium transition inline-flex items-center gap-1"

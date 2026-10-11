@@ -66,7 +66,7 @@ export default function AguardandoAprovacaoPage() {
             </Link>
             <button
               onClick={logout}
-              className="text-sm text-ink-500 hover:text-ink-300 transition flex items-center justify-center gap-1"
+              className="text-sm text-ink-400 hover:text-ink-200 transition flex items-center justify-center gap-1"
             >
               <ArrowLeft size={14} />
               Sair da conta

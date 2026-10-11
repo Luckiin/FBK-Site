@@ -297,6 +297,7 @@ alter table public.filiais enable row level security;
 alter table public.filiados enable row level security;
 alter table public.password_resets enable row level security;
 alter table public.noticias enable row level security;
+alter table public.eventos enable row level security;
 
 drop policy if exists "Admin full access filiais" on public.filiais;
 create policy "Admin full access filiais" on public.filiais
